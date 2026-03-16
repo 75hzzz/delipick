@@ -1,0 +1,5 @@
+# [OS / IDE 공통 설정]
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
