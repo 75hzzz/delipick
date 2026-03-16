@@ -1,0 +1,14 @@
+# [Python 관련]
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+.env
+
+# [Database & Logs]
+*.db
+*.sqlite3
+logs/
+*.log
