@@ -3,7 +3,7 @@ import json
 from datetime import datetime
 
 # 하단동 좌표
-API_KEY = "5931bdd9e38c94e1bc88f5591b32a513"
+API_KEY = "여기에 API KEY"
 LAT = 35.104
 LON = 128.974
 
