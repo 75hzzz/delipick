@@ -40,35 +40,23 @@ class _CategorySheetState extends State<CategorySheet> {
         ),
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
           const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Text(
-                '카테고리',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(width: 4),
-              Text(
-                '(복수)',
-                style: TextStyle(color: Colors.grey[600], fontSize: 14),
-              ),
-            ],
+          const Text(
+            '카테고리',
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
           const Divider(indent: 20, endIndent: 20),
 
+          // ✅ GridView 영역: 오버플로우 방지를 위해 Expanded로 감쌈
           Expanded(
             child: GridView.builder(
-              shrinkWrap: true,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: const EdgeInsets.all(20),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 4,
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 10,
-                childAspectRatio: 0.85,
+                mainAxisSpacing: 15,
+                crossAxisSpacing: 15,
+                childAspectRatio: 0.8, // 👈 높이 비율을 살짝 늘려 공간 확보
               ),
               itemCount: categories.length,
               itemBuilder: (context, index) {
@@ -87,30 +75,37 @@ class _CategorySheetState extends State<CategorySheet> {
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                      color: isSelected ? Colors.grey[300] : Colors.grey[100],
-                      borderRadius: BorderRadius.circular(10),
+                      color: isSelected ? const Color(0xFFE3F2FD) : Colors.white,
+                      borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        // 선택 시 테두리도 조금 더 진한 회색으로 강조
-                        color: isSelected ? Colors.grey[600]! : Colors.transparent,
+                        color: isSelected ? const Color(0xFF64B5F6) : Colors.transparent,
                         width: 2,
                       ),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Image.asset(
-                          cat['image']!,
-                          height: 65,
-                          width: 65,
-                          errorBuilder: (c, e, s) => const Icon(Icons.fastfood),
+                        // ✅ 아이콘 크기 제한
+                        Flexible(
+                          child: Image.asset(
+                            cat['image']!,
+                            width: 45,
+                            height: 45,
+                            errorBuilder: (context, error, stackTrace) =>
+                            const Icon(Icons.restaurant, size: 40, color: Colors.grey),
+                          ),
                         ),
-                        const SizedBox(height: 5),
-                        Text(
-                          cat['name']!,
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Colors.black,
-                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        const SizedBox(height: 8),
+                        // ✅ 글자가 넘치지 않게 FittedBox 사용
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            cat['name']!,
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.black,
+                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            ),
                           ),
                         ),
                       ],
