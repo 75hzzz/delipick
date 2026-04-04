@@ -17,6 +17,7 @@ class CategorySheet extends StatefulWidget {
 }
 
 class _CategorySheetState extends State<CategorySheet> {
+  // 임시 선택 상태
   late List<int> tempSelected;
 
   @override
@@ -67,6 +68,7 @@ class _CategorySheetState extends State<CategorySheet> {
               ),
               itemCount: widget.availableCategories.length,
               itemBuilder: (context, index) {
+                // 카테고리 타일 렌더링
                 final category = widget.availableCategories[index];
                 final isSelected = tempSelected.contains(category.id);
 

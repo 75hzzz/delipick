@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'food_list.dart';
 
 void main() {
+  // 앱 진입점
   runApp(const DelipickApp());
 }
 

@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import '../models/restaurant.dart';
 
 class RecommendationQuery {
+  // 필터/정렬 요청값
   final List<int> categoryIds;
   final int minPrice;
   final int maxPrice;
@@ -24,6 +25,7 @@ class RecommendationQuery {
   });
 
   Map<String, dynamic> toJson() {
+    // POST 호환용 직렬화
     return {
       'category_ids': categoryIds,
       'min_price': minPrice,
@@ -62,6 +64,7 @@ class DelipickApiService {
         _client = client ?? http.Client();
 
   Future<List<CategoryItem>> fetchCategories() async {
+    // 카테고리 목록 조회
     final uri = Uri.parse('$baseUrl/categories');
     final response = await _client.get(uri).timeout(_requestTimeout);
 
@@ -114,8 +117,10 @@ class DelipickApiService {
   }
 
   Future<RecommendationData> fetchRecommendations(RecommendationQuery query) async {
+    // 가격 범위 보정
     final adjustedMin = query.minPrice < 0 ? 0 : query.minPrice;
     final adjustedMax = query.maxPrice < adjustedMin ? adjustedMin : query.maxPrice;
+    // 추천 목록 조회(GET)
     final uri = _buildRestaurantsUri(
         RecommendationQuery(
           categoryIds: query.categoryIds,
@@ -146,6 +151,7 @@ class DelipickApiService {
   }
 
   Uri _buildRestaurantsUri(RecommendationQuery query) {
+    // 백엔드 Query 파라미터 매핑
     final queryParams = <String, String>{
       'min_price': query.minPrice.toString(),
       'max_price': query.maxPrice.toString(),
@@ -155,9 +161,11 @@ class DelipickApiService {
     };
 
     if (query.categoryIds.isNotEmpty) {
+      // 다중 카테고리 직렬화
       queryParams['category_ids'] = query.categoryIds.join(',');
     }
     if (query.spicyLevel.trim().isNotEmpty) {
+      // 맵기 필터 직렬화
       queryParams['spicy_level'] = query.spicyLevel.trim();
     }
 
@@ -165,6 +173,7 @@ class DelipickApiService {
   }
 
   String _extractErrorDetail(String responseBody) {
+    // FastAPI detail 필드 우선 추출
     try {
       final dynamic decoded = jsonDecode(responseBody);
       if (decoded is Map<String, dynamic>) {

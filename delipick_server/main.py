@@ -25,6 +25,7 @@ except ImportError:
 
 load_dotenv()
 
+# 카테고리명 복구용 기본값
 _CATEGORY_NAME_FALLBACK = {
     1: "한식",
     2: "중식",
@@ -37,6 +38,7 @@ _CATEGORY_NAME_FALLBACK = {
 
 
 class RecommendationRequest(BaseModel):
+    # 필터 조건
     category_ids: list[int] = Field(default_factory=list)
     min_price: int = 2000
     max_price: int = 100000
@@ -47,12 +49,17 @@ class RecommendationRequest(BaseModel):
 
     @model_validator(mode="after")
     def validate_ranges(self) -> "RecommendationRequest":
+        # 가격 범위 보정
         if self.min_price < 0:
             self.min_price = 0
         if self.max_price < self.min_price:
             self.max_price = self.min_price
+
+        # 정렬 모드 보정
         normalized_sort = self.sort.strip().lower()
         self.sort = normalized_sort if normalized_sort in {"delivery", "recommend"} else "delivery"
+
+        # 결과 개수 보정
         self.limit = max(1, min(self.limit, 100))
         return self
 
@@ -89,12 +96,14 @@ class RecommendationResponse(BaseModel):
 
 
 def _parse_allowed_origins() -> list[str]:
+    # CORS 오리진 목록 파싱
     raw = os.getenv("CORS_ALLOW_ORIGINS", "*")
     values = [origin.strip() for origin in raw.split(",") if origin.strip()]
     return values or ["*"]
 
 
 def _parse_bool_env(name: str, default: bool) -> bool:
+    # bool 환경변수 파싱
     value = os.getenv(name)
     if value is None:
         return default
@@ -102,6 +111,7 @@ def _parse_bool_env(name: str, default: bool) -> bool:
 
 
 def _parse_int_env(name: str, default: int) -> int:
+    # int 환경변수 파싱
     value = os.getenv(name)
     if value is None:
         return default
@@ -112,6 +122,7 @@ def _parse_int_env(name: str, default: int) -> int:
 
 
 def _db_candidates() -> list[str]:
+    # DB 후보 목록
     requested = os.getenv("DB_NAME", "").strip()
     defaults = [requested] if requested else []
     for name in ("delipick", "qqq"):
@@ -137,10 +148,12 @@ app.add_middleware(
 
 
 def get_db_connection() -> pymysql.connections.Connection:
+    # DB 연결 시도
     last_error: pymysql.MySQLError | None = None
 
     for db_name in _db_candidates():
         try:
+            # 연결 성공 시 즉시 반환
             return pymysql.connect(
                 host=os.getenv("DB_HOST", "127.0.0.1"),
                 user=os.getenv("DB_USER", "root"),
@@ -153,6 +166,7 @@ def get_db_connection() -> pymysql.connections.Connection:
             )
         except pymysql.MySQLError as error:
             last_error = error
+            # DB 미존재 오류면 다음 후보 재시도
             if _is_unknown_database(error):
                 continue
             raise
@@ -163,9 +177,11 @@ def get_db_connection() -> pymysql.connections.Connection:
 
 
 def _spicy_preference_boost(spicy_level: str, menu_name: str | None) -> float:
+    # 맵기 선호 보정값
     if not spicy_level:
         return 0.0
 
+    # 키워드 유무 감지
     normalized_level = spicy_level.lower().strip()
     menu = (menu_name or "").lower()
     hot_keywords = ["매운", "불", "마라", "핫", "spicy", "hot", "fire"]
@@ -181,6 +197,7 @@ def _spicy_preference_boost(spicy_level: str, menu_name: str | None) -> float:
 
 
 def _normalize_category_name(category_id: int | None, raw_name: Any) -> str | None:
+    # DB 문자열 품질 확인
     if isinstance(raw_name, str):
         stripped = raw_name.strip()
         if stripped and "?" not in stripped:
@@ -191,6 +208,7 @@ def _normalize_category_name(category_id: int | None, raw_name: Any) -> str | No
 
 
 def _fetch_base_candidates(conn: pymysql.connections.Connection, req: RecommendationRequest) -> list[dict[str, Any]]:
+    # 스키마 유무 감지
     with conn.cursor() as cursor:
         cursor.execute("SHOW COLUMNS FROM restaurants")
         restaurant_columns = {row["Field"] for row in cursor.fetchall()}
@@ -201,6 +219,7 @@ def _fetch_base_candidates(conn: pymysql.connections.Connection, req: Recommenda
             cursor.execute("SHOW COLUMNS FROM restaurant_details")
             detail_columns = {row["Field"] for row in cursor.fetchall()}
 
+    # 평점 컬럼 선택
     if "google_rating" in restaurant_columns:
         rating_expr = "r.google_rating"
     elif "rating" in restaurant_columns:
@@ -214,6 +233,7 @@ def _fetch_base_candidates(conn: pymysql.connections.Connection, req: Recommenda
     image_expr = "r.image_url" if "image_url" in restaurant_columns else "NULL"
     details_join = "LEFT JOIN restaurant_details rd ON rd.id = r.id" if has_restaurant_details else ""
 
+    # 기본 후보 조회 쿼리
     sql = """
     SELECT
         r.id,
@@ -243,6 +263,7 @@ def _fetch_base_candidates(conn: pymysql.connections.Connection, req: Recommenda
     """
     params: list[Any] = [req.min_price, req.max_price]
 
+    # 카테고리 필터 조건
     if req.category_ids:
         placeholders = ",".join(["%s"] * len(req.category_ids))
         sql += f" AND r.category_id IN ({placeholders})"
@@ -264,11 +285,13 @@ def _fetch_base_candidates(conn: pymysql.connections.Connection, req: Recommenda
     )
 
     with conn.cursor() as cursor:
+        # DB 조회 실행
         cursor.execute(sql, params)
         return cursor.fetchall()
 
 
 def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]]) -> RecommendationResponse:
+    # 날씨 조회 조건
     weather_status, weather_temp = ("맑음", 20.0)
     use_weather = req.weather_filter or req.sort == "recommend"
     if use_weather:
@@ -278,7 +301,10 @@ def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]]
     enriched: list[dict[str, Any]] = []
 
     for row in rows:
+        # ETA 계산
         metrics = calculate_queueing_metrics(row.get("prep_time"), row.get("delivery_time"), now_hour)
+
+        # 맵기 보정
         spicy_boost = _spicy_preference_boost(req.spicy_level, row.get("main_menu"))
         queue_score = float(metrics["queue_score"])
 
@@ -291,9 +317,11 @@ def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]]
             }
         )
 
+    # LLM 점수 사용 조건
     use_llm = req.weather_filter or req.sort == "recommend"
     llm_scores: dict[str, int] = {}
     if use_llm and enriched:
+        # LLM 입력 구성
         llm_input = [
             {"name": item["name"], "main_menu": item.get("main_menu", "")}
             for item in enriched
@@ -301,20 +329,23 @@ def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]]
         llm_scores = get_llm_scores(llm_input, req.spicy_level, weather_status, weather_temp)
 
     for item in enriched:
+        # 식당별 LLM 점수
         llm_score = llm_scores.get(item["name"], 0)
         item["llm_score"] = llm_score
 
+        # 정렬 모드별 점수 계산
         if req.sort == "recommend":
-            # 추천순은 LLM 점수를 핵심 우선순위로 두고 ETA는 보조 지표로만 사용.
+            # 추천순
             item["final_score"] = (
                 float(llm_score) * 1.0
                 + float(item["spicy_boost"]) * 0.35
                 - float(item["total_eta"]) * 0.02
             )
         else:
-            # 배달순은 ETA가 짧을수록 우선.
+            # 배달순
             item["final_score"] = -float(item["total_eta"])
 
+    # 최종 정렬
     sorted_items = sorted(enriched, key=lambda item: item["final_score"], reverse=True)
     selected = sorted_items[: req.limit]
 
@@ -357,6 +388,7 @@ def _build_request_from_query(
     sort: str,
     limit: int,
 ) -> RecommendationRequest:
+    # 카테고리 문자열 파싱
     parsed_categories: list[int] = []
     if category_ids:
         parsed_categories = [
@@ -378,6 +410,7 @@ def _build_request_from_query(
 
 @app.on_event("startup")
 def on_startup() -> None:
+    # 배달시간 워커 시작 조건
     should_start_worker = os.getenv("ENABLE_DELIVERY_WORKER", "false").lower() in {
         "1",
         "true",
@@ -389,6 +422,7 @@ def on_startup() -> None:
 
 @app.on_event("shutdown")
 def on_shutdown() -> None:
+    # 스케줄러 종료 처리
     if scheduler.running:
         scheduler.shutdown(wait=False)
 
@@ -409,6 +443,7 @@ def health_check() -> dict[str, Any]:
 
 @app.get("/categories", response_model=list[CategoryResponse])
 def get_categories() -> list[CategoryResponse]:
+    # 카테고리 목록 조회
     conn = get_db_connection()
     try:
         with conn.cursor() as cursor:
@@ -443,6 +478,7 @@ def get_restaurants(
     sort: str = Query(default="delivery"),
     limit: int = Query(default=30, ge=1, le=100),
 ) -> RecommendationResponse:
+    # 리스트 조회 엔드포인트
     request = _build_request_from_query(
         category_ids=category_ids,
         min_price=min_price,
@@ -465,6 +501,7 @@ def get_restaurants(
 
 @app.post("/recommendations", response_model=RecommendationResponse)
 def get_recommendations(request: RecommendationRequest) -> RecommendationResponse:
+    # JSON body 기반 조회 엔드포인트
     conn = get_db_connection()
     try:
         rows = _fetch_base_candidates(conn, request)
