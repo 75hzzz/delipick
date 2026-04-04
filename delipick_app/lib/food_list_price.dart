@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class PriceRangeSheet extends StatefulWidget {
@@ -34,11 +34,12 @@ class _PriceRangeSheetState extends State<PriceRangeSheet> {
       child: Column(
         children: [
           const SizedBox(height: 20),
-          const Text('가격범위', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+          const Text(
+            '가격대',
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
           const Divider(indent: 20, endIndent: 20),
           const Spacer(),
-
-          // 가격 표시 박스 영역
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 30),
             child: Row(
@@ -47,15 +48,16 @@ class _PriceRangeSheetState extends State<PriceRangeSheet> {
                 _buildPriceBox(_currentRange.start),
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10),
-                  child: Text('~', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  child: Text(
+                    '~',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
                 ),
                 _buildPriceBox(_currentRange.end),
               ],
             ),
           ),
           const SizedBox(height: 30),
-
-          // 슬라이더 영역
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: SliderTheme(
@@ -73,8 +75,8 @@ class _PriceRangeSheetState extends State<PriceRangeSheet> {
                 values: _currentRange,
                 min: 2000,
                 max: 100000,
-                divisions: 98, // (100,000 - 2,000) / 1,000 단위
-                onChanged: (RangeValues values) {
+                divisions: 98,
+                onChanged: (values) {
                   setState(() {
                     _currentRange = values;
                   });
@@ -83,8 +85,6 @@ class _PriceRangeSheetState extends State<PriceRangeSheet> {
             ),
           ),
           const Spacer(),
-
-          // 확인 버튼
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 15),
@@ -96,9 +96,18 @@ class _PriceRangeSheetState extends State<PriceRangeSheet> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF64B5F6),
                     elevation: 0,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                  child: const Text('확인', style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.bold)),
+                  child: const Text(
+                    '확인',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -109,9 +118,7 @@ class _PriceRangeSheetState extends State<PriceRangeSheet> {
   }
 
   Widget _buildPriceBox(double value) {
-    // 초기값이거나 변경되지 않았을 때의 색상 처리를 위한 로직
-    bool isDefault = (value == 2000 || value == 100000);
-
+    final bool isDefault = value == 2000 || value == 100000;
     return Container(
       width: 130,
       height: 45,
@@ -125,7 +132,7 @@ class _PriceRangeSheetState extends State<PriceRangeSheet> {
         style: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w500,
-          color: isDefault ? Colors.grey[400] : Colors.black, // 설정 안했을 때 회색 처리
+          color: isDefault ? Colors.grey[400] : Colors.black,
         ),
       ),
     );

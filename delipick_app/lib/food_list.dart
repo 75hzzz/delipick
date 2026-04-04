@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+
+import 'food_filter.dart';
 import 'food_list_category.dart';
 import 'food_list_price.dart';
-import 'food_filter.dart'; // 이 경로가 정확해야 FoodFilterScreen을 인식합니다.
-import 'restaurant_model.dart';
+import 'models/restaurant.dart';
+import 'services/api_service.dart';
 
 class FoodListScreen extends StatefulWidget {
   const FoodListScreen({super.key});
@@ -15,202 +15,331 @@ class FoodListScreen extends StatefulWidget {
 }
 
 class _FoodListScreenState extends State<FoodListScreen> {
-  List<String> selectedCategories = [];
-  RangeValues selectedPriceRange = const RangeValues(2000, 100000);
+  static const RangeValues _defaultPriceRange = RangeValues(2000, 100000);
+  static const Color _delipickBlue = Color(0xFF64B5F6);
+
+  final DelipickApiService _apiService = DelipickApiService();
+
+  List<int> selectedCategories = [];
+  RangeValues selectedPriceRange = _defaultPriceRange;
   String currentSpiciness = '';
   bool currentWeatherFilter = false;
+  String currentSort = 'delivery';
 
-  List<Restaurant> restaurants = [];
-  bool isLoading = false;
+  bool isLoading = true;
+  String? errorMessage;
+  String weatherStatus = '맑음';
+  double weatherTemp = 20;
+  List<RestaurantItem> restaurants = [];
+
+  List<CategoryItem> availableCategories = const [
+    CategoryItem(id: 1, name: '한식', imageAsset: 'assets/korean_food.png'),
+    CategoryItem(id: 2, name: '중식', imageAsset: 'assets/chinese_food.png'),
+    CategoryItem(id: 3, name: '일식', imageAsset: 'assets/japanese_food.png'),
+    CategoryItem(id: 4, name: '아시안', imageAsset: 'assets/asian.png'),
+    CategoryItem(id: 5, name: '패스트푸드', imageAsset: 'assets/fast_food.png'),
+    CategoryItem(id: 6, name: '양식', imageAsset: 'assets/western_food.png'),
+    CategoryItem(id: 7, name: '카페', imageAsset: 'assets/cafe.png'),
+  ];
 
   @override
   void initState() {
     super.initState();
-    _fetchRestaurants();
+    _initialize();
   }
 
-  Future<void> _fetchRestaurants() async {
-    setState(() => isLoading = true);
+  @override
+  void dispose() {
+    _apiService.dispose();
+    super.dispose();
+  }
 
-    // 카테고리 매핑 로직
-    Map<String, int> categoryMap = {
-      '한식': 1, '중식': 2, '일식': 3, '아시안': 4, '패스트푸드': 5, '양식': 6, '카페/디저트': 7
-    };
-    List<int> prefs = selectedCategories.map((e) => categoryMap[e] ?? 0).toList();
+  Future<void> _initialize() async {
+    try {
+      final categories = await _apiService.fetchCategories();
+      if (categories.isNotEmpty && mounted) {
+        setState(() {
+          availableCategories = categories;
+        });
+      }
+    } catch (_) {
+      // 카테고리 실패 시 기본 값 유지
+    }
 
-    // 맵기 단계 변환 (중괄호 오류 수정 완료)
-    String spicyLevel = "0";
-    if (currentSpiciness == '순한맛') {
-      spicyLevel = "1";
-    } else if (currentSpiciness == '중간맛') {
-      spicyLevel = "2";
-    } else if (currentSpiciness == '매운맛') {
-      spicyLevel = "3";
+    await _fetchRestaurants(showLoading: true);
+  }
+
+  Future<void> _fetchRestaurants({required bool showLoading}) async {
+    if (showLoading && mounted) {
+      setState(() {
+        isLoading = true;
+        errorMessage = null;
+      });
     }
 
     try {
-      // 이미지상의 IP 주소(172.27.126.107)를 유지합니다.
-      final baseUrl = "http://172.27.126.107:8000/api/recommend";
-      final queryParams = {
-        'spicy': spicyLevel,
-        'min_price': selectedPriceRange.start.toInt().toString(),
-        'max_price': selectedPriceRange.end.toInt().toString(),
-        'prefs': prefs.isEmpty
-            ? [1, 2, 3, 4, 5, 6, 7].map((e) => e.toString()).toList()
-            : prefs.map((e) => e.toString()).toList(),
-      };
+      final response = await _apiService.fetchRecommendations(
+        RecommendationQuery(
+          categoryIds: selectedCategories,
+          minPrice: selectedPriceRange.start.toInt(),
+          maxPrice: selectedPriceRange.end.toInt(),
+          spicyLevel: currentSpiciness,
+          weatherFilter: currentWeatherFilter,
+          sort: currentSort,
+          limit: 50,
+        ),
+      );
 
-      final uri = Uri.parse(baseUrl).replace(queryParameters: queryParams);
-      final response = await http.get(uri);
+      if (!mounted) return;
 
-      if (response.statusCode == 200) {
-        final data = json.decode(utf8.decode(response.bodyBytes));
-        if (data['success']) {
-          setState(() {
-            restaurants = (data['data'] as List)
-                .map((json) => Restaurant.fromJson(json))
-                .toList();
-          });
-        }
-      }
+      setState(() {
+        restaurants = response.items;
+        weatherStatus = response.weatherStatus;
+        weatherTemp = response.weatherTemp;
+        errorMessage = null;
+      });
     } catch (e) {
-      debugPrint("데이터 로딩 실패: $e");
+      if (!mounted) return;
+      final message = e is ApiException ? e.message : '네트워크 오류가 발생했습니다.';
+      setState(() {
+        restaurants = [];
+        errorMessage = message;
+      });
     } finally {
-      setState(() => isLoading = false);
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
-  void _resetFilters() {
+  String formatKoreanPrice(double value) {
+    final int price = value.toInt();
+    if (price < 10000) return '${NumberFormat('#,###').format(price)}원';
+    final int man = price ~/ 10000;
+    final int rest = price % 10000;
+    if (rest == 0) return '$man만원';
+    return '$man만${NumberFormat('#,###').format(rest)}원';
+  }
+
+  String _spicyLabel(String spicyKey) {
+    switch (spicyKey) {
+      case 'mild':
+        return '순한맛';
+      case 'medium':
+        return '중간맛';
+      case 'hot':
+        return '매운맛';
+      default:
+        return '미선택';
+    }
+  }
+
+  String _sortLabel(String sortKey) {
+    if (sortKey == 'recommend') {
+      return '추천순';
+    }
+    return '배달순';
+  }
+
+  String _displayCategoryName(RestaurantItem item) {
+    final raw = item.categoryName?.trim() ?? '';
+    if (raw.isNotEmpty && !raw.contains('?')) {
+      return raw;
+    }
+
+    for (final category in availableCategories) {
+      if (category.id == item.categoryId) {
+        return category.name;
+      }
+    }
+    return '';
+  }
+
+  Future<void> _resetFilters() async {
     setState(() {
       selectedCategories = [];
-      selectedPriceRange = const RangeValues(2000, 100000);
+      selectedPriceRange = _defaultPriceRange;
       currentSpiciness = '';
       currentWeatherFilter = false;
     });
-    _fetchRestaurants();
+    await _fetchRestaurants(showLoading: true);
   }
 
   @override
   Widget build(BuildContext context) {
-    const Color delipickBlue = Color(0xFF64B5F6);
-
     return Scaffold(
-      backgroundColor: Colors.white,
       body: Column(
         children: [
-          _buildTopBanner(delipickBlue),
-          _buildFilterBar(),
-          Expanded(
-            child: isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : restaurants.isEmpty
-                ? const Center(child: Text("조건에 맞는 식당이 없어요!"))
-                : ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: restaurants.length,
-              itemBuilder: (context, index) => _buildRestaurantCard(restaurants[index]),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+          Container(
+            color: _delipickBlue,
+            padding: const EdgeInsets.only(bottom: 15),
+            child: Column(
+              children: [
+                SafeArea(
+                  bottom: false,
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: IconButton(
+                            icon: const Icon(Icons.tune,
+                                color: Colors.black, size: 28),
+                            onPressed: () async {
+                              final result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => FoodFilterScreen(
+                                    initialSpiciness: currentSpiciness,
+                                    initialWeather: currentWeatherFilter,
+                                  ),
+                                ),
+                              );
 
-  // 상단 배너 및 필터 바 위젯 생략 (기본 디자인 유지)
-  Widget _buildTopBanner(Color color) {
-    return Container(
-      color: color,
-      padding: const EdgeInsets.only(bottom: 15),
-      child: Column(
-        children: [
-          SafeArea(
-            bottom: false,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: IconButton(
-                      icon: const Icon(Icons.tune, color: Colors.black, size: 28),
-                      onPressed: () async {
-                        final result = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => FoodFilterScreen(
-                              initialSpiciness: currentSpiciness,
-                              initialWeather: currentWeatherFilter,
+                              if (result != null && result is Map) {
+                                setState(() {
+                                  currentSpiciness =
+                                      result['spiciness'] as String? ?? '';
+                                  currentWeatherFilter =
+                                      result['weather'] as bool? ?? false;
+                                });
+                                await _fetchRestaurants(showLoading: true);
+                              }
+                            },
+                          ),
+                        ),
+                        Center(
+                          child: Image.asset(
+                            'assets/delipick_logo.png',
+                            height: 70,
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) => const Text(
+                              'Delipick',
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
-                        );
-                        if (result != null) {
-                          setState(() {
-                            currentSpiciness = result['spiciness'];
-                            currentWeatherFilter = result['weather'];
-                          });
-                          _fetchRestaurants();
-                        }
-                      },
+                        ),
+                      ],
                     ),
                   ),
-                  const Text('delipick', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
-                ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Container(
+                    height: 45,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: const Row(
+                      children: [
+                        SizedBox(width: 12),
+                        Icon(Icons.location_on_outlined,
+                            color: Colors.grey, size: 20),
+                        SizedBox(width: 8),
+                        Text(
+                          '동아대 승학캠퍼스',
+                          style: TextStyle(fontSize: 15, color: Colors.black),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: _resetFilters,
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.grey[300]!),
+                          shape: BoxShape.circle,
+                        ),
+                        child:
+                            Icon(Icons.refresh, size: 20, color: Colors.grey[700]),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    _buildCategoryButton(),
+                    const SizedBox(width: 8),
+                    _buildPriceButton(),
+                    const SizedBox(width: 8),
+                    if (currentSpiciness.isNotEmpty)
+                      _buildStateChip(_spicyLabel(currentSpiciness)),
+                    if (currentWeatherFilter) _buildStateChip('날씨반영'),
+                  ],
+                ),
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFilterBar() {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Row(
-          children: [
-            GestureDetector(
-              onTap: _resetFilters,
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.grey[300]!), shape: BoxShape.circle),
-                child: Icon(Icons.refresh, size: 20, color: Colors.grey[700]),
+          if (currentWeatherFilter)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  '날씨: $weatherStatus ${weatherTemp.toStringAsFixed(1)}°C',
+                  style: const TextStyle(fontSize: 13, color: Colors.grey),
+                ),
               ),
             ),
-            const SizedBox(width: 8),
-            _buildCategoryButton(),
-            const SizedBox(width: 8),
-            _buildPriceButton(),
-          ],
-        ),
+          Expanded(child: _buildRestaurantSection()),
+        ],
       ),
     );
   }
 
   Widget _buildCategoryButton() {
-    bool isActive = selectedCategories.isNotEmpty;
+    final bool isActive = selectedCategories.isNotEmpty;
     return GestureDetector(
       onTap: () async {
-        final result = await showModalBottomSheet<List<String>>(
+        final result = await showModalBottomSheet<List<int>>(
           context: context,
           isScrollControlled: true,
           backgroundColor: Colors.transparent,
-          builder: (context) => CategorySheet(initialSelected: selectedCategories),
+          builder: (context) => CategorySheet(
+            initialSelected: selectedCategories,
+            availableCategories: availableCategories,
+          ),
         );
+
         if (result != null) {
           setState(() => selectedCategories = result);
-          _fetchRestaurants();
+          await _fetchRestaurants(showLoading: true);
         }
       },
-      child: _buildFilterBtn(Icons.restaurant_menu, isActive ? '카테고리(${selectedCategories.length})' : '카테고리', isActive),
+      child: _buildFilterButton(
+        Icons.restaurant_menu,
+        isActive ? '카테고리(${selectedCategories.length})' : '카테고리',
+        isActive,
+      ),
     );
   }
 
   Widget _buildPriceButton() {
-    bool isActive = !(selectedPriceRange.start == 2000 && selectedPriceRange.end == 100000);
+    final bool isActive = !(selectedPriceRange.start == 2000 &&
+        selectedPriceRange.end == 100000);
+
     return GestureDetector(
       onTap: () async {
         final result = await showModalBottomSheet<RangeValues>(
@@ -219,51 +348,278 @@ class _FoodListScreenState extends State<FoodListScreen> {
           backgroundColor: Colors.transparent,
           builder: (context) => PriceRangeSheet(initialRange: selectedPriceRange),
         );
+
         if (result != null) {
           setState(() => selectedPriceRange = result);
-          _fetchRestaurants();
+          await _fetchRestaurants(showLoading: true);
         }
       },
-      child: _buildFilterBtn(Icons.monetization_on_outlined, isActive ? '가격 설정됨' : '가격범위', isActive),
+      child: _buildFilterButton(
+        Icons.monetization_on_outlined,
+        isActive
+            ? '${formatKoreanPrice(selectedPriceRange.start)}-${formatKoreanPrice(selectedPriceRange.end)}'
+            : '가격대',
+        isActive,
+      ),
     );
   }
 
-  Widget _buildFilterBtn(IconData icon, String label, bool isActive) {
+  Widget _buildFilterButton(IconData icon, String label, bool isActive) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: isActive ? const Color(0xFFE3F2FD) : Colors.white,
-        border: Border.all(color: isActive ? Colors.blue : Colors.grey[300]!, width: 1.2),
+        border: Border.all(
+          color: isActive ? Colors.blue : Colors.grey[300]!,
+          width: 1.2,
+        ),
         borderRadius: BorderRadius.circular(25),
       ),
-      child: Row(children: [
-        Icon(icon, size: 18, color: isActive ? Colors.blue : Colors.grey[700]),
-        const SizedBox(width: 6),
-        Text(label, style: TextStyle(fontSize: 14, color: isActive ? Colors.blue : Colors.grey[800], fontWeight: isActive ? FontWeight.bold : FontWeight.normal)),
-      ]),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 18, color: isActive ? Colors.blue : Colors.grey[700]),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 14,
+              color: isActive ? Colors.blue : Colors.grey[800],
+              fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+          const Icon(Icons.keyboard_arrow_down, size: 18, color: Colors.grey),
+        ],
+      ),
     );
   }
 
-  Widget _buildRestaurantCard(Restaurant res) {
+  Widget _buildStateChip(String label) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(25),
+        border: Border.all(color: Colors.grey[300]!),
+      ),
+      child: Text(
+        label,
+        style: const TextStyle(fontSize: 13, color: Colors.black87),
+      ),
+    );
+  }
+
+  Widget _buildRestaurantSection() {
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator(color: _delipickBlue));
+    }
+
+    if (errorMessage != null) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text('데이터를 불러오지 못했습니다.'),
+              const SizedBox(height: 8),
+              Text(
+                errorMessage!,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.grey, fontSize: 12),
+              ),
+              const SizedBox(height: 12),
+              ElevatedButton(
+                onPressed: () => _fetchRestaurants(showLoading: true),
+                style: ElevatedButton.styleFrom(backgroundColor: _delipickBlue),
+                child: const Text(
+                  '다시 시도',
+                  style: TextStyle(color: Colors.black),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (restaurants.isEmpty) {
+      return const Center(
+        child: Text(
+          '조건에 맞는 식당이 없습니다.',
+          style: TextStyle(color: Colors.grey),
+        ),
+      );
+    }
+
+    return Stack(
+      children: [
+        RefreshIndicator(
+          onRefresh: () => _fetchRestaurants(showLoading: false),
+          child: ListView.builder(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: restaurants.length,
+            itemBuilder: (context, index) => _buildRestaurantCard(restaurants[index]),
+          ),
+        ),
+        Positioned(
+          top: 8,
+          right: 16,
+          child: _buildSortMenuButton(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSortMenuButton() {
+    return PopupMenuButton<String>(
+      color: Colors.white,
+      onSelected: (value) async {
+        if (value == currentSort) return;
+        setState(() {
+          currentSort = value;
+        });
+        await _fetchRestaurants(showLoading: true);
+      },
+      itemBuilder: (context) => const [
+        PopupMenuItem<String>(
+          value: 'delivery',
+          child: Text('배달순'),
+        ),
+        PopupMenuItem<String>(
+          value: 'recommend',
+          child: Text('추천순'),
+        ),
+      ],
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.95),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.grey[300]!),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 6,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              _sortLabel(currentSort),
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.black87,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(width: 2),
+            const Icon(
+              Icons.arrow_drop_down,
+              color: Colors.black54,
+              size: 18,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRestaurantCard(RestaurantItem item) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8), boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 3, offset: Offset(0, 1))]),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 3, offset: Offset(0, 1)),
+        ],
+      ),
       child: Row(
         children: [
-          Container(width: 90, height: 90, margin: const EdgeInsets.all(12), decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(8))),
+          Container(
+            width: 90,
+            height: 90,
+            margin: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: item.imageUrl == null || item.imageUrl!.isEmpty
+                  ? const Icon(Icons.fastfood, color: Colors.white)
+                  : Image.network(
+                      item.imageUrl!,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                          const Icon(Icons.fastfood, color: Colors.white),
+                    ),
+            ),
+          ),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(res.name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                Text(res.mainMenu, style: TextStyle(fontSize: 13, color: Colors.grey[600])),
-                const SizedBox(height: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(color: const Color(0xFFE3F2FD), borderRadius: BorderRadius.circular(4)),
-                  child: Text('배달 시간: ${res.deliveryTime}분 | 점수: ${res.score.toInt()}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                ),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.only(right: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Row(
+                    children: [
+                      const Icon(Icons.star, color: Colors.orange, size: 18),
+                      const SizedBox(width: 2),
+                      Text(item.rating.toStringAsFixed(1)),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          _displayCategoryName(item),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style:
+                              const TextStyle(fontSize: 12, color: Colors.grey),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    item.mainMenuPrice == null
+                        ? (item.mainMenu ?? '-')
+                        : '${item.mainMenu ?? '-'} · ${NumberFormat('#,###').format(item.mainMenuPrice)}원',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 13, color: Colors.black87),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(10, 6, 12, 6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE3F2FD),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      '예상 배달 시간: ${item.estimatedTotalTime.toStringAsFixed(0)}분',
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],

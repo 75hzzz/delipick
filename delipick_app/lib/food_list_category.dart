@@ -1,26 +1,23 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+
+import 'models/restaurant.dart';
 
 class CategorySheet extends StatefulWidget {
-  final List<String> initialSelected;
+  final List<int> initialSelected;
+  final List<CategoryItem> availableCategories;
 
-  const CategorySheet({super.key, required this.initialSelected});
+  const CategorySheet({
+    super.key,
+    required this.initialSelected,
+    required this.availableCategories,
+  });
 
   @override
   State<CategorySheet> createState() => _CategorySheetState();
 }
 
 class _CategorySheetState extends State<CategorySheet> {
-  late List<String> tempSelected;
-
-  final List<Map<String, String>> categories = [
-    {'name': '한식', 'image': 'assets/korean_food.png'},
-    {'name': '중식', 'image': 'assets/chinese_food.png'},
-    {'name': '일식', 'image': 'assets/japanese_food.png'},
-    {'name': '아시안', 'image': 'assets/asian.png'},
-    {'name': '패스트푸드', 'image': 'assets/fast_food.png'},
-    {'name': '양식', 'image': 'assets/western_food.png'},
-    {'name': '카페/디저트', 'image': 'assets/cafe.png'},
-  ];
+  late List<int> tempSelected;
 
   @override
   void initState() {
@@ -40,72 +37,77 @@ class _CategorySheetState extends State<CategorySheet> {
         ),
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           const SizedBox(height: 20),
-          const Text(
-            '카테고리',
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                '카테고리',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(width: 4),
+              Text(
+                '(복수)',
+                style: TextStyle(color: Colors.grey[600], fontSize: 14),
+              ),
+            ],
           ),
           const Divider(indent: 20, endIndent: 20),
-
-          // ✅ GridView 영역: 오버플로우 방지를 위해 Expanded로 감쌈
           Expanded(
             child: GridView.builder(
-              padding: const EdgeInsets.all(20),
+              shrinkWrap: true,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 4,
-                mainAxisSpacing: 15,
-                crossAxisSpacing: 15,
-                childAspectRatio: 0.8, // 👈 높이 비율을 살짝 늘려 공간 확보
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+                childAspectRatio: 0.85,
               ),
-              itemCount: categories.length,
+              itemCount: widget.availableCategories.length,
               itemBuilder: (context, index) {
-                final cat = categories[index];
-                final isSelected = tempSelected.contains(cat['name']);
+                final category = widget.availableCategories[index];
+                final isSelected = tempSelected.contains(category.id);
 
                 return GestureDetector(
                   onTap: () {
                     setState(() {
                       if (isSelected) {
-                        tempSelected.remove(cat['name']);
+                        tempSelected.remove(category.id);
                       } else {
-                        tempSelected.add(cat['name']!);
+                        tempSelected.add(category.id);
                       }
                     });
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                      color: isSelected ? const Color(0xFFE3F2FD) : Colors.white,
-                      borderRadius: BorderRadius.circular(12),
+                      color: isSelected ? Colors.grey[300] : Colors.grey[100],
+                      borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: isSelected ? const Color(0xFF64B5F6) : Colors.transparent,
+                        color: isSelected ? Colors.grey[600]! : Colors.transparent,
                         width: 2,
                       ),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // ✅ 아이콘 크기 제한
-                        Flexible(
-                          child: Image.asset(
-                            cat['image']!,
-                            width: 45,
-                            height: 45,
-                            errorBuilder: (context, error, stackTrace) =>
-                            const Icon(Icons.restaurant, size: 40, color: Colors.grey),
-                          ),
+                        Image.asset(
+                          category.imageAsset,
+                          height: 65,
+                          width: 65,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Icon(Icons.fastfood),
                         ),
-                        const SizedBox(height: 8),
-                        // ✅ 글자가 넘치지 않게 FittedBox 사용
-                        FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            cat['name']!,
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.black,
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                            ),
+                        const SizedBox(height: 5),
+                        Text(
+                          category.name,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.black,
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.normal,
                           ),
                         ),
                       ],
@@ -115,7 +117,6 @@ class _CategorySheetState extends State<CategorySheet> {
               },
             ),
           ),
-
           SafeArea(
             top: false,
             child: Padding(
