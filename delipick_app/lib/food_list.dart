@@ -15,23 +15,28 @@ class FoodListScreen extends StatefulWidget {
 }
 
 class _FoodListScreenState extends State<FoodListScreen> {
+  // 가격 필터 기본값
   static const RangeValues _defaultPriceRange = RangeValues(2000, 100000);
   static const Color _delipickBlue = Color(0xFF64B5F6);
 
+  // API 클라이언트
   final DelipickApiService _apiService = DelipickApiService();
 
+  // 사용자 선택 상태
   List<int> selectedCategories = [];
   RangeValues selectedPriceRange = _defaultPriceRange;
   String currentSpiciness = '';
   bool currentWeatherFilter = false;
   String currentSort = 'delivery';
 
+  // 화면 렌더링 상태
   bool isLoading = true;
   String? errorMessage;
   String weatherStatus = '맑음';
   double weatherTemp = 20;
   List<RestaurantItem> restaurants = [];
 
+  // 카테고리 fallback 목록
   List<CategoryItem> availableCategories = const [
     CategoryItem(id: 1, name: '한식', imageAsset: 'assets/korean_food.png'),
     CategoryItem(id: 2, name: '중식', imageAsset: 'assets/chinese_food.png'),
@@ -55,6 +60,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
   }
 
   Future<void> _initialize() async {
+    // 앱 시작 시 카테고리 사전 조회
     try {
       final categories = await _apiService.fetchCategories();
       if (categories.isNotEmpty && mounted) {
@@ -70,6 +76,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
   }
 
   Future<void> _fetchRestaurants({required bool showLoading}) async {
+    // 리스트 재조회
     if (showLoading && mounted) {
       setState(() {
         isLoading = true;
@@ -78,6 +85,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
     }
 
     try {
+      // 요청 파라미터 구성
       final response = await _apiService.fetchRecommendations(
         RecommendationQuery(
           categoryIds: selectedCategories,
@@ -93,6 +101,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
       if (!mounted) return;
 
       setState(() {
+        // 성공 상태 반영
         restaurants = response.items;
         weatherStatus = response.weatherStatus;
         weatherTemp = response.weatherTemp;
@@ -102,6 +111,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
       if (!mounted) return;
       final message = e is ApiException ? e.message : '네트워크 오류가 발생했습니다.';
       setState(() {
+        // 실패 상태 반영
         restaurants = [];
         errorMessage = message;
       });
@@ -115,6 +125,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
   }
 
   String formatKoreanPrice(double value) {
+    // 원화 단위 문자열 변환
     final int price = value.toInt();
     if (price < 10000) return '${NumberFormat('#,###').format(price)}원';
     final int man = price ~/ 10000;
@@ -124,6 +135,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
   }
 
   String _spicyLabel(String spicyKey) {
+    // 맵기 key -> 표시명
     switch (spicyKey) {
       case 'mild':
         return '순한맛';
@@ -137,6 +149,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
   }
 
   String _sortLabel(String sortKey) {
+    // 정렬 key -> 표시명
     if (sortKey == 'recommend') {
       return '추천순';
     }
@@ -144,6 +157,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
   }
 
   String _displayCategoryName(RestaurantItem item) {
+    // 카테고리명 fallback 처리
     final raw = item.categoryName?.trim() ?? '';
     if (raw.isNotEmpty && !raw.contains('?')) {
       return raw;
@@ -158,6 +172,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
   }
 
   Future<void> _resetFilters() async {
+    // 필터 초기화
     setState(() {
       selectedCategories = [];
       selectedPriceRange = _defaultPriceRange;
@@ -310,6 +325,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
   }
 
   Widget _buildCategoryButton() {
+    // 카테고리 바텀시트
     final bool isActive = selectedCategories.isNotEmpty;
     return GestureDetector(
       onTap: () async {
@@ -337,6 +353,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
   }
 
   Widget _buildPriceButton() {
+    // 가격 바텀시트
     final bool isActive = !(selectedPriceRange.start == 2000 &&
         selectedPriceRange.end == 100000);
 
@@ -365,6 +382,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
   }
 
   Widget _buildFilterButton(IconData icon, String label, bool isActive) {
+    // 공통 필터 칩
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
@@ -395,6 +413,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
   }
 
   Widget _buildStateChip(String label) {
+    // 선택 상태 칩
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
@@ -410,10 +429,12 @@ class _FoodListScreenState extends State<FoodListScreen> {
   }
 
   Widget _buildRestaurantSection() {
+    // 로딩 상태
     if (isLoading) {
       return const Center(child: CircularProgressIndicator(color: _delipickBlue));
     }
 
+    // 에러 상태
     if (errorMessage != null) {
       return Center(
         child: Padding(
@@ -443,6 +464,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
       );
     }
 
+    // 빈 결과 상태
     if (restaurants.isEmpty) {
       return const Center(
         child: Text(
@@ -452,6 +474,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
       );
     }
 
+    // 결과 리스트 + 정렬 오버레이
     return Stack(
       children: [
         RefreshIndicator(
@@ -472,10 +495,12 @@ class _FoodListScreenState extends State<FoodListScreen> {
   }
 
   Widget _buildSortMenuButton() {
+    // 정렬 팝업 메뉴
     return PopupMenuButton<String>(
       color: Colors.white,
       onSelected: (value) async {
         if (value == currentSort) return;
+        // 정렬 변경 즉시 재조회
         setState(() {
           currentSort = value;
         });
@@ -529,6 +554,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
   }
 
   Widget _buildRestaurantCard(RestaurantItem item) {
+    // 식당 카드
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(

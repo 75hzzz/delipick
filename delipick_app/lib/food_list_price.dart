@@ -11,6 +11,7 @@ class PriceRangeSheet extends StatefulWidget {
 }
 
 class _PriceRangeSheetState extends State<PriceRangeSheet> {
+  // 가격 범위 상태
   late RangeValues _currentRange;
   final NumberFormat _formatter = NumberFormat('#,###');
 
@@ -77,6 +78,7 @@ class _PriceRangeSheetState extends State<PriceRangeSheet> {
                 max: 100000,
                 divisions: 98,
                 onChanged: (values) {
+                  // 슬라이더 상태 반영
                   setState(() {
                     _currentRange = values;
                   });
@@ -118,6 +120,7 @@ class _PriceRangeSheetState extends State<PriceRangeSheet> {
   }
 
   Widget _buildPriceBox(double value) {
+    // 가격 표시 박스
     final bool isDefault = value == 2000 || value == 100000;
     return Container(
       width: 130,

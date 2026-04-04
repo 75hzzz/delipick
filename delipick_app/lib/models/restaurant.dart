@@ -1,4 +1,5 @@
-﻿class RestaurantItem {
+class RestaurantItem {
+  // 식당 기본 정보
   final int id;
   final String name;
   final int? categoryId;
@@ -13,6 +14,8 @@
   final double estimatedTotalTime;
   final double queuingWait;
   final bool isPeakTime;
+
+  // 추천/정렬 정보
   final int llmScore;
   final double finalScore;
 
@@ -36,6 +39,7 @@
   });
 
   factory RestaurantItem.fromJson(Map<String, dynamic> json) {
+    // API 응답 파싱
     return RestaurantItem(
       id: (json['id'] as num).toInt(),
       name: json['name'] as String? ?? '',
@@ -58,6 +62,7 @@
 }
 
 class RecommendationData {
+  // 응답 메타 + 리스트
   final String weatherStatus;
   final double weatherTemp;
   final List<RestaurantItem> items;
@@ -69,6 +74,7 @@ class RecommendationData {
   });
 
   factory RecommendationData.fromJson(Map<String, dynamic> json) {
+    // items 배열 안전 파싱
     final List<dynamic> rawItems = json['items'] as List<dynamic>? ?? const [];
     return RecommendationData(
       weatherStatus: json['weather_status'] as String? ?? '맑음',
@@ -82,6 +88,7 @@ class RecommendationData {
 }
 
 class CategoryItem {
+  // 카테고리 표시 정보
   final int id;
   final String name;
   final String imageAsset;

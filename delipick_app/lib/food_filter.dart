@@ -15,9 +15,11 @@ class FoodFilterScreen extends StatefulWidget {
 }
 
 class _FoodFilterScreenState extends State<FoodFilterScreen> {
+  // 현재 선택 상태
   late String selectedSpiciness;
   late bool isWeatherFilterOn;
 
+  // 맵기 옵션 목록
   final List<Map<String, String>> spicinessLevels = const [
     {'key': 'mild', 'label': '순한맛'},
     {'key': 'medium', 'label': '중간맛'},
@@ -163,6 +165,7 @@ class _FoodFilterScreenState extends State<FoodFilterScreen> {
   }
 
   Widget _buildSpicyButton(String key, String label) {
+    // 맵기 선택 버튼
     final isSelected = selectedSpiciness == key;
     return GestureDetector(
       onTap: () {

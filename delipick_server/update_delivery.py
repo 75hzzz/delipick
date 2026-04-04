@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# 동아대 승학캠퍼스 정문 좌표
+# 기준 좌표
 USER_LAT = 35.113732
 USER_LON = 128.965903
 
@@ -17,6 +17,7 @@ NAVER_URL = "https://maps.apigw.ntruss.com/map-direction/v1/driving"
 
 
 def _db_candidates() -> list[str]:
+    # DB 후보 목록
     requested = os.getenv("DB_NAME", "").strip()
     defaults = [requested] if requested else []
     for name in ("delipick", "qqq"):
@@ -30,6 +31,7 @@ def _is_unknown_database(error: pymysql.MySQLError) -> bool:
 
 
 def get_db_connection() -> pymysql.connections.Connection:
+    # DB 연결 시도
     last_error: pymysql.MySQLError | None = None
     for db_name in _db_candidates():
         try:
@@ -54,6 +56,7 @@ def get_db_connection() -> pymysql.connections.Connection:
 
 
 def _naver_headers() -> dict[str, str]:
+    # 네이버 API 인증 헤더
     client_id = os.getenv("NAVER_CLIENT_ID", "").strip()
     client_secret = os.getenv("NAVER_CLIENT_SECRET", "").strip()
     return {
@@ -63,11 +66,13 @@ def _naver_headers() -> dict[str, str]:
 
 
 def _has_naver_keys() -> bool:
+    # 인증키 유무 확인
     headers = _naver_headers()
     return bool(headers["X-NCP-APIGW-API-KEY-ID"] and headers["X-NCP-APIGW-API-KEY"])
 
 
 def get_naver_duration(goal_lat: float, goal_lon: float) -> int:
+    # 네이버 경로 기반 소요시간 조회
     if not _has_naver_keys():
         return 20
 
@@ -97,6 +102,7 @@ def get_naver_duration(goal_lat: float, goal_lon: float) -> int:
 
 
 def update_delivery_times() -> None:
+    # 식당별 배달시간 갱신 배치
     now_str = datetime.now().strftime("%H:%M:%S")
     print(f"[{now_str}] Delivery time refresh started.")
 
@@ -108,6 +114,7 @@ def update_delivery_times() -> None:
 
             updated = 0
             for restaurant in restaurants:
+                # 좌표 유효성 확인
                 lat = restaurant.get("latitude")
                 lon = restaurant.get("longitude")
                 if lat is None or lon is None:
@@ -132,6 +139,7 @@ scheduler = BackgroundScheduler()
 
 
 def start_delivery_worker() -> None:
+    # 워커 시작 + 주기 스케줄 등록
     if scheduler.running:
         return
 

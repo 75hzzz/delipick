@@ -19,6 +19,7 @@ client = OpenAI(api_key=OPENAI_API_KEY) if OPENAI_API_KEY else None
 
 
 def _normalize_spicy_text(user_spicy: str) -> str:
+    # 매운맛 입력 정규화
     normalized = (user_spicy or "").strip().lower()
     if normalized in {"mild", "1", "순한맛"}:
         return "순한맛"
@@ -30,6 +31,7 @@ def _normalize_spicy_text(user_spicy: str) -> str:
 
 
 def _db_candidates() -> list[str]:
+    # DB 후보 목록
     requested = os.getenv("DB_NAME", "").strip()
     defaults = [requested] if requested else []
     for name in ("delipick", "qqq"):
@@ -43,6 +45,7 @@ def _is_unknown_database(error: pymysql.MySQLError) -> bool:
 
 
 def get_db_connection() -> pymysql.connections.Connection:
+    # DB 연결 시도
     last_error: pymysql.MySQLError | None = None
     for db_name in _db_candidates():
         try:
@@ -67,6 +70,7 @@ def get_db_connection() -> pymysql.connections.Connection:
 
 
 def fetch_realtime_weather() -> tuple[str, float]:
+    # 날씨 조회
     if not WEATHER_API_KEY:
         return "맑음", 20.0
 
@@ -90,20 +94,30 @@ def fetch_realtime_weather() -> tuple[str, float]:
         }
         return mapping.get(main_weather, "맑음"), temp
     except Exception:
+        # 조회 실패 fallback
         return "맑음", 20.0
 
 
 def calculate_queueing_metrics(prep_time: Any, delivery_time: Any, now_hour: int) -> dict[str, Any]:
     """
-    주어진 조리시간/배달시간을 기반으로 피크타임 가중치를 반영해
-    예측 조리시간, 대기시간, 총 ETA를 계산한다.
+    입력값:
+    - 조리시간(prep_time)
+    - 배달시간(delivery_time)
+    - 현재 시각(now_hour)
+
+    출력값:
+    - 예측 조리시간
+    - 대기시간
+    - 총 ETA
+    - 정렬용 queue_score
     """
     base_prep = float(prep_time) if prep_time and float(prep_time) > 0 else 15.0
     delivery = float(delivery_time) if delivery_time and float(delivery_time) > 0 else 15.0
 
+    # 피크타임 판정
     is_peak = (11 <= now_hour < 14) or (17 <= now_hour < 20)
     if is_peak:
-        # 피크타임 과증폭을 줄여 ETA가 60~70분으로 고정되지 않도록 완화
+        # 피크타임 가중치
         lam_factor = random.uniform(0.58, 0.78)
         peak_boost = random.uniform(0.10, 0.30) * base_prep
         spike_chance = 0.12
@@ -114,6 +128,7 @@ def calculate_queueing_metrics(prep_time: Any, delivery_time: Any, now_hour: int
 
     prep_noise = random.uniform(0.03, 0.18) * base_prep
 
+    # M/M/1 대기시간 근사
     mu = 1.0 / base_prep
     lam = mu * lam_factor
     mm1_wait_raw = lam / (mu * (mu - lam)) if (mu - lam) > 1e-6 else base_prep * 1.2
@@ -124,7 +139,7 @@ def calculate_queueing_metrics(prep_time: Any, delivery_time: Any, now_hour: int
 
     simulated_prep = base_prep + prep_noise + peak_boost + mm1_wait + spike_minutes
 
-    # 총 ETA가 과도하게 커지지 않게 prep 상한을 배달시간과 연동
+    # ETA 상한 제어
     target_total_cap = 60.0 if is_peak else 52.0
     prep_upper_cap = min(45.0, max(base_prep + 4.0, target_total_cap - delivery))
     simulated_prep = max(base_prep, min(simulated_prep, prep_upper_cap))
@@ -149,9 +164,11 @@ def get_llm_scores(
     weather_status: str,
     temp: float,
 ) -> dict[str, int]:
+    # LLM 점수 계산
     if not candidates:
         return {}
 
+    # LLM 비활성 fallback
     if client is None:
         return {res["name"]: 50 for res in candidates if res.get("name")}
 
@@ -161,6 +178,7 @@ def get_llm_scores(
 
     spicy_text = _normalize_spicy_text(user_spicy)
 
+    # 프롬프트 구성
     prompt = f"""
 당신은 맛집 추천 전문가입니다.
 현재 날씨는 {weather_status}({temp:.1f}°C), 사용자의 매운맛 선호는 '{spicy_text}'입니다.
@@ -177,6 +195,7 @@ def get_llm_scores(
             temperature=0,
         )
         content = response.choices[0].message.content or ""
+        # 모델 출력 파싱
         scores: dict[str, int] = {}
         for line in content.splitlines():
             if ":" not in line:
@@ -189,7 +208,9 @@ def get_llm_scores(
             scores[name.strip()] = score
 
         if not scores:
+            # 파싱 실패 fallback
             return {res["name"]: 50 for res in candidates if res.get("name")}
         return scores
     except Exception:
+        # 호출 실패 fallback
         return {res["name"]: 50 for res in candidates if res.get("name")}
