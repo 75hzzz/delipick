@@ -11,11 +11,14 @@ class DelipickApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'DeliPick',
+      title: 'delipick',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primaryColor: const Color(0xFF64B5F6),
+        primarySwatch: Colors.blue,
         scaffoldBackgroundColor: Colors.white,
+        sliderTheme: const SliderThemeData(
+          showValueIndicator: ShowValueIndicator.onDrag,
+        ),
       ),
       home: const FoodListScreen(),
     );
