@@ -27,7 +27,6 @@ class _FoodListScreenState extends State<FoodListScreen> {
   RangeValues selectedPriceRange = _defaultPriceRange;
   String currentSpiciness = '';
   bool currentWeatherFilter = false;
-  String currentSort = 'delivery';
 
   // 화면 렌더링 상태
   bool isLoading = true;
@@ -93,7 +92,6 @@ class _FoodListScreenState extends State<FoodListScreen> {
           maxPrice: selectedPriceRange.end.toInt(),
           spicyLevel: currentSpiciness,
           weatherFilter: currentWeatherFilter,
-          sort: currentSort,
           limit: 50,
         ),
       );
@@ -132,28 +130,6 @@ class _FoodListScreenState extends State<FoodListScreen> {
     final int rest = price % 10000;
     if (rest == 0) return '$man만원';
     return '$man만${NumberFormat('#,###').format(rest)}원';
-  }
-
-  String _spicyLabel(String spicyKey) {
-    // 맵기 key -> 표시명
-    switch (spicyKey) {
-      case 'mild':
-        return '순한맛';
-      case 'medium':
-        return '중간맛';
-      case 'hot':
-        return '매운맛';
-      default:
-        return '미선택';
-    }
-  }
-
-  String _sortLabel(String sortKey) {
-    // 정렬 key -> 표시명
-    if (sortKey == 'recommend') {
-      return '추천순';
-    }
-    return '배달순';
   }
 
   String _displayCategoryName(RestaurantItem item) {
@@ -299,9 +275,6 @@ class _FoodListScreenState extends State<FoodListScreen> {
                     const SizedBox(width: 8),
                     _buildPriceButton(),
                     const SizedBox(width: 8),
-                    if (currentSpiciness.isNotEmpty)
-                      _buildStateChip(_spicyLabel(currentSpiciness)),
-                    if (currentWeatherFilter) _buildStateChip('날씨반영'),
                   ],
                 ),
               ),
@@ -412,22 +385,6 @@ class _FoodListScreenState extends State<FoodListScreen> {
     );
   }
 
-  Widget _buildStateChip(String label) {
-    // 선택 상태 칩
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: Colors.grey[300]!),
-      ),
-      child: Text(
-        label,
-        style: const TextStyle(fontSize: 13, color: Colors.black87),
-      ),
-    );
-  }
-
   Widget _buildRestaurantSection() {
     // 로딩 상태
     if (isLoading) {
@@ -474,81 +431,12 @@ class _FoodListScreenState extends State<FoodListScreen> {
       );
     }
 
-    // 결과 리스트 + 정렬 오버레이
-    return Stack(
-      children: [
-        RefreshIndicator(
-          onRefresh: () => _fetchRestaurants(showLoading: false),
-          child: ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: restaurants.length,
-            itemBuilder: (context, index) => _buildRestaurantCard(restaurants[index]),
-          ),
-        ),
-        Positioned(
-          top: 8,
-          right: 16,
-          child: _buildSortMenuButton(),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSortMenuButton() {
-    // 정렬 팝업 메뉴
-    return PopupMenuButton<String>(
-      color: Colors.white,
-      onSelected: (value) async {
-        if (value == currentSort) return;
-        // 정렬 변경 즉시 재조회
-        setState(() {
-          currentSort = value;
-        });
-        await _fetchRestaurants(showLoading: true);
-      },
-      itemBuilder: (context) => const [
-        PopupMenuItem<String>(
-          value: 'delivery',
-          child: Text('배달순'),
-        ),
-        PopupMenuItem<String>(
-          value: 'recommend',
-          child: Text('추천순'),
-        ),
-      ],
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.95),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey[300]!),
-          boxShadow: const [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 6,
-              offset: Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              _sortLabel(currentSort),
-              style: const TextStyle(
-                fontSize: 12,
-                color: Colors.black87,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(width: 2),
-            const Icon(
-              Icons.arrow_drop_down,
-              color: Colors.black54,
-              size: 18,
-            ),
-          ],
-        ),
+    return RefreshIndicator(
+      onRefresh: () => _fetchRestaurants(showLoading: false),
+      child: ListView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: restaurants.length,
+        itemBuilder: (context, index) => _buildRestaurantCard(restaurants[index]),
       ),
     );
   }
