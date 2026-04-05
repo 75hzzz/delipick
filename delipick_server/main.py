@@ -690,7 +690,7 @@ if __name__ == "__main__":
     import uvicorn
 
     uvicorn.run(
-        app,
+        "main:app",
         host=os.getenv("APP_HOST", "0.0.0.0"),
         port=_parse_int_env("APP_PORT", 8000),
         reload=_parse_bool_env("APP_RELOAD", True),
