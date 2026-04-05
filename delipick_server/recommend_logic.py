@@ -173,16 +173,33 @@ def get_llm_scores(
         return {res["name"]: 50 for res in candidates if res.get("name")}
 
     context = "".join(
-        [f"- {res.get('name', '')} (메뉴: {res.get('main_menu', '')})\n" for res in candidates]
+        [
+            (
+                f"- {res.get('name', '')} | 카테고리: {res.get('category_name', '')} "
+                f"| 대표메뉴: {res.get('main_menu', '')} "
+                f"| 매운메뉴힌트: {res.get('spicy_menu_hint', '')} "
+                f"| 매운메뉴비율: {res.get('spicy_ratio', 0)}\n"
+            )
+            for res in candidates
+        ]
     )
 
     spicy_text = _normalize_spicy_text(user_spicy)
 
     # 프롬프트 구성
     prompt = f"""
-당신은 맛집 추천 전문가입니다.
+당신은 음식 취향 필터 전용 심사관입니다.
 현재 날씨는 {weather_status}({temp:.1f}°C), 사용자의 매운맛 선호는 '{spicy_text}'입니다.
-아래 식당 메뉴를 보고 0~100 사이 점수를 매겨 주세요.
+
+점수 규칙:
+- 취향에 매우 잘 맞으면 80~100
+- 애매하게 맞으면 50~79
+- 취향과 명확히 다르면 0~49
+- 사용자가 '매운맛'을 원하면 매운 메뉴 중심 식당만 높은 점수를 주세요.
+- 매운맛 선호일 때 버거/피자/카페/디저트 중심 체인은 원칙적으로 0~25를 주세요.
+- 매운메뉴힌트가 비어 있고 매운메뉴비율이 낮으면 낮은 점수를 주세요.
+- 사용자가 '순한맛'을 원하면 자극적인 매운 메뉴 중심 식당은 0~35를 주세요.
+
 출력 형식은 반드시 '식당명: 점수' 한 줄씩입니다.
 
 {context}

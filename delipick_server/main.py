@@ -36,6 +36,24 @@ _CATEGORY_NAME_FALLBACK = {
     7: "카페",
 }
 
+_SPICY_KEYWORDS = ("매운", "마라", "불", "핫", "spicy", "hot", "fire", "엽")
+_MILD_FAVOR_CATEGORIES = {5, 6, 7}
+_SPICY_FOCUS_CATEGORIES = {1, 2, 3, 4}
+_SPICY_BRAND_HINTS = ("엽떡", "신전", "마라", "불닭", "짬뽕", "두찜", "떡볶이", "닭발")
+_NONSPICY_BRAND_HINTS = (
+    "본죽",
+    "롯데리아",
+    "노브랜드버거",
+    "맥도날드",
+    "버거킹",
+    "맘스터치",
+    "피자",
+    "도미노",
+    "파파존",
+    "스타벅스",
+    "카페",
+)
+
 
 class RecommendationRequest(BaseModel):
     # 필터 조건
@@ -44,7 +62,6 @@ class RecommendationRequest(BaseModel):
     max_price: int = 100000
     spicy_level: str = ""
     weather_filter: bool = False
-    sort: str = "delivery"
     limit: int = 30
 
     @model_validator(mode="after")
@@ -54,10 +71,6 @@ class RecommendationRequest(BaseModel):
             self.min_price = 0
         if self.max_price < self.min_price:
             self.max_price = self.min_price
-
-        # 정렬 모드 보정
-        normalized_sort = self.sort.strip().lower()
-        self.sort = normalized_sort if normalized_sort in {"delivery", "recommend"} else "delivery"
 
         # 결과 개수 보정
         self.limit = max(1, min(self.limit, 100))
@@ -117,6 +130,17 @@ def _parse_int_env(name: str, default: int) -> int:
         return default
     try:
         return int(value)
+    except ValueError:
+        return default
+
+
+def _parse_float_env(name: str, default: float) -> float:
+    # float 환경변수 파싱
+    value = os.getenv(name)
+    if value is None:
+        return default
+    try:
+        return float(value)
     except ValueError:
         return default
 
@@ -207,6 +231,67 @@ def _normalize_category_name(category_id: int | None, raw_name: Any) -> str | No
     return None
 
 
+def _llm_cutoff_score(req: RecommendationRequest) -> int:
+    base_cutoff = _parse_int_env("LLM_FILTER_MIN_SCORE", 60)
+    spicy_cutoff = _parse_int_env("LLM_SPICY_MIN_SCORE", 68)
+    mild_cutoff = _parse_int_env("LLM_MILD_MIN_SCORE", 52)
+    level = req.spicy_level.strip().lower()
+    if level in {"hot", "spicy", "매운맛", "3"}:
+        return max(base_cutoff, spicy_cutoff)
+    if level in {"mild", "순한맛", "1"}:
+        return mild_cutoff
+    return base_cutoff
+
+
+def _target_result_count(limit: int) -> int:
+    configured = _parse_int_env("LLM_MIN_RESULTS", 10)
+    return max(1, min(limit, configured))
+
+
+def _looks_like_default_llm_scores(scores: dict[str, int]) -> bool:
+    if not scores:
+        return True
+    values = list(scores.values())
+    return len(set(values)) == 1 and values[0] == 50
+
+
+def _contains_spicy_keyword(text: str | None) -> bool:
+    value = (text or "").lower()
+    return any(keyword in value for keyword in _SPICY_KEYWORDS)
+
+
+def _name_spicy_affinity(name: str | None) -> float:
+    value = (name or "").lower()
+    score = 0.0
+    if any(keyword in value for keyword in _SPICY_BRAND_HINTS):
+        score += 0.55
+    if any(keyword in value for keyword in _NONSPICY_BRAND_HINTS):
+        score -= 0.75
+    return score
+
+
+def _spicy_signature_strength(item: dict[str, Any]) -> float:
+    ratio = float(item.get("spicy_ratio") or 0.0)
+    menu_bonus = 0.35 if _contains_spicy_keyword(item.get("main_menu")) else 0.0
+    spicy_menu_bonus = 0.45 if _contains_spicy_keyword(item.get("spicy_menu_hint")) else 0.0
+    category_id = item.get("category_id")
+    if category_id in _SPICY_FOCUS_CATEGORIES:
+        cuisine_bonus = 0.15
+    elif category_id in _MILD_FAVOR_CATEGORIES:
+        cuisine_bonus = -0.20
+    else:
+        cuisine_bonus = 0.0
+    return ratio + menu_bonus + spicy_menu_bonus + cuisine_bonus + _name_spicy_affinity(item.get("name"))
+
+
+def _passes_hot_gate(item: dict[str, Any], min_strength: float) -> bool:
+    strength = _spicy_signature_strength(item)
+    category_id = item.get("category_id")
+    if category_id in _MILD_FAVOR_CATEGORIES and strength < (min_strength + 0.35):
+        return False
+    return strength >= min_strength
+
+
 def _fetch_base_candidates(conn: pymysql.connections.Connection, req: RecommendationRequest) -> list[dict[str, Any]]:
     # 스키마 유무 감지
     with conn.cursor() as cursor:
@@ -245,6 +330,8 @@ def _fetch_base_candidates(conn: pymysql.connections.Connection, req: Recommenda
         MAX({image_expr}) AS restaurant_image_url,
         MAX({prep_expr}) AS prep_time,
         MAX({delivery_expr}) AS delivery_time,
+        MAX(COALESCE(ms.spicy_ratio, 0)) AS spicy_ratio,
+        MAX(ms.spicy_menu_hint) AS spicy_menu_hint,
         COALESCE(mp.min_price, 0) AS main_menu_price,
         MIN(m.menu_name) AS main_menu,
         MIN(NULLIF(m.image_url, '')) AS main_menu_image_url
@@ -258,6 +345,25 @@ def _fetch_base_candidates(conn: pymysql.connections.Connection, req: Recommenda
     LEFT JOIN menus m
         ON m.restaurant_id = r.id
        AND m.price = mp.min_price
+    LEFT JOIN (
+        SELECT
+            restaurant_id,
+            AVG(
+                CASE
+                    WHEN LOWER(menu_name) REGEXP '매운|마라|불|핫|spicy|hot|fire|엽' THEN 1
+                    ELSE 0
+                END
+            ) AS spicy_ratio,
+            MIN(
+                CASE
+                    WHEN LOWER(menu_name) REGEXP '매운|마라|불|핫|spicy|hot|fire|엽'
+                        THEN menu_name
+                    ELSE NULL
+                END
+            ) AS spicy_menu_hint
+        FROM menus
+        GROUP BY restaurant_id
+    ) ms ON ms.restaurant_id = r.id
     {details_join}
     WHERE COALESCE(mp.min_price, 0) BETWEEN %s AND %s
     """
@@ -291,62 +397,134 @@ def _fetch_base_candidates(conn: pymysql.connections.Connection, req: Recommenda
 
 
 def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]]) -> RecommendationResponse:
-    # 날씨 조회 조건
     weather_status, weather_temp = ("맑음", 20.0)
-    use_weather = req.weather_filter or req.sort == "recommend"
-    if use_weather:
+    if req.weather_filter:
         weather_status, weather_temp = fetch_realtime_weather()
 
     now_hour = datetime.now().hour
     enriched: list[dict[str, Any]] = []
 
     for row in rows:
-        # ETA 계산
         metrics = calculate_queueing_metrics(row.get("prep_time"), row.get("delivery_time"), now_hour)
-
-        # 맵기 보정
         spicy_boost = _spicy_preference_boost(req.spicy_level, row.get("main_menu"))
-        queue_score = float(metrics["queue_score"])
 
         enriched.append(
             {
                 **row,
                 **metrics,
                 "spicy_boost": spicy_boost,
-                "base_score": queue_score + spicy_boost,
+                "base_score": float(metrics["queue_score"]) + spicy_boost,
             }
         )
 
-    # LLM 점수 사용 조건
-    use_llm = req.weather_filter or req.sort == "recommend"
+    target_count = _target_result_count(req.limit)
+    spicy_level = req.spicy_level.strip().lower()
+    if spicy_level in {"hot", "spicy", "매운맛", "3"}:
+        strict_min = _parse_float_env("HOT_SIGNATURE_STRICT_MIN", 0.80)
+        relaxed_min = _parse_float_env("HOT_SIGNATURE_RELAXED_MIN", 0.50)
+        strict_candidates = [item for item in enriched if _passes_hot_gate(item, strict_min)]
+        relaxed_candidates = [item for item in enriched if _passes_hot_gate(item, relaxed_min)]
+        if len(strict_candidates) >= target_count:
+            enriched = strict_candidates
+        elif len(relaxed_candidates) >= target_count:
+            enriched = relaxed_candidates
+        elif relaxed_candidates:
+            enriched = relaxed_candidates
+    elif spicy_level in {"mild", "순한맛", "1"}:
+        # 순한맛은 강한 매운 시그니처 매장을 대부분 제외한다.
+        enriched = [
+            item
+            for item in enriched
+            if _spicy_signature_strength(item) < 0.55
+            or item.get("category_id") in _MILD_FAVOR_CATEGORIES
+        ]
+
+    use_llm_filter = req.weather_filter or bool(req.spicy_level.strip())
     llm_scores: dict[str, int] = {}
-    if use_llm and enriched:
-        # LLM 입력 구성
+    if use_llm_filter and enriched:
         llm_input = [
-            {"name": item["name"], "main_menu": item.get("main_menu", "")}
+            {
+                "name": item["name"],
+                "category_name": _normalize_category_name(item.get("category_id"), item.get("category_name")) or "",
+                "main_menu": item.get("main_menu", ""),
+                "spicy_menu_hint": item.get("spicy_menu_hint", ""),
+                "spicy_ratio": round(float(item.get("spicy_ratio") or 0.0), 2),
+            }
             for item in enriched
         ]
         llm_scores = get_llm_scores(llm_input, req.spicy_level, weather_status, weather_temp)
+    llm_filter_available = use_llm_filter and not _looks_like_default_llm_scores(llm_scores)
 
     for item in enriched:
-        # 식당별 LLM 점수
         llm_score = llm_scores.get(item["name"], 0)
         item["llm_score"] = llm_score
+        item["final_score"] = float(llm_score) if use_llm_filter else -float(item["total_eta"])
 
-        # 정렬 모드별 점수 계산
-        if req.sort == "recommend":
-            # 추천순
-            item["final_score"] = (
-                float(llm_score) * 1.0
-                + float(item["spicy_boost"]) * 0.35
-                - float(item["total_eta"]) * 0.02
+    filtered_items = enriched
+    if llm_filter_available:
+        cutoff = _llm_cutoff_score(req)
+
+        def _by_cutoff(current_cutoff: int) -> list[dict[str, Any]]:
+            if spicy_level in {"hot", "spicy", "매운맛", "3"}:
+                hot_min = _parse_float_env("HOT_SIGNATURE_RELAXED_MIN", 0.45)
+                return [
+                    item
+                    for item in enriched
+                    if int(item.get("llm_score") or 0) >= current_cutoff
+                    and _passes_hot_gate(item, hot_min)
+                ]
+            return [
+                item for item in enriched if int(item.get("llm_score") or 0) >= current_cutoff
+            ]
+
+        filtered_items = _by_cutoff(cutoff)
+        while len(filtered_items) < target_count and cutoff > 40:
+            cutoff -= 4
+            filtered_items = _by_cutoff(cutoff)
+
+        # 컷오프 완화 후에도 비어 있으면 LLM 상위 매장을 최소 개수만큼 노출
+        if not filtered_items and enriched:
+            if spicy_level in {"hot", "spicy", "매운맛", "3"}:
+                emergency_hot = [
+                    item for item in enriched if _passes_hot_gate(item, 0.35)
+                ]
+                source = emergency_hot if emergency_hot else enriched
+            else:
+                source = enriched
+            filtered_items = sorted(source, key=lambda item: int(item.get("llm_score") or 0), reverse=True)[:target_count]
+
+        # 매운맛 결과가 너무 적으면, 매운 시그니처가 있는 차선 후보를 보충한다.
+        if spicy_level in {"hot", "spicy", "매운맛", "3"} and len(filtered_items) < target_count and enriched:
+            fallback_min = _parse_float_env("HOT_SIGNATURE_FALLBACK_MIN", 0.30)
+            supplement_source = [item for item in enriched if _passes_hot_gate(item, fallback_min)]
+            if not supplement_source:
+                supplement_source = enriched
+
+            existing_ids = {int(item["id"]) for item in filtered_items if item.get("id") is not None}
+            supplement_sorted = sorted(
+                supplement_source,
+                key=lambda item: (
+                    int(item.get("llm_score") or 0),
+                    _spicy_signature_strength(item),
+                    -float(item.get("total_eta") or 9999),
+                ),
+                reverse=True,
             )
-        else:
-            # 배달순
-            item["final_score"] = -float(item["total_eta"])
 
-    # 최종 정렬
-    sorted_items = sorted(enriched, key=lambda item: item["final_score"], reverse=True)
+            for item in supplement_sorted:
+                item_id = item.get("id")
+                if item_id is None:
+                    continue
+                normalized_id = int(item_id)
+                if normalized_id in existing_ids:
+                    continue
+                filtered_items.append(item)
+                existing_ids.add(normalized_id)
+                if len(filtered_items) >= target_count:
+                    break
+
+    # 기본 노출은 항상 배달 ETA 순
+    sorted_items = sorted(filtered_items, key=lambda item: float(item["total_eta"]))
     selected = sorted_items[: req.limit]
 
     response_items = [
@@ -385,7 +563,6 @@ def _build_request_from_query(
     max_price: int,
     spicy_level: str,
     weather_filter: bool,
-    sort: str,
     limit: int,
 ) -> RecommendationRequest:
     # 카테고리 문자열 파싱
@@ -403,7 +580,6 @@ def _build_request_from_query(
         max_price=max_price,
         spicy_level=spicy_level,
         weather_filter=weather_filter,
-        sort=sort,
         limit=limit,
     )
 
@@ -475,7 +651,6 @@ def get_restaurants(
     max_price: int = Query(default=100000, ge=0),
     spicy_level: str = Query(default=""),
     weather_filter: bool = Query(default=False),
-    sort: str = Query(default="delivery"),
     limit: int = Query(default=30, ge=1, le=100),
 ) -> RecommendationResponse:
     # 리스트 조회 엔드포인트
@@ -485,7 +660,6 @@ def get_restaurants(
         max_price=max_price,
         spicy_level=spicy_level,
         weather_filter=weather_filter,
-        sort=sort,
         limit=limit,
     )
 

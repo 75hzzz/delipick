@@ -5,13 +5,12 @@ import 'package:http/http.dart' as http;
 import '../models/restaurant.dart';
 
 class RecommendationQuery {
-  // 필터/정렬 요청값
+  // 필터 요청값
   final List<int> categoryIds;
   final int minPrice;
   final int maxPrice;
   final String spicyLevel;
   final bool weatherFilter;
-  final String sort;
   final int limit;
 
   const RecommendationQuery({
@@ -20,7 +19,6 @@ class RecommendationQuery {
     required this.maxPrice,
     required this.spicyLevel,
     required this.weatherFilter,
-    this.sort = 'delivery',
     this.limit = 30,
   });
 
@@ -32,7 +30,6 @@ class RecommendationQuery {
       'max_price': maxPrice,
       'spicy_level': spicyLevel,
       'weather_filter': weatherFilter,
-      'sort': sort,
       'limit': limit,
     };
   }
@@ -128,7 +125,6 @@ class DelipickApiService {
           maxPrice: adjustedMax,
           spicyLevel: query.spicyLevel,
           weatherFilter: query.weatherFilter,
-          sort: query.sort,
           limit: query.limit,
         ),
     );
@@ -156,7 +152,6 @@ class DelipickApiService {
       'min_price': query.minPrice.toString(),
       'max_price': query.maxPrice.toString(),
       'weather_filter': query.weatherFilter.toString(),
-      'sort': query.sort,
       'limit': query.limit.toString(),
     };
 
