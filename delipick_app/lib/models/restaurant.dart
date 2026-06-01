@@ -1,7 +1,8 @@
 class RestaurantItem {
-  // 식당 기본 정보
+  final int? menuId;
   final int id;
   final String name;
+  final String? restaurantName;
   final int? categoryId;
   final String? categoryName;
   final String? address;
@@ -15,13 +16,18 @@ class RestaurantItem {
   final double queuingWait;
   final bool isPeakTime;
 
-  // 추천/정렬 정보
-  final int llmScore;
+  final double deliveryScore;
+  final double priceScore;
+  final double restaurantReviewScore;
+  final double preferenceScore;
   final double finalScore;
+  final String? recommendationReason;
 
   const RestaurantItem({
+    required this.menuId,
     required this.id,
     required this.name,
+    required this.restaurantName,
     required this.categoryId,
     required this.categoryName,
     required this.address,
@@ -34,15 +40,20 @@ class RestaurantItem {
     required this.estimatedTotalTime,
     required this.queuingWait,
     required this.isPeakTime,
-    required this.llmScore,
+    required this.deliveryScore,
+    required this.priceScore,
+    required this.restaurantReviewScore,
+    required this.preferenceScore,
     required this.finalScore,
+    required this.recommendationReason,
   });
 
   factory RestaurantItem.fromJson(Map<String, dynamic> json) {
-    // API 응답 파싱
     return RestaurantItem(
+      menuId: (json['menu_id'] as num?)?.toInt(),
       id: (json['id'] as num).toInt(),
       name: json['name'] as String? ?? '',
+      restaurantName: json['restaurant_name'] as String?,
       categoryId: (json['category_id'] as num?)?.toInt(),
       categoryName: json['category_name'] as String?,
       address: json['address'] as String?,
@@ -55,30 +66,35 @@ class RestaurantItem {
       estimatedTotalTime: (json['estimated_total_time'] as num?)?.toDouble() ?? 0,
       queuingWait: (json['queuing_wait'] as num?)?.toDouble() ?? 0,
       isPeakTime: json['is_peak_time'] as bool? ?? false,
-      llmScore: (json['llm_score'] as num?)?.toInt() ?? 0,
+      deliveryScore: (json['delivery_score'] as num?)?.toDouble() ?? 0,
+      priceScore: (json['price_score'] as num?)?.toDouble() ?? 0,
+      restaurantReviewScore: (json['restaurant_review_score'] as num?)?.toDouble() ?? 0.5,
+      preferenceScore: (json['preference_score'] as num?)?.toDouble() ?? 0.5,
       finalScore: (json['final_score'] as num?)?.toDouble() ?? 0,
+      recommendationReason: json['recommendation_reason'] as String?,
     );
   }
 }
 
 class RecommendationData {
-  // 응답 메타 + 리스트
-  final String weatherStatus;
-  final double weatherTemp;
+  final String mode;
+  final String? userType;
+  final String preferenceText;
   final List<RestaurantItem> items;
 
   const RecommendationData({
-    required this.weatherStatus,
-    required this.weatherTemp,
+    required this.mode,
+    required this.userType,
+    required this.preferenceText,
     required this.items,
   });
 
   factory RecommendationData.fromJson(Map<String, dynamic> json) {
-    // items 배열 안전 파싱
     final List<dynamic> rawItems = json['items'] as List<dynamic>? ?? const [];
     return RecommendationData(
-      weatherStatus: json['weather_status'] as String? ?? '맑음',
-      weatherTemp: (json['weather_temp'] as num?)?.toDouble() ?? 20,
+      mode: json['mode'] as String? ?? 'default_delivery',
+      userType: json['user_type'] as String?,
+      preferenceText: json['preference_text'] as String? ?? '',
       items: rawItems
           .whereType<Map<String, dynamic>>()
           .map(RestaurantItem.fromJson)
@@ -87,8 +103,33 @@ class RecommendationData {
   }
 }
 
+class MenuItem {
+  final int id;
+  final int restaurantId;
+  final String menuName;
+  final int? price;
+  final String? imageUrl;
+
+  const MenuItem({
+    required this.id,
+    required this.restaurantId,
+    required this.menuName,
+    this.price,
+    this.imageUrl,
+  });
+
+  factory MenuItem.fromJson(Map<String, dynamic> json) {
+    return MenuItem(
+      id: (json['id'] as num).toInt(),
+      restaurantId: (json['restaurant_id'] as num).toInt(),
+      menuName: json['menu_name'] as String? ?? '',
+      price: (json['price'] as num?)?.toInt(),
+      imageUrl: json['image_url'] as String?,
+    );
+  }
+}
+
 class CategoryItem {
-  // 카테고리 표시 정보
   final int id;
   final String name;
   final String imageAsset;

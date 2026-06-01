@@ -1,4 +1,6 @@
-﻿import os
+﻿import json
+import math
+import os
 from datetime import datetime
 from typing import Any
 
@@ -10,22 +12,21 @@ from pydantic import BaseModel, Field, model_validator
 
 try:
     from .recommend_logic import (
+        build_taste_vector_from_text,
+        build_text_embedding,
         calculate_queueing_metrics,
-        fetch_realtime_weather,
-        get_llm_scores,
     )
     from .update_delivery import scheduler, start_delivery_worker
 except ImportError:
     from recommend_logic import (
+        build_taste_vector_from_text,
+        build_text_embedding,
         calculate_queueing_metrics,
-        fetch_realtime_weather,
-        get_llm_scores,
     )
     from update_delivery import scheduler, start_delivery_worker
 
 load_dotenv()
 
-# 카테고리명 복구용 기본값
 _CATEGORY_NAME_FALLBACK = {
     1: "한식",
     2: "중식",
@@ -36,43 +37,24 @@ _CATEGORY_NAME_FALLBACK = {
     7: "카페",
 }
 
-_SPICY_KEYWORDS = ("매운", "마라", "불", "핫", "spicy", "hot", "fire", "엽")
-_MILD_FAVOR_CATEGORIES = {5, 6, 7}
-_SPICY_FOCUS_CATEGORIES = {1, 2, 3, 4}
-_SPICY_BRAND_HINTS = ("엽떡", "신전", "마라", "불닭", "짬뽕", "두찜", "떡볶이", "닭발")
-_NONSPICY_BRAND_HINTS = (
-    "본죽",
-    "롯데리아",
-    "노브랜드버거",
-    "맥도날드",
-    "버거킹",
-    "맘스터치",
-    "피자",
-    "도미노",
-    "파파존",
-    "스타벅스",
-    "카페",
-)
-
 
 class RecommendationRequest(BaseModel):
-    # 필터 조건
     category_ids: list[int] = Field(default_factory=list)
     min_price: int = 2000
     max_price: int = 100000
-    spicy_level: str = ""
-    weather_filter: bool = False
+    user_type: str = ""
+    preference_text: str = ""
     limit: int = 30
 
     @model_validator(mode="after")
     def validate_ranges(self) -> "RecommendationRequest":
-        # 가격 범위 보정
         if self.min_price < 0:
             self.min_price = 0
         if self.max_price < self.min_price:
             self.max_price = self.min_price
 
-        # 결과 개수 보정
+        self.user_type = _normalize_user_type(self.user_type)
+        self.preference_text = self.preference_text.strip()
         self.limit = max(1, min(self.limit, 100))
         return self
 
@@ -83,8 +65,10 @@ class CategoryResponse(BaseModel):
 
 
 class RestaurantResponse(BaseModel):
+    menu_id: int | None = None
     id: int
     name: str
+    restaurant_name: str | None = None
     category_id: int | None = None
     category_name: str | None = None
     address: str | None = None
@@ -97,26 +81,37 @@ class RestaurantResponse(BaseModel):
     estimated_total_time: float
     queuing_wait: float
     is_peak_time: bool
-    llm_score: int = 0
+    delivery_score: float
+    price_score: float
+    restaurant_review_score: float
+    preference_score: float
     final_score: float
+    recommendation_reason: str | None = None
 
 
 class RecommendationResponse(BaseModel):
-    weather_status: str
-    weather_temp: float
+    mode: str
+    user_type: str | None = None
+    preference_text: str
     count: int
     items: list[RestaurantResponse]
 
 
+class MenuResponse(BaseModel):
+    id: int
+    restaurant_id: int
+    menu_name: str
+    price: int | None = None
+    image_url: str | None = None
+
+
 def _parse_allowed_origins() -> list[str]:
-    # CORS 오리진 목록 파싱
     raw = os.getenv("CORS_ALLOW_ORIGINS", "*")
     values = [origin.strip() for origin in raw.split(",") if origin.strip()]
     return values or ["*"]
 
 
 def _parse_bool_env(name: str, default: bool) -> bool:
-    # bool 환경변수 파싱
     value = os.getenv(name)
     if value is None:
         return default
@@ -124,7 +119,6 @@ def _parse_bool_env(name: str, default: bool) -> bool:
 
 
 def _parse_int_env(name: str, default: int) -> int:
-    # int 환경변수 파싱
     value = os.getenv(name)
     if value is None:
         return default
@@ -134,19 +128,38 @@ def _parse_int_env(name: str, default: int) -> int:
         return default
 
 
-def _parse_float_env(name: str, default: float) -> float:
-    # float 환경변수 파싱
-    value = os.getenv(name)
-    if value is None:
-        return default
-    try:
-        return float(value)
-    except ValueError:
-        return default
+def _clip01(value: float) -> float:
+    return max(0.0, min(1.0, value))
+
+
+def _normalize_user_type(raw: str) -> str:
+    normalized = (raw or "").strip().lower()
+    mapping = {
+        "편의형": "convenience",
+        "convenience": "convenience",
+        "편의": "convenience",
+        "미식형": "gourmet",
+        "gourmet": "gourmet",
+        "foodie": "gourmet",
+        "미식": "gourmet",
+        "경제형": "budget",
+        "budget": "budget",
+        "경제": "budget",
+    }
+    return mapping.get(normalized, "")
+
+
+def _normalize_category_name(category_id: int | None, raw_name: Any) -> str | None:
+    if isinstance(raw_name, str):
+        stripped = raw_name.strip()
+        if stripped and "?" not in stripped:
+            return stripped
+    if category_id is not None:
+        return _CATEGORY_NAME_FALLBACK.get(category_id)
+    return None
 
 
 def _db_candidates() -> list[str]:
-    # DB 후보 목록
     requested = os.getenv("DB_NAME", "").strip()
     defaults = [requested] if requested else []
     for name in ("delipick", "qqq"):
@@ -159,7 +172,7 @@ def _is_unknown_database(error: pymysql.MySQLError) -> bool:
     return bool(error.args and error.args[0] == 1049)
 
 
-app = FastAPI(title="Delipick API", version="1.0.0")
+app = FastAPI(title="Delipick API", version="2.0.0")
 _allowed_origins = _parse_allowed_origins()
 _allow_credentials = not (_allowed_origins == ["*"])
 app.add_middleware(
@@ -172,12 +185,10 @@ app.add_middleware(
 
 
 def get_db_connection() -> pymysql.connections.Connection:
-    # DB 연결 시도
     last_error: pymysql.MySQLError | None = None
 
     for db_name in _db_candidates():
         try:
-            # 연결 성공 시 즉시 반환
             return pymysql.connect(
                 host=os.getenv("DB_HOST", "127.0.0.1"),
                 user=os.getenv("DB_USER", "root"),
@@ -190,7 +201,6 @@ def get_db_connection() -> pymysql.connections.Connection:
             )
         except pymysql.MySQLError as error:
             last_error = error
-            # DB 미존재 오류면 다음 후보 재시도
             if _is_unknown_database(error):
                 continue
             raise
@@ -200,125 +210,144 @@ def get_db_connection() -> pymysql.connections.Connection:
     raise RuntimeError("Unable to connect database with known candidates.")
 
 
-def _spicy_preference_boost(spicy_level: str, menu_name: str | None) -> float:
-    # 맵기 선호 보정값
-    if not spicy_level:
+def _cosine_similarity_0_1(vec1: list[float], vec2: list[float], default: float = 0.5) -> float:
+    if not vec1 or not vec2 or len(vec1) != len(vec2):
+        return default
+
+    dot = sum(a * b for a, b in zip(vec1, vec2))
+    norm1 = math.sqrt(sum(a * a for a in vec1))
+    norm2 = math.sqrt(sum(b * b for b in vec2))
+    if norm1 == 0 or norm2 == 0:
+        return default
+
+    cosine = dot / (norm1 * norm2)
+    return _clip01((cosine + 1.0) / 2.0)
+
+
+def _parse_embedding(raw: Any) -> list[float]:
+    if raw is None:
+        return []
+
+    if isinstance(raw, list):
+        return [float(v) for v in raw]
+
+    if not isinstance(raw, str):
+        return []
+
+    text = raw.strip()
+    if not text:
+        return []
+
+    try:
+        parsed = json.loads(text)
+        if isinstance(parsed, list):
+            return [float(v) for v in parsed]
+    except Exception:
+        pass
+
+    start = text.find("[")
+    end = text.rfind("]")
+    if start == -1 or end == -1 or end <= start:
+        return []
+
+    try:
+        parsed = json.loads(text[start : end + 1])
+        if isinstance(parsed, list):
+            return [float(v) for v in parsed]
+    except Exception:
+        return []
+    return []
+
+
+def _value_or_zero(raw: Any) -> float:
+    try:
+        if raw is None:
+            return 0.0
+        return float(raw)
+    except Exception:
         return 0.0
 
-    # 키워드 유무 감지
-    normalized_level = spicy_level.lower().strip()
-    menu = (menu_name or "").lower()
-    hot_keywords = ["매운", "불", "마라", "핫", "spicy", "hot", "fire"]
-    has_hot_menu = any(keyword in menu for keyword in hot_keywords)
 
-    if normalized_level in {"매운맛", "hot", "spicy", "3"}:
-        return 15.0 if has_hot_menu else -3.0
-    if normalized_level in {"중간맛", "medium", "2"}:
-        return 6.0 if has_hot_menu else 2.0
-    if normalized_level in {"순한맛", "mild", "1"}:
-        return -6.0 if has_hot_menu else 4.0
-    return 0.0
+def _menu_taste_vector(row: dict[str, Any]) -> list[float]:
+    review_values = [
+        _value_or_zero(row.get("review_salty")),
+        _value_or_zero(row.get("review_sweet")),
+        _value_or_zero(row.get("review_sour")),
+        _value_or_zero(row.get("review_umami")),
+        _value_or_zero(row.get("review_spicy")),
+    ]
+    base_values = [
+        _value_or_zero(row.get("salty")),
+        _value_or_zero(row.get("sweet")),
+        _value_or_zero(row.get("sour")),
+        _value_or_zero(row.get("umami")),
+        _value_or_zero(row.get("spicy")),
+    ]
 
-
-def _normalize_category_name(category_id: int | None, raw_name: Any) -> str | None:
-    # DB 문자열 품질 확인
-    if isinstance(raw_name, str):
-        stripped = raw_name.strip()
-        if stripped and "?" not in stripped:
-            return stripped
-    if category_id is not None:
-        return _CATEGORY_NAME_FALLBACK.get(category_id)
-    return None
+    use_review = any(value > 0 for value in review_values)
+    selected = review_values if use_review else base_values
+    return [_clip01(value) for value in selected]
 
 
-def _llm_cutoff_score(req: RecommendationRequest) -> int:
-    base_cutoff = _parse_int_env("LLM_FILTER_MIN_SCORE", 60)
-    spicy_cutoff = _parse_int_env("LLM_SPICY_MIN_SCORE", 68)
-    mild_cutoff = _parse_int_env("LLM_MILD_MIN_SCORE", 52)
-    level = req.spicy_level.strip().lower()
-    if level in {"hot", "spicy", "매운맛", "3"}:
-        return max(base_cutoff, spicy_cutoff)
-    if level in {"mild", "순한맛", "1"}:
-        return mild_cutoff
-    return base_cutoff
+def _weight_by_user_type(user_type: str) -> dict[str, float]:
+    if user_type == "convenience":
+        return {
+            "delivery": 0.5,
+            "price": 0.2,
+            "review": 0.2,
+            "preference": 0.1,
+        }
+    if user_type == "gourmet":
+        return {
+            "delivery": 0.1,
+            "price": 0.1,
+            "review": 0.3,
+            "preference": 0.5,
+        }
+    if user_type == "budget":
+        return {
+            "delivery": 0.15,
+            "price": 0.5,
+            "review": 0.15,
+            "preference": 0.2,
+        }
+    return {
+        "delivery": 0.25,
+        "price": 0.25,
+        "review": 0.25,
+        "preference": 0.25,
+    }
 
 
-def _target_result_count(limit: int) -> int:
-    configured = _parse_int_env("LLM_MIN_RESULTS", 10)
-    return max(1, min(limit, configured))
+def _reason_text(delivery: float, price: float, review: float, preference: float, personalized: bool) -> str:
+    if not personalized:
+        return "예상 배달 시간이 빠른 순으로 정렬했어요"
 
+    candidates = [
+        ("취향 유사도가 높아요", preference),
+        ("리뷰 평점이 좋아요", review),
+        ("예상 배달 시간이 빨라요", delivery),
+        ("가격 부담이 낮아요", price),
+    ]
+    ranked = sorted(candidates, key=lambda x: x[1], reverse=True)
 
-def _looks_like_default_llm_scores(scores: dict[str, int]) -> bool:
-    if not scores:
-        return True
-    values = list(scores.values())
-    return len(set(values)) == 1 and values[0] == 50
+    strong = [message for message, score in ranked if score >= 0.65]
+    if strong:
+        return " · ".join(strong[:2])
 
-
-def _contains_spicy_keyword(text: str | None) -> bool:
-    value = (text or "").lower()
-    return any(keyword in value for keyword in _SPICY_KEYWORDS)
-
-
-def _name_spicy_affinity(name: str | None) -> float:
-    value = (name or "").lower()
-    score = 0.0
-    if any(keyword in value for keyword in _SPICY_BRAND_HINTS):
-        score += 0.55
-    if any(keyword in value for keyword in _NONSPICY_BRAND_HINTS):
-        score -= 0.75
-    return score
-
-
-def _spicy_signature_strength(item: dict[str, Any]) -> float:
-    ratio = float(item.get("spicy_ratio") or 0.0)
-    menu_bonus = 0.35 if _contains_spicy_keyword(item.get("main_menu")) else 0.0
-    spicy_menu_bonus = 0.45 if _contains_spicy_keyword(item.get("spicy_menu_hint")) else 0.0
-    category_id = item.get("category_id")
-    if category_id in _SPICY_FOCUS_CATEGORIES:
-        cuisine_bonus = 0.15
-    elif category_id in _MILD_FAVOR_CATEGORIES:
-        cuisine_bonus = -0.20
-    else:
-        cuisine_bonus = 0.0
-    return ratio + menu_bonus + spicy_menu_bonus + cuisine_bonus + _name_spicy_affinity(item.get("name"))
-
-
-def _passes_hot_gate(item: dict[str, Any], min_strength: float) -> bool:
-    strength = _spicy_signature_strength(item)
-    category_id = item.get("category_id")
-    if category_id in _MILD_FAVOR_CATEGORIES and strength < (min_strength + 0.35):
-        return False
-    return strength >= min_strength
+    return ranked[0][0]
 
 
 def _fetch_base_candidates(conn: pymysql.connections.Connection, req: RecommendationRequest) -> list[dict[str, Any]]:
-    # 스키마 유무 감지
     with conn.cursor() as cursor:
         cursor.execute("SHOW COLUMNS FROM restaurants")
         restaurant_columns = {row["Field"] for row in cursor.fetchall()}
-        cursor.execute("SHOW TABLES LIKE 'restaurant_details'")
-        has_restaurant_details = cursor.fetchone() is not None
-        detail_columns: set[str] = set()
-        if has_restaurant_details:
-            cursor.execute("SHOW COLUMNS FROM restaurant_details")
-            detail_columns = {row["Field"] for row in cursor.fetchall()}
 
-    # 평점 컬럼 선택
-    if "google_rating" in restaurant_columns:
-        rating_expr = "r.google_rating"
-    elif "rating" in restaurant_columns:
-        rating_expr = "r.rating"
-    elif has_restaurant_details and "google_rating" in detail_columns:
-        rating_expr = "rd.google_rating"
-    else:
-        rating_expr = "0"
+    rating_expr = "r.google_rating" if "google_rating" in restaurant_columns else "0"
     prep_expr = "r.prep_time" if "prep_time" in restaurant_columns else "NULL"
     delivery_expr = "r.delivery_time" if "delivery_time" in restaurant_columns else "NULL"
     image_expr = "r.image_url" if "image_url" in restaurant_columns else "NULL"
-    details_join = "LEFT JOIN restaurant_details rd ON rd.id = r.id" if has_restaurant_details else ""
 
-    # 기본 후보 조회 쿼리
     sql = """
     SELECT
         r.id,
@@ -330,8 +359,6 @@ def _fetch_base_candidates(conn: pymysql.connections.Connection, req: Recommenda
         MAX({image_expr}) AS restaurant_image_url,
         MAX({prep_expr}) AS prep_time,
         MAX({delivery_expr}) AS delivery_time,
-        MAX(COALESCE(ms.spicy_ratio, 0)) AS spicy_ratio,
-        MAX(ms.spicy_menu_hint) AS spicy_menu_hint,
         COALESCE(mp.min_price, 0) AS main_menu_price,
         MIN(m.menu_name) AS main_menu,
         MIN(NULLIF(m.image_url, '')) AS main_menu_image_url
@@ -345,31 +372,15 @@ def _fetch_base_candidates(conn: pymysql.connections.Connection, req: Recommenda
     LEFT JOIN menus m
         ON m.restaurant_id = r.id
        AND m.price = mp.min_price
-    LEFT JOIN (
-        SELECT
-            restaurant_id,
-            AVG(
-                CASE
-                    WHEN LOWER(menu_name) REGEXP '매운|마라|불|핫|spicy|hot|fire|엽' THEN 1
-                    ELSE 0
-                END
-            ) AS spicy_ratio,
-            MIN(
-                CASE
-                    WHEN LOWER(menu_name) REGEXP '매운|마라|불|핫|spicy|hot|fire|엽'
-                        THEN menu_name
-                    ELSE NULL
-                END
-            ) AS spicy_menu_hint
-        FROM menus
-        GROUP BY restaurant_id
-    ) ms ON ms.restaurant_id = r.id
-    {details_join}
     WHERE COALESCE(mp.min_price, 0) BETWEEN %s AND %s
-    """
+    """.format(
+        rating_expr=rating_expr,
+        image_expr=image_expr,
+        prep_expr=prep_expr,
+        delivery_expr=delivery_expr,
+    )
     params: list[Any] = [req.min_price, req.max_price]
 
-    # 카테고리 필터 조건
     if req.category_ids:
         placeholders = ",".join(["%s"] * len(req.category_ids))
         sql += f" AND r.category_id IN ({placeholders})"
@@ -382,176 +393,337 @@ def _fetch_base_candidates(conn: pymysql.connections.Connection, req: Recommenda
         mp.min_price
     ORDER BY r.id ASC
     """
-    sql = sql.format(
-        rating_expr=rating_expr,
-        image_expr=image_expr,
-        prep_expr=prep_expr,
-        delivery_expr=delivery_expr,
-        details_join=details_join,
-    )
 
     with conn.cursor() as cursor:
-        # DB 조회 실행
         cursor.execute(sql, params)
         return cursor.fetchall()
 
 
-def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]]) -> RecommendationResponse:
-    weather_status, weather_temp = ("맑음", 20.0)
-    if req.weather_filter:
-        weather_status, weather_temp = fetch_realtime_weather()
+def _fetch_review_scores(conn: pymysql.connections.Connection, restaurant_ids: list[int]) -> dict[int, float]:
+    if not restaurant_ids:
+        return {}
+
+    placeholders = ",".join(["%s"] * len(restaurant_ids))
+    sql = f"""
+    SELECT restaurant_id, AVG(review_score) AS avg_review_score
+    FROM reviews
+    WHERE restaurant_id IN ({placeholders})
+    GROUP BY restaurant_id
+    """
+
+    with conn.cursor() as cursor:
+        cursor.execute(sql, restaurant_ids)
+        rows = cursor.fetchall()
+
+    scores: dict[int, float] = {}
+    for row in rows:
+        rest_id = int(row["restaurant_id"])
+        avg_score = row.get("avg_review_score")
+        scores[rest_id] = _clip01(float(avg_score)) if avg_score is not None else 0.5
+    return scores
+
+
+def _fetch_menu_flavors(
+    conn: pymysql.connections.Connection,
+    restaurant_ids: list[int],
+    req: RecommendationRequest,
+) -> list[dict[str, Any]]:
+    if not restaurant_ids:
+        return []
+
+    placeholders = ",".join(["%s"] * len(restaurant_ids))
+    sql = f"""
+    SELECT
+        m.restaurant_id,
+        m.id AS menu_id,
+        m.menu_name,
+        m.price,
+        m.image_url AS menu_image_url,
+        mf.salty,
+        mf.sweet,
+        mf.sour,
+        mf.umami,
+        mf.spicy,
+        mf.semantic_embedding,
+        mf.review_salty,
+        mf.review_sweet,
+        mf.review_sour,
+        mf.review_umami,
+        mf.review_spicy,
+        mf.review_embedding
+    FROM menus m
+    LEFT JOIN menu_flavors mf ON mf.menu_id = m.id
+    WHERE m.restaurant_id IN ({placeholders})
+      AND m.price BETWEEN %s AND %s
+    """
+
+    params: list[Any] = [*restaurant_ids, req.min_price, req.max_price]
+    with conn.cursor() as cursor:
+        cursor.execute(sql, params)
+        return cursor.fetchall()
+
+
+def _calculate_menu_preference_score(
+    row: dict[str, Any],
+    user_taste_vector: list[float],
+    user_embedding: list[float],
+) -> float:
+    menu_taste = _menu_taste_vector(row)
+    taste_similarity = _cosine_similarity_0_1(user_taste_vector, menu_taste, default=0.5)
+
+    menu_embedding = _parse_embedding(row.get("semantic_embedding"))
+    menu_embedding_similarity = _cosine_similarity_0_1(user_embedding, menu_embedding, default=0.5)
+
+    review_embedding_raw = _parse_embedding(row.get("review_embedding"))
+    if not review_embedding_raw:
+        review_embedding_similarity = 0.5
+    else:
+        review_embedding_similarity = _cosine_similarity_0_1(
+            user_embedding,
+            review_embedding_raw,
+            default=0.5,
+        )
+
+    return _clip01(
+        (taste_similarity * 0.4)
+        + (menu_embedding_similarity * 0.3)
+        + (review_embedding_similarity * 0.3)
+    )
+
+
+def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]], conn: pymysql.connections.Connection) -> RecommendationResponse:
+    if not rows:
+        return RecommendationResponse(
+            mode="default_delivery" if not req.preference_text else "personalized",
+            user_type=req.user_type or None,
+            preference_text=req.preference_text,
+            count=0,
+            items=[],
+        )
 
     now_hour = datetime.now().hour
+    restaurant_ids = [int(row["id"]) for row in rows]
+
+    review_scores = _fetch_review_scores(conn, restaurant_ids)
+
     enriched: list[dict[str, Any]] = []
+    etas: list[float] = []
+    prices: list[float] = []
 
     for row in rows:
         metrics = calculate_queueing_metrics(row.get("prep_time"), row.get("delivery_time"), now_hour)
-        spicy_boost = _spicy_preference_boost(req.spicy_level, row.get("main_menu"))
+        eta = float(metrics["total_eta"])
+        price = float(row.get("main_menu_price") or 0.0)
+
+        etas.append(eta)
+        prices.append(price)
 
         enriched.append(
             {
                 **row,
                 **metrics,
-                "spicy_boost": spicy_boost,
-                "base_score": float(metrics["queue_score"]) + spicy_boost,
+                "restaurant_review_score": review_scores.get(int(row["id"]), 0.5),
             }
         )
 
-    target_count = _target_result_count(req.limit)
-    spicy_level = req.spicy_level.strip().lower()
-    if spicy_level in {"hot", "spicy", "매운맛", "3"}:
-        strict_min = _parse_float_env("HOT_SIGNATURE_STRICT_MIN", 0.80)
-        relaxed_min = _parse_float_env("HOT_SIGNATURE_RELAXED_MIN", 0.50)
-        strict_candidates = [item for item in enriched if _passes_hot_gate(item, strict_min)]
-        relaxed_candidates = [item for item in enriched if _passes_hot_gate(item, relaxed_min)]
-        if len(strict_candidates) >= target_count:
-            enriched = strict_candidates
-        elif len(relaxed_candidates) >= target_count:
-            enriched = relaxed_candidates
-        elif relaxed_candidates:
-            enriched = relaxed_candidates
-    elif spicy_level in {"mild", "순한맛", "1"}:
-        # 순한맛은 강한 매운 시그니처 매장을 대부분 제외한다.
-        enriched = [
-            item
-            for item in enriched
-            if _spicy_signature_strength(item) < 0.55
-            or item.get("category_id") in _MILD_FAVOR_CATEGORIES
-        ]
+    min_eta = min(etas)
+    max_eta = max(etas)
+    min_price = min(prices)
+    max_price = max(prices)
 
-    use_llm_filter = req.weather_filter or bool(req.spicy_level.strip())
-    llm_scores: dict[str, int] = {}
-    if use_llm_filter and enriched:
-        llm_input = [
-            {
-                "name": item["name"],
-                "category_name": _normalize_category_name(item.get("category_id"), item.get("category_name")) or "",
-                "main_menu": item.get("main_menu", ""),
-                "spicy_menu_hint": item.get("spicy_menu_hint", ""),
-                "spicy_ratio": round(float(item.get("spicy_ratio") or 0.0), 2),
-            }
-            for item in enriched
-        ]
-        llm_scores = get_llm_scores(llm_input, req.spicy_level, weather_status, weather_temp)
-    llm_filter_available = use_llm_filter and not _looks_like_default_llm_scores(llm_scores)
+    personalized = bool(req.preference_text)
+    weights = _weight_by_user_type(req.user_type)
 
     for item in enriched:
-        llm_score = llm_scores.get(item["name"], 0)
-        item["llm_score"] = llm_score
-        item["final_score"] = float(llm_score) if use_llm_filter else -float(item["total_eta"])
+        eta = float(item["total_eta"])
+        if max_eta == min_eta:
+            delivery_score = 1.0
+        else:
+            delivery_score = _clip01(1.0 - ((eta - min_eta) / (max_eta - min_eta)))
 
-    filtered_items = enriched
-    if llm_filter_available:
-        cutoff = _llm_cutoff_score(req)
+        review_score = _clip01(float(item.get("restaurant_review_score") or 0.5))
 
-        def _by_cutoff(current_cutoff: int) -> list[dict[str, Any]]:
-            if spicy_level in {"hot", "spicy", "매운맛", "3"}:
-                hot_min = _parse_float_env("HOT_SIGNATURE_RELAXED_MIN", 0.45)
-                return [
-                    item
-                    for item in enriched
-                    if int(item.get("llm_score") or 0) >= current_cutoff
-                    and _passes_hot_gate(item, hot_min)
-                ]
-            return [
-                item for item in enriched if int(item.get("llm_score") or 0) >= current_cutoff
-            ]
+        item["delivery_score"] = delivery_score
+        item["restaurant_review_score"] = review_score
 
-        filtered_items = _by_cutoff(cutoff)
-        while len(filtered_items) < target_count and cutoff > 40:
-            cutoff -= 4
-            filtered_items = _by_cutoff(cutoff)
+    if personalized:
+        user_taste = build_taste_vector_from_text(req.preference_text)
+        user_taste_vector = [
+            float(user_taste.get("salty", 0.5)),
+            float(user_taste.get("sweet", 0.5)),
+            float(user_taste.get("sour", 0.5)),
+            float(user_taste.get("umami", 0.5)),
+            float(user_taste.get("spicy", 0.5)),
+        ]
+        user_embedding = build_text_embedding(req.preference_text)
 
-        # 컷오프 완화 후에도 비어 있으면 LLM 상위 매장을 최소 개수만큼 노출
-        if not filtered_items and enriched:
-            if spicy_level in {"hot", "spicy", "매운맛", "3"}:
-                emergency_hot = [
-                    item for item in enriched if _passes_hot_gate(item, 0.35)
-                ]
-                source = emergency_hot if emergency_hot else enriched
-            else:
-                source = enriched
-            filtered_items = sorted(source, key=lambda item: int(item.get("llm_score") or 0), reverse=True)[:target_count]
+        flavor_rows = _fetch_menu_flavors(conn, restaurant_ids, req)
+        restaurants_by_id = {int(item["id"]): item for item in enriched}
+        menu_candidates: list[dict[str, Any]] = []
 
-        # 매운맛 결과가 너무 적으면, 매운 시그니처가 있는 차선 후보를 보충한다.
-        if spicy_level in {"hot", "spicy", "매운맛", "3"} and len(filtered_items) < target_count and enriched:
-            fallback_min = _parse_float_env("HOT_SIGNATURE_FALLBACK_MIN", 0.30)
-            supplement_source = [item for item in enriched if _passes_hot_gate(item, fallback_min)]
-            if not supplement_source:
-                supplement_source = enriched
+        for row in flavor_rows:
+            rest_id = int(row.get("restaurant_id") or 0)
+            rest = restaurants_by_id.get(rest_id)
+            if rest is None:
+                continue
 
-            existing_ids = {int(item["id"]) for item in filtered_items if item.get("id") is not None}
-            supplement_sorted = sorted(
-                supplement_source,
-                key=lambda item: (
-                    int(item.get("llm_score") or 0),
-                    _spicy_signature_strength(item),
-                    -float(item.get("total_eta") or 9999),
-                ),
-                reverse=True,
+            menu_price = float(row.get("price") or 0.0)
+            preference_score = _calculate_menu_preference_score(
+                row=row,
+                user_taste_vector=user_taste_vector,
+                user_embedding=user_embedding,
+            )
+            menu_candidates.append(
+                {
+                    "menu_id": int(row["menu_id"]),
+                    "menu_name": row.get("menu_name"),
+                    "menu_price": menu_price,
+                    "menu_image_url": row.get("menu_image_url"),
+                    "restaurant_id": rest_id,
+                    "restaurant": rest,
+                    "delivery_score": float(rest["delivery_score"]),
+                    "review_score": float(rest["restaurant_review_score"]),
+                    "preference_score": preference_score,
+                    "estimated_total_time": float(rest["total_eta"]),
+                    "queuing_wait": float(rest["queuing_wait"]),
+                    "is_peak_time": bool(rest["is_peak_time"]),
+                }
             )
 
-            for item in supplement_sorted:
-                item_id = item.get("id")
-                if item_id is None:
-                    continue
-                normalized_id = int(item_id)
-                if normalized_id in existing_ids:
-                    continue
-                filtered_items.append(item)
-                existing_ids.add(normalized_id)
-                if len(filtered_items) >= target_count:
-                    break
+        if not menu_candidates:
+            return RecommendationResponse(
+                mode="personalized",
+                user_type=req.user_type or None,
+                preference_text=req.preference_text,
+                count=0,
+                items=[],
+            )
 
-    # 기본 노출은 항상 배달 ETA 순
-    sorted_items = sorted(filtered_items, key=lambda item: float(item["total_eta"]))
-    selected = sorted_items[: req.limit]
+        menu_prices = [float(item["menu_price"]) for item in menu_candidates]
+        min_menu_price = min(menu_prices)
+        max_menu_price = max(menu_prices)
 
-    response_items = [
-        RestaurantResponse(
-            id=item["id"],
-            name=item["name"],
-            category_id=item.get("category_id"),
-            category_name=_normalize_category_name(item.get("category_id"), item.get("category_name")),
-            address=item.get("address"),
-            rating=float(item.get("rating_value") or 0.0),
-            main_menu=item.get("main_menu"),
-            main_menu_price=int(item["main_menu_price"]) if item.get("main_menu_price") is not None else None,
-            image_url=(item.get("main_menu_image_url") or item.get("restaurant_image_url") or None),
-            prep_time=int(item["prep_time"]) if item.get("prep_time") is not None else None,
-            delivery_time=int(item["delivery_time"]) if item.get("delivery_time") is not None else None,
-            estimated_total_time=float(item["total_eta"]),
-            queuing_wait=float(item["queuing_wait"]),
-            is_peak_time=bool(item["is_peak_time"]),
-            llm_score=int(item.get("llm_score") or 0),
-            final_score=float(item["final_score"]),
+        for item in menu_candidates:
+            if max_menu_price == min_menu_price:
+                price_score = 1.0
+            else:
+                price_score = _clip01(
+                    1.0 - ((float(item["menu_price"]) - min_menu_price) / (max_menu_price - min_menu_price))
+                )
+            item["price_score"] = price_score
+            item["final_score"] = (
+                (float(item["delivery_score"]) * weights["delivery"])
+                + (price_score * weights["price"])
+                + (float(item["review_score"]) * weights["review"])
+                + (float(item["preference_score"]) * weights["preference"])
+            )
+            item["recommendation_reason"] = _reason_text(
+                float(item["delivery_score"]),
+                price_score,
+                float(item["review_score"]),
+                float(item["preference_score"]),
+                True,
+            )
+
+        sorted_items = sorted(
+            menu_candidates,
+            key=lambda item: (float(item["final_score"]), -float(item["estimated_total_time"])),
+            reverse=True,
         )
-        for item in selected
-    ]
+        selected = sorted_items[: req.limit]
+        response_items = [
+            RestaurantResponse(
+                menu_id=int(item["menu_id"]),
+                id=int(item["restaurant_id"]),
+                name=str(item.get("menu_name") or ""),
+                restaurant_name=str(item["restaurant"].get("name") or ""),
+                category_id=item["restaurant"].get("category_id"),
+                category_name=_normalize_category_name(
+                    item["restaurant"].get("category_id"),
+                    item["restaurant"].get("category_name"),
+                ),
+                address=item["restaurant"].get("address"),
+                rating=float(item["restaurant"].get("rating_value") or 0.0),
+                main_menu=str(item.get("menu_name") or ""),
+                main_menu_price=int(item["menu_price"]) if item.get("menu_price") is not None else None,
+                image_url=(
+                    item.get("menu_image_url")
+                    or item["restaurant"].get("main_menu_image_url")
+                    or item["restaurant"].get("restaurant_image_url")
+                    or None
+                ),
+                prep_time=int(item["restaurant"]["prep_time"]) if item["restaurant"].get("prep_time") is not None else None,
+                delivery_time=(
+                    int(item["restaurant"]["delivery_time"])
+                    if item["restaurant"].get("delivery_time") is not None
+                    else None
+                ),
+                estimated_total_time=float(item["estimated_total_time"]),
+                queuing_wait=float(item["queuing_wait"]),
+                is_peak_time=bool(item["is_peak_time"]),
+                delivery_score=float(item["delivery_score"]),
+                price_score=float(item["price_score"]),
+                restaurant_review_score=float(item["review_score"]),
+                preference_score=float(item["preference_score"]),
+                final_score=float(item["final_score"]),
+                recommendation_reason=str(item["recommendation_reason"]),
+            )
+            for item in selected
+        ]
+        mode = "personalized"
+    else:
+        for item in enriched:
+            price = float(item.get("main_menu_price") or 0.0)
+            if max_price == min_price:
+                price_score = 1.0
+            else:
+                price_score = _clip01(1.0 - ((price - min_price) / (max_price - min_price)))
+            item["price_score"] = price_score
+            item["preference_score"] = 0.5
+            item["final_score"] = float(item["delivery_score"])
+            item["recommendation_reason"] = _reason_text(
+                float(item["delivery_score"]),
+                price_score,
+                float(item["restaurant_review_score"]),
+                0.5,
+                False,
+            )
+
+        sorted_items = sorted(enriched, key=lambda item: float(item["total_eta"]))
+        selected = sorted_items[: req.limit]
+        response_items = [
+            RestaurantResponse(
+                menu_id=None,
+                id=item["id"],
+                name=item["name"],
+                restaurant_name=item.get("name"),
+                category_id=item.get("category_id"),
+                category_name=_normalize_category_name(item.get("category_id"), item.get("category_name")),
+                address=item.get("address"),
+                rating=float(item.get("rating_value") or 0.0),
+                main_menu=item.get("main_menu"),
+                main_menu_price=int(item["main_menu_price"]) if item.get("main_menu_price") is not None else None,
+                image_url=(item.get("main_menu_image_url") or item.get("restaurant_image_url") or None),
+                prep_time=int(item["prep_time"]) if item.get("prep_time") is not None else None,
+                delivery_time=int(item["delivery_time"]) if item.get("delivery_time") is not None else None,
+                estimated_total_time=float(item["total_eta"]),
+                queuing_wait=float(item["queuing_wait"]),
+                is_peak_time=bool(item["is_peak_time"]),
+                delivery_score=float(item.get("delivery_score") or 0.0),
+                price_score=float(item.get("price_score") or 0.0),
+                restaurant_review_score=float(item.get("restaurant_review_score") or 0.5),
+                preference_score=float(item.get("preference_score") or 0.5),
+                final_score=float(item.get("final_score") or 0.0),
+                recommendation_reason=item.get("recommendation_reason"),
+            )
+            for item in selected
+        ]
+        mode = "default_delivery"
 
     return RecommendationResponse(
-        weather_status=weather_status,
-        weather_temp=weather_temp,
+        mode=mode,
+        user_type=req.user_type or None,
+        preference_text=req.preference_text,
         count=len(response_items),
         items=response_items,
     )
@@ -561,11 +733,10 @@ def _build_request_from_query(
     category_ids: str | None,
     min_price: int,
     max_price: int,
-    spicy_level: str,
-    weather_filter: bool,
+    user_type: str,
+    preference_text: str,
     limit: int,
 ) -> RecommendationRequest:
-    # 카테고리 문자열 파싱
     parsed_categories: list[int] = []
     if category_ids:
         parsed_categories = [
@@ -578,15 +749,14 @@ def _build_request_from_query(
         category_ids=parsed_categories,
         min_price=min_price,
         max_price=max_price,
-        spicy_level=spicy_level,
-        weather_filter=weather_filter,
+        user_type=user_type,
+        preference_text=preference_text,
         limit=limit,
     )
 
 
 @app.on_event("startup")
 def on_startup() -> None:
-    # 배달시간 워커 시작 조건
     should_start_worker = os.getenv("ENABLE_DELIVERY_WORKER", "false").lower() in {
         "1",
         "true",
@@ -598,7 +768,6 @@ def on_startup() -> None:
 
 @app.on_event("shutdown")
 def on_shutdown() -> None:
-    # 스케줄러 종료 처리
     if scheduler.running:
         scheduler.shutdown(wait=False)
 
@@ -619,7 +788,6 @@ def health_check() -> dict[str, Any]:
 
 @app.get("/categories", response_model=list[CategoryResponse])
 def get_categories() -> list[CategoryResponse]:
-    # 카테고리 목록 조회
     conn = get_db_connection()
     try:
         with conn.cursor() as cursor:
@@ -644,29 +812,55 @@ def get_categories() -> list[CategoryResponse]:
         conn.close()
 
 
+@app.get("/restaurants/{restaurant_id}/menus", response_model=list[MenuResponse])
+def get_restaurant_menus(restaurant_id: int) -> list[MenuResponse]:
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                "SELECT id, restaurant_id, menu_name, price, image_url"
+                " FROM menus WHERE restaurant_id=%s ORDER BY id ASC",
+                (restaurant_id,),
+            )
+            rows = cursor.fetchall()
+            return [
+                MenuResponse(
+                    id=row["id"],
+                    restaurant_id=row["restaurant_id"],
+                    menu_name=row["menu_name"] or "",
+                    price=row.get("price"),
+                    image_url=row.get("image_url"),
+                )
+                for row in rows
+            ]
+    except pymysql.MySQLError as error:
+        raise HTTPException(status_code=500, detail=f"DB error: {error}") from error
+    finally:
+        conn.close()
+
+
 @app.get("/restaurants", response_model=RecommendationResponse)
 def get_restaurants(
     category_ids: str | None = Query(default=None, description="Comma-separated ids. Example: 1,2"),
     min_price: int = Query(default=2000, ge=0),
     max_price: int = Query(default=100000, ge=0),
-    spicy_level: str = Query(default=""),
-    weather_filter: bool = Query(default=False),
+    user_type: str = Query(default=""),
+    preference_text: str = Query(default=""),
     limit: int = Query(default=30, ge=1, le=100),
 ) -> RecommendationResponse:
-    # 리스트 조회 엔드포인트
     request = _build_request_from_query(
         category_ids=category_ids,
         min_price=min_price,
         max_price=max_price,
-        spicy_level=spicy_level,
-        weather_filter=weather_filter,
+        user_type=user_type,
+        preference_text=preference_text,
         limit=limit,
     )
 
     conn = get_db_connection()
     try:
         rows = _fetch_base_candidates(conn, request)
-        return _rank_recommendations(request, rows)
+        return _rank_recommendations(request, rows, conn)
     except pymysql.MySQLError as error:
         raise HTTPException(status_code=500, detail=f"DB error: {error}") from error
     finally:
@@ -675,11 +869,10 @@ def get_restaurants(
 
 @app.post("/recommendations", response_model=RecommendationResponse)
 def get_recommendations(request: RecommendationRequest) -> RecommendationResponse:
-    # JSON body 기반 조회 엔드포인트
     conn = get_db_connection()
     try:
         rows = _fetch_base_candidates(conn, request)
-        return _rank_recommendations(request, rows)
+        return _rank_recommendations(request, rows, conn)
     except pymysql.MySQLError as error:
         raise HTTPException(status_code=500, detail=f"DB error: {error}") from error
     finally:
@@ -690,7 +883,7 @@ if __name__ == "__main__":
     import uvicorn
 
     uvicorn.run(
-        app,
+        "main:app",
         host=os.getenv("APP_HOST", "0.0.0.0"),
         port=_parse_int_env("APP_PORT", 8000),
         reload=_parse_bool_env("APP_RELOAD", True),
