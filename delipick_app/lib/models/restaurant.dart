@@ -103,6 +103,32 @@ class RecommendationData {
   }
 }
 
+class MenuItem {
+  final int id;
+  final int restaurantId;
+  final String menuName;
+  final int? price;
+  final String? imageUrl;
+
+  const MenuItem({
+    required this.id,
+    required this.restaurantId,
+    required this.menuName,
+    this.price,
+    this.imageUrl,
+  });
+
+  factory MenuItem.fromJson(Map<String, dynamic> json) {
+    return MenuItem(
+      id: (json['id'] as num).toInt(),
+      restaurantId: (json['restaurant_id'] as num).toInt(),
+      menuName: json['menu_name'] as String? ?? '',
+      price: (json['price'] as num?)?.toInt(),
+      imageUrl: json['image_url'] as String?,
+    );
+  }
+}
+
 class CategoryItem {
   final int id;
   final String name;

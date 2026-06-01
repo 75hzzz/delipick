@@ -20,7 +20,7 @@ git merge origin/merge-test
 
 # 4. **플러터 터미널**에서 (새로 추가된 패키지나 라이브러리) 패키지 동기화
 flutter pub get
-
+```
 # 2. 데이터 베이스 구축
 
 ### 폴더 구조

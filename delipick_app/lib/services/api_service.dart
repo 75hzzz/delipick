@@ -174,6 +174,24 @@ class DelipickApiService {
     return responseBody;
   }
 
+  Future<List<MenuItem>> fetchMenus(int restaurantId) async {
+    final uri = Uri.parse('$baseUrl/restaurants/$restaurantId/menus');
+    final response = await _client.get(uri).timeout(_requestTimeout);
+
+    if (response.statusCode != 200) {
+      throw ApiException('메뉴 조회 실패 (${response.statusCode})');
+    }
+
+    final body = utf8.decode(response.bodyBytes);
+    final dynamic data = jsonDecode(body);
+
+    if (data is! List) {
+      throw const ApiException('메뉴 응답 형식이 올바르지 않습니다.');
+    }
+
+    return data.whereType<Map<String, dynamic>>().map(MenuItem.fromJson).toList();
+  }
+
   void dispose() {
     _client.close();
   }
