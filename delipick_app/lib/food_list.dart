@@ -1,11 +1,14 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import 'food_filter.dart';
+import 'cart_screen.dart';
 import 'food_list_category.dart';
 import 'food_list_price.dart';
+import 'menu_list_screen.dart';
+import 'models/cart.dart';
 import 'models/restaurant.dart';
 import 'services/api_service.dart';
+import 'taste_preference.dart';
 
 class FoodListScreen extends StatefulWidget {
   const FoodListScreen({super.key});
@@ -15,27 +18,21 @@ class FoodListScreen extends StatefulWidget {
 }
 
 class _FoodListScreenState extends State<FoodListScreen> {
-  // 가격 필터 기본값
   static const RangeValues _defaultPriceRange = RangeValues(2000, 100000);
   static const Color _delipickBlue = Color(0xFF64B5F6);
 
-  // API 클라이언트
   final DelipickApiService _apiService = DelipickApiService();
 
-  // 사용자 선택 상태
   List<int> selectedCategories = [];
   RangeValues selectedPriceRange = _defaultPriceRange;
-  String currentSpiciness = '';
-  bool currentWeatherFilter = false;
+  String currentUserType = '';
+  String currentPreferenceText = '';
 
-  // 화면 렌더링 상태
   bool isLoading = true;
   String? errorMessage;
-  String weatherStatus = '맑음';
-  double weatherTemp = 20;
+  String currentMode = 'default_delivery';
   List<RestaurantItem> restaurants = [];
 
-  // 카테고리 fallback 목록
   List<CategoryItem> availableCategories = const [
     CategoryItem(id: 1, name: '한식', imageAsset: 'assets/korean_food.png'),
     CategoryItem(id: 2, name: '중식', imageAsset: 'assets/chinese_food.png'),
@@ -59,7 +56,6 @@ class _FoodListScreenState extends State<FoodListScreen> {
   }
 
   Future<void> _initialize() async {
-    // 앱 시작 시 카테고리 사전 조회
     try {
       final categories = await _apiService.fetchCategories();
       if (categories.isNotEmpty && mounted) {
@@ -75,7 +71,6 @@ class _FoodListScreenState extends State<FoodListScreen> {
   }
 
   Future<void> _fetchRestaurants({required bool showLoading}) async {
-    // 리스트 재조회
     if (showLoading && mounted) {
       setState(() {
         isLoading = true;
@@ -84,14 +79,13 @@ class _FoodListScreenState extends State<FoodListScreen> {
     }
 
     try {
-      // 요청 파라미터 구성
       final response = await _apiService.fetchRecommendations(
         RecommendationQuery(
           categoryIds: selectedCategories,
           minPrice: selectedPriceRange.start.toInt(),
           maxPrice: selectedPriceRange.end.toInt(),
-          spicyLevel: currentSpiciness,
-          weatherFilter: currentWeatherFilter,
+          userType: currentUserType,
+          preferenceText: currentPreferenceText,
           limit: 50,
         ),
       );
@@ -99,17 +93,14 @@ class _FoodListScreenState extends State<FoodListScreen> {
       if (!mounted) return;
 
       setState(() {
-        // 성공 상태 반영
         restaurants = response.items;
-        weatherStatus = response.weatherStatus;
-        weatherTemp = response.weatherTemp;
+        currentMode = response.mode;
         errorMessage = null;
       });
     } catch (e) {
       if (!mounted) return;
       final message = e is ApiException ? e.message : '네트워크 오류가 발생했습니다.';
       setState(() {
-        // 실패 상태 반영
         restaurants = [];
         errorMessage = message;
       });
@@ -123,7 +114,6 @@ class _FoodListScreenState extends State<FoodListScreen> {
   }
 
   String formatKoreanPrice(double value) {
-    // 원화 단위 문자열 변환
     final int price = value.toInt();
     if (price < 10000) return '${NumberFormat('#,###').format(price)}원';
     final int man = price ~/ 10000;
@@ -133,7 +123,6 @@ class _FoodListScreenState extends State<FoodListScreen> {
   }
 
   String _displayCategoryName(RestaurantItem item) {
-    // 카테고리명 fallback 처리
     final raw = item.categoryName?.trim() ?? '';
     if (raw.isNotEmpty && !raw.contains('?')) {
       return raw;
@@ -147,13 +136,26 @@ class _FoodListScreenState extends State<FoodListScreen> {
     return '';
   }
 
+  String _userTypeLabel(String type) {
+    switch (type) {
+      case 'convenience':
+        return '편의형';
+      case 'gourmet':
+        return '미식형';
+      case 'budget':
+        return '경제형';
+      default:
+        return '미선택';
+    }
+  }
+
   Future<void> _resetFilters() async {
-    // 필터 초기화
     setState(() {
       selectedCategories = [];
       selectedPriceRange = _defaultPriceRange;
-      currentSpiciness = '';
-      currentWeatherFilter = false;
+      currentUserType = '';
+      currentPreferenceText = '';
+      currentMode = 'default_delivery';
     });
     await _fetchRestaurants(showLoading: true);
   }
@@ -171,33 +173,30 @@ class _FoodListScreenState extends State<FoodListScreen> {
                 SafeArea(
                   bottom: false,
                   child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
+                    padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
                         Align(
                           alignment: Alignment.centerLeft,
                           child: IconButton(
-                            icon: const Icon(Icons.tune,
+                            icon: const Icon(Icons.psychology_outlined,
                                 color: Colors.black, size: 28),
                             onPressed: () async {
                               final result = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => FoodFilterScreen(
-                                    initialSpiciness: currentSpiciness,
-                                    initialWeather: currentWeatherFilter,
+                                  builder: (context) => TastePreferenceScreen(
+                                    initialUserType: currentUserType,
+                                    initialPreferenceText: currentPreferenceText,
                                   ),
                                 ),
                               );
 
                               if (result != null && result is Map) {
                                 setState(() {
-                                  currentSpiciness =
-                                      result['spiciness'] as String? ?? '';
-                                  currentWeatherFilter =
-                                      result['weather'] as bool? ?? false;
+                                  currentUserType = result['userType'] as String? ?? '';
+                                  currentPreferenceText = result['preferenceText'] as String? ?? '';
                                 });
                                 await _fetchRestaurants(showLoading: true);
                               }
@@ -219,6 +218,58 @@ class _FoodListScreenState extends State<FoodListScreen> {
                             ),
                           ),
                         ),
+                        // 장바구니 아이콘 (헤더 오른쪽 끝)
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: ListenableBuilder(
+                            listenable: cartModel,
+                            builder: (context, _) {
+                              final count = cartModel.totalCount;
+                              return Stack(
+                                clipBehavior: Clip.none,
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.shopping_cart_outlined,
+                                      color: Colors.black,
+                                      size: 28,
+                                    ),
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => const CartScreen(),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                  if (count > 0)
+                                    Positioned(
+                                      top: 4,
+                                      right: 4,
+                                      child: Container(
+                                        width: 18,
+                                        height: 18,
+                                        decoration: const BoxDecoration(
+                                          color: Colors.red,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          count > 99 ? '99+' : '$count',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              );
+                            },
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -234,8 +285,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
                     child: const Row(
                       children: [
                         SizedBox(width: 12),
-                        Icon(Icons.location_on_outlined,
-                            color: Colors.grey, size: 20),
+                        Icon(Icons.location_on_outlined, color: Colors.grey, size: 20),
                         SizedBox(width: 8),
                         Text(
                           '동아대 승학캠퍼스',
@@ -266,8 +316,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
                           border: Border.all(color: Colors.grey[300]!),
                           shape: BoxShape.circle,
                         ),
-                        child:
-                            Icon(Icons.refresh, size: 20, color: Colors.grey[700]),
+                        child: Icon(Icons.refresh, size: 20, color: Colors.grey[700]),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -280,14 +329,27 @@ class _FoodListScreenState extends State<FoodListScreen> {
               ),
             ),
           ),
-          if (currentWeatherFilter)
+          if (currentPreferenceText.isNotEmpty)
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  '날씨: $weatherStatus ${weatherTemp.toStringAsFixed(1)}°C',
+                  '${_userTypeLabel(currentUserType)} · "$currentPreferenceText"',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(fontSize: 13, color: Colors.grey),
+                ),
+              ),
+            ),
+          if (currentPreferenceText.isEmpty)
+            const Padding(
+              padding: EdgeInsets.fromLTRB(16, 0, 16, 10),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  '기본 정렬: 배달 빠른 순',
+                  style: TextStyle(fontSize: 13, color: Colors.grey),
                 ),
               ),
             ),
@@ -298,7 +360,6 @@ class _FoodListScreenState extends State<FoodListScreen> {
   }
 
   Widget _buildCategoryButton() {
-    // 카테고리 바텀시트
     final bool isActive = selectedCategories.isNotEmpty;
     return GestureDetector(
       onTap: () async {
@@ -326,9 +387,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
   }
 
   Widget _buildPriceButton() {
-    // 가격 바텀시트
-    final bool isActive = !(selectedPriceRange.start == 2000 &&
-        selectedPriceRange.end == 100000);
+    final bool isActive = !(selectedPriceRange.start == 2000 && selectedPriceRange.end == 100000);
 
     return GestureDetector(
       onTap: () async {
@@ -355,7 +414,6 @@ class _FoodListScreenState extends State<FoodListScreen> {
   }
 
   Widget _buildFilterButton(IconData icon, String label, bool isActive) {
-    // 공통 필터 칩
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
@@ -386,12 +444,10 @@ class _FoodListScreenState extends State<FoodListScreen> {
   }
 
   Widget _buildRestaurantSection() {
-    // 로딩 상태
     if (isLoading) {
       return const Center(child: CircularProgressIndicator(color: _delipickBlue));
     }
 
-    // 에러 상태
     if (errorMessage != null) {
       return Center(
         child: Padding(
@@ -421,12 +477,11 @@ class _FoodListScreenState extends State<FoodListScreen> {
       );
     }
 
-    // 빈 결과 상태
     if (restaurants.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
-          '조건에 맞는 식당이 없습니다.',
-          style: TextStyle(color: Colors.grey),
+          currentMode == 'personalized' ? '조건에 맞는 음식이 없습니다.' : '조건에 맞는 식당이 없습니다.',
+          style: const TextStyle(color: Colors.grey),
         ),
       );
     }
@@ -442,8 +497,20 @@ class _FoodListScreenState extends State<FoodListScreen> {
   }
 
   Widget _buildRestaurantCard(RestaurantItem item) {
-    // 식당 카드
-    return Container(
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MenuListScreen(
+              restaurantId: item.id,
+              restaurantName: item.restaurantName ?? item.name,
+              deliveryTime: item.estimatedTotalTime.round(),
+            ),
+          ),
+        );
+      },
+      child: Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -489,6 +556,16 @@ class _FoodListScreenState extends State<FoodListScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                  if (currentMode == 'personalized' && (item.restaurantName ?? '').isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 2),
+                      child: Text(
+                        item.restaurantName!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
+                    ),
                   const SizedBox(height: 2),
                   Row(
                     children: [
@@ -501,17 +578,20 @@ class _FoodListScreenState extends State<FoodListScreen> {
                           _displayCategoryName(item),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style:
-                              const TextStyle(fontSize: 12, color: Colors.grey),
+                          style: const TextStyle(fontSize: 12, color: Colors.grey),
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    item.mainMenuPrice == null
-                        ? (item.mainMenu ?? '-')
-                        : '${item.mainMenu ?? '-'} · ${NumberFormat('#,###').format(item.mainMenuPrice)}원',
+                    currentMode == 'personalized'
+                        ? (item.mainMenuPrice == null
+                            ? '-'
+                            : '${NumberFormat('#,###').format(item.mainMenuPrice)}원')
+                        : (item.mainMenuPrice == null
+                            ? (item.mainMenu ?? '-')
+                            : '${item.mainMenu ?? '-'} · ${NumberFormat('#,###').format(item.mainMenuPrice)}원'),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(fontSize: 13, color: Colors.black87),
@@ -532,12 +612,23 @@ class _FoodListScreenState extends State<FoodListScreen> {
                       ),
                     ),
                   ),
+                  if (currentMode == 'personalized' && (item.recommendationReason ?? '').isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 6),
+                      child: Text(
+                        item.recommendationReason!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
+                    ),
                 ],
               ),
             ),
           ),
         ],
       ),
-    );
+    ), // Container
+    ); // GestureDetector
   }
 }
