@@ -45,7 +45,7 @@ class ApiException implements Exception {
 class DelipickApiService {
   static const String _defaultBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://10.0.2.2:8000',
+    defaultValue: 'http://192.168.35.119:8000',
   );
   static const Duration _requestTimeout = Duration(seconds: 12);
 
