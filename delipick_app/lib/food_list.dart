@@ -1,8 +1,11 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'cart_screen.dart';
 import 'food_list_category.dart';
 import 'food_list_price.dart';
+import 'menu_list_screen.dart';
+import 'models/cart.dart';
 import 'models/restaurant.dart';
 import 'services/api_service.dart';
 import 'taste_preference.dart';
@@ -242,6 +245,58 @@ class _FoodListScreenState extends State<FoodListScreen> {
                                 color: Colors.white,
                               ),
                             ),
+                          ),
+                        ),
+                        // 장바구니 아이콘 (헤더 오른쪽 끝)
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: ListenableBuilder(
+                            listenable: cartModel,
+                            builder: (context, _) {
+                              final count = cartModel.totalCount;
+                              return Stack(
+                                clipBehavior: Clip.none,
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.shopping_cart_outlined,
+                                      color: Colors.black,
+                                      size: 28,
+                                    ),
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => const CartScreen(),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                  if (count > 0)
+                                    Positioned(
+                                      top: 4,
+                                      right: 4,
+                                      child: Container(
+                                        width: 18,
+                                        height: 18,
+                                        decoration: const BoxDecoration(
+                                          color: Colors.red,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          count > 99 ? '99+' : '$count',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              );
+                            },
                           ),
                         ),
                       ],
@@ -493,123 +548,137 @@ class _FoodListScreenState extends State<FoodListScreen> {
   }
 
   Widget _buildRestaurantCard(RestaurantItem item) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 3, offset: Offset(0, 1)),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 90,
-            height: 90,
-            margin: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: item.imageUrl == null || item.imageUrl!.isEmpty
-                  ? const Icon(Icons.fastfood, color: Colors.white)
-                  : Image.network(
-                item.imageUrl!,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                const Icon(Icons.fastfood, color: Colors.white),
-              ),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MenuListScreen(
+              restaurantId: item.id,
+              restaurantName: item.restaurantName ?? item.name,
+              deliveryTime: item.estimatedTotalTime.round(),
             ),
           ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(right: 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    item.name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  if (currentMode == 'personalized' && (item.restaurantName ?? '').isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 2),
-                      child: Text(
-                        item.restaurantName!,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontSize: 12, color: Colors.grey),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: const [
+            BoxShadow(color: Colors.black12, blurRadius: 3, offset: Offset(0, 1)),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 90,
+              height: 90,
+              margin: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: item.imageUrl == null || item.imageUrl!.isEmpty
+                    ? const Icon(Icons.fastfood, color: Colors.white)
+                    : Image.network(
+                  item.imageUrl!,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) =>
+                  const Icon(Icons.fastfood, color: Colors.white),
+                ),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  const SizedBox(height: 2),
-                  Row(
-                    children: [
-                      const Icon(Icons.star, color: Colors.orange, size: 18),
-                      const SizedBox(width: 2),
-                      Text(item.rating.toStringAsFixed(1)),
-                      const SizedBox(width: 8),
-                      Flexible(
+                    if (currentMode == 'personalized' && (item.restaurantName ?? '').isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
                         child: Text(
-                          _displayCategoryName(item),
+                          item.restaurantName!,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(fontSize: 12, color: Colors.grey),
                         ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    currentMode == 'personalized'
-                        ? (item.mainMenuPrice == null
-                        ? '-'
-                        : '${NumberFormat('#,###').format(item.mainMenuPrice)}원')
-                        : (item.mainMenuPrice == null
-                        ? (item.mainMenu ?? '-')
-                        : '${item.mainMenu ?? '-'} · ${NumberFormat('#,###').format(item.mainMenuPrice)}원'),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontSize: 13, color: Colors.black87),
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.fromLTRB(10, 6, 12, 6),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFE3F2FD),
-                      borderRadius: BorderRadius.circular(4),
+                    const SizedBox(height: 2),
+                    Row(
+                      children: [
+                        const Icon(Icons.star, color: Colors.orange, size: 18),
+                        const SizedBox(width: 2),
+                        Text(item.rating.toStringAsFixed(1)),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Text(
+                            _displayCategoryName(item),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 12, color: Colors.grey),
+                          ),
+                        ),
+                      ],
                     ),
-                    child: Text(
-                      '예상 배달 시간: ${item.estimatedTotalTime.toStringAsFixed(0)}분',
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500,
+                    const SizedBox(height: 6),
+                    Text(
+                      currentMode == 'personalized'
+                          ? (item.mainMenuPrice == null
+                          ? '-'
+                          : '${NumberFormat('#,###').format(item.mainMenuPrice)}원')
+                          : (item.mainMenuPrice == null
+                          ? (item.mainMenu ?? '-')
+                          : '${item.mainMenu ?? '-'} · ${NumberFormat('#,###').format(item.mainMenuPrice)}원'),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontSize: 13, color: Colors.black87),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(10, 6, 12, 6),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFE3F2FD),
+                        borderRadius: BorderRadius.circular(4),
                       ),
-                    ),
-                  ),
-                  if (currentMode == 'personalized' && (item.recommendationReason ?? '').isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 6),
                       child: Text(
-                        item.recommendationReason!,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontSize: 12, color: Colors.grey),
+                        '예상 배달 시간: ${item.estimatedTotalTime.toStringAsFixed(0)}분',
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
-                ],
+                    if (currentMode == 'personalized' && (item.recommendationReason ?? '').isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 6),
+                        child: Text(
+                          item.recommendationReason!,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontSize: 12, color: Colors.grey),
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

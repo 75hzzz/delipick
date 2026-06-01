@@ -97,6 +97,14 @@ class RecommendationResponse(BaseModel):
     items: list[RestaurantResponse]
 
 
+class MenuResponse(BaseModel):
+    id: int
+    restaurant_id: int
+    menu_name: str
+    price: int | None = None
+    image_url: str | None = None
+
+
 def _parse_allowed_origins() -> list[str]:
     raw = os.getenv("CORS_ALLOW_ORIGINS", "*")
     values = [origin.strip() for origin in raw.split(",") if origin.strip()]
@@ -795,6 +803,33 @@ def get_categories() -> list[CategoryResponse]:
                         row.get("category_name"),
                     )
                     or "",
+                )
+                for row in rows
+            ]
+    except pymysql.MySQLError as error:
+        raise HTTPException(status_code=500, detail=f"DB error: {error}") from error
+    finally:
+        conn.close()
+
+
+@app.get("/restaurants/{restaurant_id}/menus", response_model=list[MenuResponse])
+def get_restaurant_menus(restaurant_id: int) -> list[MenuResponse]:
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                "SELECT id, restaurant_id, menu_name, price, image_url"
+                " FROM menus WHERE restaurant_id=%s ORDER BY id ASC",
+                (restaurant_id,),
+            )
+            rows = cursor.fetchall()
+            return [
+                MenuResponse(
+                    id=row["id"],
+                    restaurant_id=row["restaurant_id"],
+                    menu_name=row["menu_name"] or "",
+                    price=row.get("price"),
+                    image_url=row.get("image_url"),
                 )
                 for row in rows
             ]

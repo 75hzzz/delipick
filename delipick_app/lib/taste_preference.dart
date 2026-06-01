@@ -244,10 +244,10 @@ class _TastePreferenceScreenState extends State<TastePreferenceScreen> {
                         margin: const EdgeInsets.only(bottom: 14),
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                         decoration: BoxDecoration(
-                          color: Colors.white, // 상자 내부 배경색을 투명한 흰색으로 변경!
+                          color: Colors.white,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: Colors.grey[300]!, // 테두리 선을 은은한 회색으로 유지
+                            color: Colors.grey[300]!,
                             width: 1.2,
                           ),
                         ),
@@ -281,7 +281,7 @@ class _TastePreferenceScreenState extends State<TastePreferenceScreen> {
                                     value: currentLevel.toDouble(),
                                     min: 0,
                                     max: 2,
-                                    divisions: 2, // 3단계(낮음/중간/높음) 이산적 값 선택을 위해 스텝 분할 제한
+                                    divisions: 2,
                                     onChanged: (value) {
                                       setState(() {
                                         tasteLevels[key] = value.toInt();
