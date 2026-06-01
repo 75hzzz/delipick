@@ -25,6 +25,16 @@ class _FoodListScreenState extends State<FoodListScreen> {
   String currentUserType = '';
   String currentPreferenceText = '';
 
+  // 각 맛의 세부 조절 단계 관리 (0: 낮음, 1: 중간, 2: 높음)
+  // 기본 중간 (아무것도 선택X)
+  Map<String, int> currentTasteLevels = {
+    'salty': 1,
+    'sweet': 1,
+    'sour': 1,
+    'spicy': 1,
+    'umami': 1,
+  };
+
   bool isLoading = true;
   String? errorMessage;
   String currentMode = 'default_delivery';
@@ -61,7 +71,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
         });
       }
     } catch (_) {
-      // 카테고리 실패 시 기본 값 유지
+      // API 조회 실패 시 하드코딩된 대안 상수를 유지하기 위한 예외 방어
     }
 
     await _fetchRestaurants(showLoading: true);
@@ -153,12 +163,27 @@ class _FoodListScreenState extends State<FoodListScreen> {
       currentUserType = '';
       currentPreferenceText = '';
       currentMode = 'default_delivery';
+      currentTasteLevels = {
+        'salty': 1,
+        'sweet': 1,
+        'sour': 1,
+        'spicy': 1,
+        'umami': 1,
+      };
     });
     await _fetchRestaurants(showLoading: true);
   }
 
   @override
   Widget build(BuildContext context) {
+    // 상단 텍스트 출력용 상태 활성화 여부 계산
+    final bool hasUserType = currentUserType.isNotEmpty;
+    // 모든 맛 레벨 중 하나라도 기본값(1)에서 어긋났는지 검증하여 변경 여부 판단
+    final bool hasCustomTaste = currentTasteLevels.values.any((level) => level != 1);
+
+    // 요구사항에 맞춰 자연어 입력(PreferenceText) 유무는 상단 라벨 활성화 조건에서 영구 배제
+    final bool showFilterLabel = hasUserType || hasCustomTaste;
+
     return Scaffold(
       body: Column(
         children: [
@@ -177,7 +202,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
                         Align(
                           alignment: Alignment.centerLeft,
                           child: IconButton(
-                            icon: const Icon(Icons.psychology_outlined,
+                            icon: const Icon(Icons.settings_outlined,
                                 color: Colors.black, size: 28),
                             onPressed: () async {
                               final result = await Navigator.push(
@@ -186,6 +211,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
                                   builder: (context) => TastePreferenceScreen(
                                     initialUserType: currentUserType,
                                     initialPreferenceText: currentPreferenceText,
+                                    initialTasteLevels: currentTasteLevels,
                                   ),
                                 ),
                               );
@@ -194,6 +220,9 @@ class _FoodListScreenState extends State<FoodListScreen> {
                                 setState(() {
                                   currentUserType = result['userType'] as String? ?? '';
                                   currentPreferenceText = result['preferenceText'] as String? ?? '';
+                                  if (result['tasteLevels'] != null) {
+                                    currentTasteLevels = Map<String, int>.from(result['tasteLevels'] as Map);
+                                  }
                                 });
                                 await _fetchRestaurants(showLoading: true);
                               }
@@ -274,20 +303,41 @@ class _FoodListScreenState extends State<FoodListScreen> {
               ),
             ),
           ),
-          if (currentPreferenceText.isNotEmpty)
+
+          // 사용자 유형 및 맛 조절 상태를 기반으로 동적 라벨 결합 및 노출
+          if (showFilterLabel)
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: Text(
-                  '${_userTypeLabel(currentUserType)} · "$currentPreferenceText"',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 13, color: Colors.grey),
+                child: Builder(
+                  builder: (context) {
+                    List<String> labels = [];
+
+                    // 사용자 유형이 선택되었을 경우 텍스트 추가
+                    if (hasUserType) {
+                      labels.add(_userTypeLabel(currentUserType));
+                    }
+
+                    // 맛 조절 단계 변경 시 문구 추가
+                    if (hasCustomTaste) {
+                      labels.add('맛 적용 중');
+                    }
+
+                    // 두 조건 모두 해당할 시 ' · ' 로 결합 (e.g. 편의형 · 맛 적용 중)
+                    return Text(
+                      labels.join(' · '),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontSize: 13, color: Colors.grey),
+                    );
+                  },
                 ),
               ),
             ),
-          if (currentPreferenceText.isEmpty)
+
+          // 설정값 유무가 전혀 체크되지 않은 초기 default 상태 분기
+          if (!showFilterLabel)
             const Padding(
               padding: EdgeInsets.fromLTRB(16, 0, 16, 10),
               child: Align(
@@ -298,6 +348,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
                 ),
               ),
             ),
+
           Expanded(child: _buildRestaurantSection()),
         ],
       ),
@@ -466,11 +517,11 @@ class _FoodListScreenState extends State<FoodListScreen> {
               child: item.imageUrl == null || item.imageUrl!.isEmpty
                   ? const Icon(Icons.fastfood, color: Colors.white)
                   : Image.network(
-                      item.imageUrl!,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) =>
-                          const Icon(Icons.fastfood, color: Colors.white),
-                    ),
+                item.imageUrl!,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) =>
+                const Icon(Icons.fastfood, color: Colors.white),
+              ),
             ),
           ),
           Expanded(
@@ -519,11 +570,11 @@ class _FoodListScreenState extends State<FoodListScreen> {
                   Text(
                     currentMode == 'personalized'
                         ? (item.mainMenuPrice == null
-                            ? '-'
-                            : '${NumberFormat('#,###').format(item.mainMenuPrice)}원')
+                        ? '-'
+                        : '${NumberFormat('#,###').format(item.mainMenuPrice)}원')
                         : (item.mainMenuPrice == null
-                            ? (item.mainMenu ?? '-')
-                            : '${item.mainMenu ?? '-'} · ${NumberFormat('#,###').format(item.mainMenuPrice)}원'),
+                        ? (item.mainMenu ?? '-')
+                        : '${item.mainMenu ?? '-'} · ${NumberFormat('#,###').format(item.mainMenuPrice)}원'),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(fontSize: 13, color: Colors.black87),
