@@ -40,6 +40,17 @@ class CartModel extends ChangeNotifier {
 
   int get totalPrice => _items.fold(0, (sum, e) => sum + e.price * e.quantity);
 
+  int get additionalPrepDelay {
+    if (totalCount <= 1) return 0;
+    final delay = (totalCount - 1) * 2;
+    return delay > 10 ? 10 : delay;
+  }
+
+  int get estimatedTotalTime {
+    if (deliveryTime <= 0) return 0;
+    return deliveryTime + additionalPrepDelay;
+  }
+
   /// 담기 시도.
   /// 같은 식당이거나 비어 있으면 추가 후 true 반환.
   /// 다른 식당이면 추가하지 않고 false 반환 (UI에서 교체 확인 필요).

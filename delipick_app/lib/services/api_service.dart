@@ -10,6 +10,7 @@ class RecommendationQuery {
   final int maxPrice;
   final String userType;
   final String preferenceText;
+  final Map<String, int> tasteLevels;
   final int limit;
 
   const RecommendationQuery({
@@ -18,16 +19,21 @@ class RecommendationQuery {
     required this.maxPrice,
     required this.userType,
     required this.preferenceText,
+    this.tasteLevels = const {},
     this.limit = 30,
   });
 
   Map<String, dynamic> toJson() {
+    final selectedTasteLevels = Map<String, int>.from(tasteLevels)
+      ..removeWhere((_, value) => value < 0 || value > 2);
+
     return {
       'category_ids': categoryIds,
       'min_price': minPrice,
       'max_price': maxPrice,
       'user_type': userType,
       'preference_text': preferenceText,
+      'taste_levels': selectedTasteLevels,
       'limit': limit,
     };
   }
@@ -118,6 +124,7 @@ class DelipickApiService {
         maxPrice: adjustedMax,
         userType: query.userType,
         preferenceText: query.preferenceText,
+        tasteLevels: query.tasteLevels,
         limit: query.limit,
       ),
     );
@@ -154,6 +161,13 @@ class DelipickApiService {
     }
     if (query.preferenceText.trim().isNotEmpty) {
       queryParams['preference_text'] = query.preferenceText.trim();
+    }
+    final selectedTasteLevels = Map<String, int>.from(query.tasteLevels)
+      ..removeWhere((_, value) => value < 0 || value > 2);
+    if (selectedTasteLevels.isNotEmpty) {
+      queryParams['taste_levels'] = selectedTasteLevels.entries
+          .map((entry) => '${entry.key}:${entry.value}')
+          .join(',');
     }
 
     return Uri.parse('$baseUrl/restaurants').replace(queryParameters: queryParams);

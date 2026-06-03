@@ -28,14 +28,13 @@ class _FoodListScreenState extends State<FoodListScreen> {
   String currentUserType = '';
   String currentPreferenceText = '';
 
-  // 각 맛의 세부 조절 단계 관리 (0: 낮음, 1: 중간, 2: 높음)
-  // 기본 중간 (아무것도 선택X)
+  // 각 맛의 세부 조절 단계 관리 (-1: 선택 안 함, 0: 낮음, 1: 중간, 2: 높음)
   Map<String, int> currentTasteLevels = {
-    'salty': 1,
-    'sweet': 1,
-    'sour': 1,
-    'spicy': 1,
-    'umami': 1,
+    'salty': -1,
+    'sweet': -1,
+    'sour': -1,
+    'spicy': -1,
+    'umami': -1,
   };
 
   bool isLoading = true;
@@ -52,6 +51,33 @@ class _FoodListScreenState extends State<FoodListScreen> {
     CategoryItem(id: 6, name: '양식', imageAsset: 'assets/western_food.png'),
     CategoryItem(id: 7, name: '카페', imageAsset: 'assets/cafe.png'),
   ];
+
+  Map<String, int> _defaultTasteLevels() {
+    return {
+      'salty': -1,
+      'sweet': -1,
+      'sour': -1,
+      'spicy': -1,
+      'umami': -1,
+    };
+  }
+
+  Map<String, int> _normalizeTasteLevels(Map<String, int>? source) {
+    final normalized = _defaultTasteLevels();
+    if (source == null) {
+      return normalized;
+    }
+
+    for (final key in normalized.keys) {
+      final value = source[key];
+      if (value != null && value >= -1 && value <= 2) {
+        normalized[key] = value;
+      }
+    }
+
+    final isLegacyDefault = normalized.values.every((level) => level == 1);
+    return isLegacyDefault ? _defaultTasteLevels() : normalized;
+  }
 
   @override
   void initState() {
@@ -96,6 +122,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
           maxPrice: selectedPriceRange.end.toInt(),
           userType: currentUserType,
           preferenceText: currentPreferenceText,
+          tasteLevels: _normalizeTasteLevels(currentTasteLevels),
           limit: 50,
         ),
       );
@@ -166,13 +193,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
       currentUserType = '';
       currentPreferenceText = '';
       currentMode = 'default_delivery';
-      currentTasteLevels = {
-        'salty': 1,
-        'sweet': 1,
-        'sour': 1,
-        'spicy': 1,
-        'umami': 1,
-      };
+      currentTasteLevels = _defaultTasteLevels();
     });
     await _fetchRestaurants(showLoading: true);
   }
@@ -181,8 +202,9 @@ class _FoodListScreenState extends State<FoodListScreen> {
   Widget build(BuildContext context) {
     // 상단 텍스트 출력용 상태 활성화 여부 계산
     final bool hasUserType = currentUserType.isNotEmpty;
-    // 모든 맛 레벨 중 하나라도 기본값(1)에서 어긋났는지 검증하여 변경 여부 판단
-    final bool hasCustomTaste = currentTasteLevels.values.any((level) => level != 1);
+    final normalizedTasteLevels = _normalizeTasteLevels(currentTasteLevels);
+    // 모든 맛 레벨 중 하나라도 선택 안 함(-1)에서 어긋났는지 검증하여 변경 여부 판단
+    final bool hasCustomTaste = normalizedTasteLevels.values.any((level) => level != -1);
 
     // 요구사항에 맞춰 자연어 입력(PreferenceText) 유무는 상단 라벨 활성화 조건에서 영구 배제
     final bool showFilterLabel = hasUserType || hasCustomTaste;
@@ -214,7 +236,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
                                   builder: (context) => TastePreferenceScreen(
                                     initialUserType: currentUserType,
                                     initialPreferenceText: currentPreferenceText,
-                                    initialTasteLevels: currentTasteLevels,
+                                    initialTasteLevels: normalizedTasteLevels,
                                   ),
                                 ),
                               );
@@ -224,7 +246,9 @@ class _FoodListScreenState extends State<FoodListScreen> {
                                   currentUserType = result['userType'] as String? ?? '';
                                   currentPreferenceText = result['preferenceText'] as String? ?? '';
                                   if (result['tasteLevels'] != null) {
-                                    currentTasteLevels = Map<String, int>.from(result['tasteLevels'] as Map);
+                                    currentTasteLevels = _normalizeTasteLevels(
+                                      Map<String, int>.from(result['tasteLevels'] as Map),
+                                    );
                                   }
                                 });
                                 await _fetchRestaurants(showLoading: true);

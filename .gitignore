@@ -3,3 +3,6 @@
 Thumbs.db
 .vscode/
 .idea/
+
+# Local Codex/config files
+config/

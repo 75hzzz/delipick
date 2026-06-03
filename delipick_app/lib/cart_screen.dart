@@ -217,8 +217,8 @@ class CartScreen extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 10),
-                // 예상 배달 시간
-                if (cartModel.deliveryTime > 0)
+                // 예상 소요 시간
+                if (cartModel.estimatedTotalTime > 0)
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.fromLTRB(10, 8, 12, 8),
@@ -230,12 +230,16 @@ class CartScreen extends StatelessWidget {
                       children: [
                         const Icon(Icons.access_time, size: 16, color: Colors.black54),
                         const SizedBox(width: 6),
-                        Text(
-                          '예상 배달 시간: ${cartModel.deliveryTime}분',
-                          style: const TextStyle(
-                            fontSize: 13,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w500,
+                        Expanded(
+                          child: Text(
+                            cartModel.additionalPrepDelay > 0
+                                ? '예상 소요 시간: ${cartModel.estimatedTotalTime}분 (+${cartModel.additionalPrepDelay}분)'
+                                : '예상 소요 시간: ${cartModel.estimatedTotalTime}분',
+                            style: const TextStyle(
+                              fontSize: 13,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ],

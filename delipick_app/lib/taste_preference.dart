@@ -29,7 +29,7 @@ class _TastePreferenceScreenState extends State<TastePreferenceScreen> {
     {'key': 'umami', 'label': '감칠맛'},
   ];
 
-  // 상단 바인딩 및 슬라이더 제어용 맛 단계 데이터 (0: 낮음, 1: 중간, 2: 높음)
+  // 상단 바인딩 및 슬라이더 제어용 맛 단계 데이터 (-1: 선택 안 함, 0: 낮음, 1: 중간, 2: 높음)
   late Map<String, int> tasteLevels;
 
   final List<Map<String, dynamic>> userTypes = const [
@@ -53,6 +53,33 @@ class _TastePreferenceScreenState extends State<TastePreferenceScreen> {
     },
   ];
 
+  Map<String, int> _defaultTasteLevels() {
+    return {
+      'salty': -1,
+      'sweet': -1,
+      'sour': -1,
+      'spicy': -1,
+      'umami': -1,
+    };
+  }
+
+  Map<String, int> _normalizeTasteLevels(Map<String, int>? source) {
+    final normalized = _defaultTasteLevels();
+    if (source == null) {
+      return normalized;
+    }
+
+    for (final key in normalized.keys) {
+      final value = source[key];
+      if (value != null && value >= -1 && value <= 2) {
+        normalized[key] = value;
+      }
+    }
+
+    final isLegacyDefault = normalized.values.every((level) => level == 1);
+    return isLegacyDefault ? _defaultTasteLevels() : normalized;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -60,15 +87,7 @@ class _TastePreferenceScreenState extends State<TastePreferenceScreen> {
     preferenceController = TextEditingController(text: widget.initialPreferenceText);
 
     // Deep Copy를 통해 이전 화면의 상태 오염 방지 및 초기 Null 예외 처리
-    tasteLevels = widget.initialTasteLevels != null
-        ? Map<String, int>.from(widget.initialTasteLevels!)
-        : {
-      'salty': 1,
-      'sweet': 1,
-      'sour': 1,
-      'spicy': 1,
-      'umami': 1,
-    };
+    tasteLevels = _normalizeTasteLevels(widget.initialTasteLevels);
   }
 
   @override
@@ -238,7 +257,7 @@ class _TastePreferenceScreenState extends State<TastePreferenceScreen> {
                     // 4. 맛 조절 슬라이더 리스트 섹션 (테두리 조절)
                     ...tasteCategories.map((taste) {
                       final String key = taste['key']!;
-                      final int currentLevel = tasteLevels[key] ?? 1;
+                      final int currentLevel = tasteLevels[key] ?? -1;
 
                       return Container(
                         margin: const EdgeInsets.only(bottom: 14),
@@ -279,9 +298,9 @@ class _TastePreferenceScreenState extends State<TastePreferenceScreen> {
                                 children: [
                                   Slider(
                                     value: currentLevel.toDouble(),
-                                    min: 0,
+                                    min: -1,
                                     max: 2,
-                                    divisions: 2,
+                                    divisions: 3,
                                     onChanged: (value) {
                                       setState(() {
                                         tasteLevels[key] = value.toInt();
@@ -293,9 +312,34 @@ class _TastePreferenceScreenState extends State<TastePreferenceScreen> {
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text('낮음', style: TextStyle(fontSize: 11, color: Colors.grey)),
-                                        Text('중간', style: TextStyle(fontSize: 11, color: Colors.grey)),
-                                        Text('높음', style: TextStyle(fontSize: 11, color: Colors.grey)),
+                                        Expanded(
+                                          child: Text(
+                                            '선택안함',
+                                            textAlign: TextAlign.left,
+                                            style: TextStyle(fontSize: 10, color: Colors.grey),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            '낮음',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(fontSize: 11, color: Colors.grey),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            '중간',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(fontSize: 11, color: Colors.grey),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            '높음',
+                                            textAlign: TextAlign.right,
+                                            style: TextStyle(fontSize: 11, color: Colors.grey),
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   )

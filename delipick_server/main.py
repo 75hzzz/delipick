@@ -1,6 +1,4 @@
-﻿import json
-import math
-import os
+﻿import os
 from datetime import datetime
 from typing import Any
 
@@ -25,17 +23,12 @@ except ImportError:
     )
     from update_delivery import scheduler, start_delivery_worker
 
-load_dotenv()
+try:
+    from . import recommendation_scoring as scoring
+except ImportError:
+    import recommendation_scoring as scoring
 
-_CATEGORY_NAME_FALLBACK = {
-    1: "한식",
-    2: "중식",
-    3: "일식",
-    4: "아시안",
-    5: "패스트푸드",
-    6: "양식",
-    7: "카페",
-}
+load_dotenv()
 
 
 class RecommendationRequest(BaseModel):
@@ -44,6 +37,7 @@ class RecommendationRequest(BaseModel):
     max_price: int = 100000
     user_type: str = ""
     preference_text: str = ""
+    taste_levels: dict[str, int] = Field(default_factory=dict)
     limit: int = 30
 
     @model_validator(mode="after")
@@ -53,8 +47,9 @@ class RecommendationRequest(BaseModel):
         if self.max_price < self.min_price:
             self.max_price = self.min_price
 
-        self.user_type = _normalize_user_type(self.user_type)
+        self.user_type = scoring._normalize_user_type(self.user_type)
         self.preference_text = self.preference_text.strip()
+        self.taste_levels = scoring._normalize_taste_levels(self.taste_levels)
         self.limit = max(1, min(self.limit, 100))
         return self
 
@@ -128,37 +123,6 @@ def _parse_int_env(name: str, default: int) -> int:
         return default
 
 
-def _clip01(value: float) -> float:
-    return max(0.0, min(1.0, value))
-
-
-def _normalize_user_type(raw: str) -> str:
-    normalized = (raw or "").strip().lower()
-    mapping = {
-        "편의형": "convenience",
-        "convenience": "convenience",
-        "편의": "convenience",
-        "미식형": "gourmet",
-        "gourmet": "gourmet",
-        "foodie": "gourmet",
-        "미식": "gourmet",
-        "경제형": "budget",
-        "budget": "budget",
-        "경제": "budget",
-    }
-    return mapping.get(normalized, "")
-
-
-def _normalize_category_name(category_id: int | None, raw_name: Any) -> str | None:
-    if isinstance(raw_name, str):
-        stripped = raw_name.strip()
-        if stripped and "?" not in stripped:
-            return stripped
-    if category_id is not None:
-        return _CATEGORY_NAME_FALLBACK.get(category_id)
-    return None
-
-
 def _db_candidates() -> list[str]:
     requested = os.getenv("DB_NAME", "").strip()
     defaults = [requested] if requested else []
@@ -210,134 +174,6 @@ def get_db_connection() -> pymysql.connections.Connection:
     raise RuntimeError("Unable to connect database with known candidates.")
 
 
-def _cosine_similarity_0_1(vec1: list[float], vec2: list[float], default: float = 0.5) -> float:
-    if not vec1 or not vec2 or len(vec1) != len(vec2):
-        return default
-
-    dot = sum(a * b for a, b in zip(vec1, vec2))
-    norm1 = math.sqrt(sum(a * a for a in vec1))
-    norm2 = math.sqrt(sum(b * b for b in vec2))
-    if norm1 == 0 or norm2 == 0:
-        return default
-
-    cosine = dot / (norm1 * norm2)
-    return _clip01((cosine + 1.0) / 2.0)
-
-
-def _parse_embedding(raw: Any) -> list[float]:
-    if raw is None:
-        return []
-
-    if isinstance(raw, list):
-        return [float(v) for v in raw]
-
-    if not isinstance(raw, str):
-        return []
-
-    text = raw.strip()
-    if not text:
-        return []
-
-    try:
-        parsed = json.loads(text)
-        if isinstance(parsed, list):
-            return [float(v) for v in parsed]
-    except Exception:
-        pass
-
-    start = text.find("[")
-    end = text.rfind("]")
-    if start == -1 or end == -1 or end <= start:
-        return []
-
-    try:
-        parsed = json.loads(text[start : end + 1])
-        if isinstance(parsed, list):
-            return [float(v) for v in parsed]
-    except Exception:
-        return []
-    return []
-
-
-def _value_or_zero(raw: Any) -> float:
-    try:
-        if raw is None:
-            return 0.0
-        return float(raw)
-    except Exception:
-        return 0.0
-
-
-def _menu_taste_vector(row: dict[str, Any]) -> list[float]:
-    review_values = [
-        _value_or_zero(row.get("review_salty")),
-        _value_or_zero(row.get("review_sweet")),
-        _value_or_zero(row.get("review_sour")),
-        _value_or_zero(row.get("review_umami")),
-        _value_or_zero(row.get("review_spicy")),
-    ]
-    base_values = [
-        _value_or_zero(row.get("salty")),
-        _value_or_zero(row.get("sweet")),
-        _value_or_zero(row.get("sour")),
-        _value_or_zero(row.get("umami")),
-        _value_or_zero(row.get("spicy")),
-    ]
-
-    use_review = any(value > 0 for value in review_values)
-    selected = review_values if use_review else base_values
-    return [_clip01(value) for value in selected]
-
-
-def _weight_by_user_type(user_type: str) -> dict[str, float]:
-    if user_type == "convenience":
-        return {
-            "delivery": 0.5,
-            "price": 0.2,
-            "review": 0.2,
-            "preference": 0.1,
-        }
-    if user_type == "gourmet":
-        return {
-            "delivery": 0.1,
-            "price": 0.1,
-            "review": 0.3,
-            "preference": 0.5,
-        }
-    if user_type == "budget":
-        return {
-            "delivery": 0.15,
-            "price": 0.5,
-            "review": 0.15,
-            "preference": 0.2,
-        }
-    return {
-        "delivery": 0.25,
-        "price": 0.25,
-        "review": 0.25,
-        "preference": 0.25,
-    }
-
-
-def _reason_text(delivery: float, price: float, review: float, preference: float, personalized: bool) -> str:
-    if not personalized:
-        return "예상 배달 시간이 빠른 순으로 정렬했어요"
-
-    candidates = [
-        ("취향 유사도가 높아요", preference),
-        ("리뷰 평점이 좋아요", review),
-        ("예상 배달 시간이 빨라요", delivery),
-        ("가격 부담이 낮아요", price),
-    ]
-    ranked = sorted(candidates, key=lambda x: x[1], reverse=True)
-
-    strong = [message for message, score in ranked if score >= 0.65]
-    if strong:
-        return " · ".join(strong[:2])
-
-    return ranked[0][0]
-
-
 def _fetch_base_candidates(conn: pymysql.connections.Connection, req: RecommendationRequest) -> list[dict[str, Any]]:
     with conn.cursor() as cursor:
         cursor.execute("SHOW COLUMNS FROM restaurants")
@@ -367,12 +203,13 @@ def _fetch_base_candidates(conn: pymysql.connections.Connection, req: Recommenda
     LEFT JOIN (
         SELECT restaurant_id, MIN(price) AS min_price
         FROM menus
+        WHERE price BETWEEN %s AND %s
         GROUP BY restaurant_id
     ) mp ON mp.restaurant_id = r.id
     LEFT JOIN menus m
         ON m.restaurant_id = r.id
        AND m.price = mp.min_price
-    WHERE COALESCE(mp.min_price, 0) BETWEEN %s AND %s
+    WHERE mp.min_price IS NOT NULL
     """.format(
         rating_expr=rating_expr,
         image_expr=image_expr,
@@ -419,7 +256,7 @@ def _fetch_review_scores(conn: pymysql.connections.Connection, restaurant_ids: l
     for row in rows:
         rest_id = int(row["restaurant_id"])
         avg_score = row.get("avg_review_score")
-        scores[rest_id] = _clip01(float(avg_score)) if avg_score is not None else 0.5
+        scores[rest_id] = scoring._clip01(float(avg_score)) if avg_score is not None else 0.5
     return scores
 
 
@@ -437,6 +274,7 @@ def _fetch_menu_flavors(
         m.restaurant_id,
         m.id AS menu_id,
         m.menu_name,
+        r.name AS restaurant_name,
         m.price,
         m.image_url AS menu_image_url,
         mf.salty,
@@ -452,6 +290,7 @@ def _fetch_menu_flavors(
         mf.review_spicy,
         mf.review_embedding
     FROM menus m
+    JOIN restaurants r ON r.id = m.restaurant_id
     LEFT JOIN menu_flavors mf ON mf.menu_id = m.id
     WHERE m.restaurant_id IN ({placeholders})
       AND m.price BETWEEN %s AND %s
@@ -463,38 +302,10 @@ def _fetch_menu_flavors(
         return cursor.fetchall()
 
 
-def _calculate_menu_preference_score(
-    row: dict[str, Any],
-    user_taste_vector: list[float],
-    user_embedding: list[float],
-) -> float:
-    menu_taste = _menu_taste_vector(row)
-    taste_similarity = _cosine_similarity_0_1(user_taste_vector, menu_taste, default=0.5)
-
-    menu_embedding = _parse_embedding(row.get("semantic_embedding"))
-    menu_embedding_similarity = _cosine_similarity_0_1(user_embedding, menu_embedding, default=0.5)
-
-    review_embedding_raw = _parse_embedding(row.get("review_embedding"))
-    if not review_embedding_raw:
-        review_embedding_similarity = 0.5
-    else:
-        review_embedding_similarity = _cosine_similarity_0_1(
-            user_embedding,
-            review_embedding_raw,
-            default=0.5,
-        )
-
-    return _clip01(
-        (taste_similarity * 0.4)
-        + (menu_embedding_similarity * 0.3)
-        + (review_embedding_similarity * 0.3)
-    )
-
-
 def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]], conn: pymysql.connections.Connection) -> RecommendationResponse:
     if not rows:
         return RecommendationResponse(
-            mode="default_delivery" if not req.preference_text else "personalized",
+            mode="personalized" if (req.preference_text or req.taste_levels) else "default_delivery",
             user_type=req.user_type or None,
             preference_text=req.preference_text,
             count=0,
@@ -531,17 +342,17 @@ def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]]
     min_price = min(prices)
     max_price = max(prices)
 
-    personalized = bool(req.preference_text)
-    weights = _weight_by_user_type(req.user_type)
+    personalized = bool(req.preference_text or req.taste_levels)
+    weights = scoring._weight_by_user_type(req.user_type)
 
     for item in enriched:
         eta = float(item["total_eta"])
         if max_eta == min_eta:
             delivery_score = 1.0
         else:
-            delivery_score = _clip01(1.0 - ((eta - min_eta) / (max_eta - min_eta)))
+            delivery_score = scoring._clip01(1.0 - ((eta - min_eta) / (max_eta - min_eta)))
 
-        review_score = _clip01(float(item.get("restaurant_review_score") or 0.5))
+        review_score = scoring._clip01(float(item.get("restaurant_review_score") or 0.5))
 
         item["delivery_score"] = delivery_score
         item["restaurant_review_score"] = review_score
@@ -568,11 +379,15 @@ def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]]
                 continue
 
             menu_price = float(row.get("price") or 0.0)
-            preference_score = _calculate_menu_preference_score(
+            preference_score = scoring._calculate_menu_preference_score(
                 row=row,
                 user_taste_vector=user_taste_vector,
                 user_embedding=user_embedding,
+                preference_text=req.preference_text,
+                taste_levels=req.taste_levels,
             )
+            direct_intent = scoring._preference_query_direct_intent(req.preference_text)
+            exact_match_score, related_match_score = scoring._direct_menu_name_match_scores(req.preference_text, row)
             menu_candidates.append(
                 {
                     "menu_id": int(row["menu_id"]),
@@ -584,6 +399,9 @@ def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]]
                     "delivery_score": float(rest["delivery_score"]),
                     "review_score": float(rest["restaurant_review_score"]),
                     "preference_score": preference_score,
+                    "direct_intent": direct_intent,
+                    "exact_match_score": exact_match_score,
+                    "related_match_score": related_match_score,
                     "estimated_total_time": float(rest["total_eta"]),
                     "queuing_wait": float(rest["queuing_wait"]),
                     "is_peak_time": bool(rest["is_peak_time"]),
@@ -607,17 +425,24 @@ def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]]
             if max_menu_price == min_menu_price:
                 price_score = 1.0
             else:
-                price_score = _clip01(
+                price_score = scoring._clip01(
                     1.0 - ((float(item["menu_price"]) - min_menu_price) / (max_menu_price - min_menu_price))
                 )
             item["price_score"] = price_score
-            item["final_score"] = (
+            item["condition_adjustment"] = scoring._condition_adjustment_score(req.preference_text, item)
+            item["final_score"] = scoring._clip01(
                 (float(item["delivery_score"]) * weights["delivery"])
                 + (price_score * weights["price"])
                 + (float(item["review_score"]) * weights["review"])
                 + (float(item["preference_score"]) * weights["preference"])
+                + (float(item["exact_match_score"]) * float(item["direct_intent"]) * 0.22)
+                + (
+                    float(item["related_match_score"])
+                    * ((float(item["direct_intent"]) * 0.06) + ((1.0 - float(item["direct_intent"])) * 0.10))
+                )
+                + float(item["condition_adjustment"])
             )
-            item["recommendation_reason"] = _reason_text(
+            item["recommendation_reason"] = scoring._reason_text(
                 float(item["delivery_score"]),
                 price_score,
                 float(item["review_score"]),
@@ -638,7 +463,7 @@ def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]]
                 name=str(item.get("menu_name") or ""),
                 restaurant_name=str(item["restaurant"].get("name") or ""),
                 category_id=item["restaurant"].get("category_id"),
-                category_name=_normalize_category_name(
+                category_name=scoring._normalize_category_name(
                     item["restaurant"].get("category_id"),
                     item["restaurant"].get("category_name"),
                 ),
@@ -677,11 +502,11 @@ def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]]
             if max_price == min_price:
                 price_score = 1.0
             else:
-                price_score = _clip01(1.0 - ((price - min_price) / (max_price - min_price)))
+                price_score = scoring._clip01(1.0 - ((price - min_price) / (max_price - min_price)))
             item["price_score"] = price_score
             item["preference_score"] = 0.5
             item["final_score"] = float(item["delivery_score"])
-            item["recommendation_reason"] = _reason_text(
+            item["recommendation_reason"] = scoring._reason_text(
                 float(item["delivery_score"]),
                 price_score,
                 float(item["restaurant_review_score"]),
@@ -698,7 +523,7 @@ def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]]
                 name=item["name"],
                 restaurant_name=item.get("name"),
                 category_id=item.get("category_id"),
-                category_name=_normalize_category_name(item.get("category_id"), item.get("category_name")),
+                category_name=scoring._normalize_category_name(item.get("category_id"), item.get("category_name")),
                 address=item.get("address"),
                 rating=float(item.get("rating_value") or 0.0),
                 main_menu=item.get("main_menu"),
@@ -735,6 +560,7 @@ def _build_request_from_query(
     max_price: int,
     user_type: str,
     preference_text: str,
+    taste_levels: str,
     limit: int,
 ) -> RecommendationRequest:
     parsed_categories: list[int] = []
@@ -745,12 +571,24 @@ def _build_request_from_query(
             if value.strip().isdigit()
         ]
 
+    parsed_taste_levels: dict[str, int] = {}
+    for entry in (taste_levels or "").split(","):
+        if ":" not in entry:
+            continue
+        key, value = entry.split(":", 1)
+        key = key.strip()
+        try:
+            parsed_taste_levels[key] = int(value.strip())
+        except Exception:
+            continue
+
     return RecommendationRequest(
         category_ids=parsed_categories,
         min_price=min_price,
         max_price=max_price,
         user_type=user_type,
         preference_text=preference_text,
+        taste_levels=parsed_taste_levels,
         limit=limit,
     )
 
@@ -798,7 +636,7 @@ def get_categories() -> list[CategoryResponse]:
             return [
                 CategoryResponse(
                     category_id=row["category_id"],
-                    category_name=_normalize_category_name(
+                    category_name=scoring._normalize_category_name(
                         row.get("category_id"),
                         row.get("category_name"),
                     )
@@ -846,6 +684,7 @@ def get_restaurants(
     max_price: int = Query(default=100000, ge=0),
     user_type: str = Query(default=""),
     preference_text: str = Query(default=""),
+    taste_levels: str = Query(default=""),
     limit: int = Query(default=30, ge=1, le=100),
 ) -> RecommendationResponse:
     request = _build_request_from_query(
@@ -854,6 +693,7 @@ def get_restaurants(
         max_price=max_price,
         user_type=user_type,
         preference_text=preference_text,
+        taste_levels=taste_levels,
         limit=limit,
     )
 
