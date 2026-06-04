@@ -566,7 +566,48 @@ class _FoodListScreenState extends State<FoodListScreen> {
       child: ListView.builder(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         itemCount: restaurants.length,
-        itemBuilder: (context, index) => _buildRestaurantCard(restaurants[index]),
+        itemBuilder: (context, index) {
+          final item = restaurants[index];
+          final previousSection = index > 0 ? restaurants[index - 1].recommendationSection : null;
+          final showSimilarDivider = currentMode == 'personalized' &&
+              item.recommendationSection == 'similar' &&
+              previousSection != item.recommendationSection;
+
+          if (!showSimilarDivider) {
+            return _buildRestaurantCard(item);
+          }
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _buildRecommendationDivider(item.recommendationSectionLabel ?? '유사 추천'),
+              _buildRestaurantCard(item),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildRecommendationDivider(String label) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(4, 10, 4, 14),
+      child: Row(
+        children: [
+          const Expanded(child: Divider(height: 1, thickness: 1, color: Color(0xFFE0E0E0))),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Text(
+              label,
+              style: const TextStyle(
+                color: Colors.grey,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          const Expanded(child: Divider(height: 1, thickness: 1, color: Color(0xFFE0E0E0))),
+        ],
       ),
     );
   }
@@ -631,11 +672,11 @@ class _FoodListScreenState extends State<FoodListScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    if (currentMode == 'personalized' && (item.restaurantName ?? '').isNotEmpty)
+                    if (currentMode == 'personalized' && (item.mainMenu ?? '').isNotEmpty)
                       Padding(
                         padding: const EdgeInsets.only(top: 2),
                         child: Text(
-                          item.restaurantName!,
+                          '추천 메뉴: ${item.mainMenu!}',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(fontSize: 12, color: Colors.grey),

@@ -1,5 +1,6 @@
 ﻿import os
 from datetime import datetime
+import re
 from typing import Any
 
 import pymysql
@@ -10,6 +11,7 @@ from pydantic import BaseModel, Field, model_validator
 
 try:
     from .recommend_logic import (
+        build_preference_tag_intent,
         build_taste_vector_from_text,
         build_text_embedding,
         calculate_queueing_metrics,
@@ -17,6 +19,7 @@ try:
     from .update_delivery import scheduler, start_delivery_worker
 except ImportError:
     from recommend_logic import (
+        build_preference_tag_intent,
         build_taste_vector_from_text,
         build_text_embedding,
         calculate_queueing_metrics,
@@ -29,6 +32,18 @@ except ImportError:
     import recommendation_scoring as scoring
 
 load_dotenv()
+
+MIN_RECOMMENDABLE_NON_CAFE_PRICE = 4000
+PRICE_FILTER_EXEMPT_CATEGORY_IDS = (7,)
+NATURAL_CATEGORY_KEYWORDS = {
+    1: ("한식", "한국음식", "한식당", "백반", "국밥"),
+    2: ("중식", "중국음식", "중국집", "짜장", "짬뽕"),
+    3: ("일식", "일본음식", "초밥", "스시", "돈까스", "라멘"),
+    4: ("아시안", "쌀국수", "마라", "태국", "베트남"),
+    5: ("패스트푸드", "패스트", "버거", "햄버거", "치킨"),
+    6: ("양식", "파스타", "피자", "스테이크"),
+    7: ("카페", "디저트", "커피", "음료", "빵", "베이글"),
+}
 
 
 class RecommendationRequest(BaseModel):
@@ -82,6 +97,8 @@ class RestaurantResponse(BaseModel):
     preference_score: float
     final_score: float
     recommendation_reason: str | None = None
+    recommendation_section: str | None = None
+    recommendation_section_label: str | None = None
 
 
 class RecommendationResponse(BaseModel):
@@ -90,6 +107,28 @@ class RecommendationResponse(BaseModel):
     preference_text: str
     count: int
     items: list[RestaurantResponse]
+
+
+def _compact_text(text: str) -> str:
+    return re.sub(r"\s+", "", (text or "").lower())
+
+
+def _category_ids_from_preference_text(text: str) -> set[int]:
+    compact = _compact_text(text)
+    if not compact:
+        return set()
+
+    matched: set[int] = set()
+    for category_id, keywords in NATURAL_CATEGORY_KEYWORDS.items():
+        for keyword in keywords:
+            token = _compact_text(keyword)
+            if not token or token not in compact:
+                continue
+            if token == "한식" and "한식사" in compact:
+                continue
+            matched.add(category_id)
+            break
+    return matched
 
 
 class MenuResponse(BaseModel):
@@ -201,10 +240,12 @@ def _fetch_base_candidates(conn: pymysql.connections.Connection, req: Recommenda
     FROM restaurants r
     LEFT JOIN categories c ON c.category_id = r.category_id
     LEFT JOIN (
-        SELECT restaurant_id, MIN(price) AS min_price
-        FROM menus
-        WHERE price BETWEEN %s AND %s
-        GROUP BY restaurant_id
+        SELECT m2.restaurant_id, MIN(m2.price) AS min_price
+        FROM menus m2
+        JOIN restaurants r2 ON r2.id = m2.restaurant_id
+        WHERE m2.price BETWEEN %s AND %s
+          AND (r2.category_id IN ({exempt_category_ids}) OR m2.price >= %s)
+        GROUP BY m2.restaurant_id
     ) mp ON mp.restaurant_id = r.id
     LEFT JOIN menus m
         ON m.restaurant_id = r.id
@@ -215,8 +256,9 @@ def _fetch_base_candidates(conn: pymysql.connections.Connection, req: Recommenda
         image_expr=image_expr,
         prep_expr=prep_expr,
         delivery_expr=delivery_expr,
+        exempt_category_ids=",".join(str(value) for value in PRICE_FILTER_EXEMPT_CATEGORY_IDS),
     )
-    params: list[Any] = [req.min_price, req.max_price]
+    params: list[Any] = [req.min_price, req.max_price, MIN_RECOMMENDABLE_NON_CAFE_PRICE]
 
     if req.category_ids:
         placeholders = ",".join(["%s"] * len(req.category_ids))
@@ -268,7 +310,13 @@ def _fetch_menu_flavors(
     if not restaurant_ids:
         return []
 
+    with conn.cursor() as cursor:
+        cursor.execute("SHOW COLUMNS FROM menu_flavors")
+        flavor_columns = {row["Field"] for row in cursor.fetchall()}
+
+    menu_tags_expr = "mf.menu_tags" if "menu_tags" in flavor_columns else "NULL"
     placeholders = ",".join(["%s"] * len(restaurant_ids))
+    exempt_category_ids = ",".join(str(value) for value in PRICE_FILTER_EXEMPT_CATEGORY_IDS)
     sql = f"""
     SELECT
         m.restaurant_id,
@@ -288,15 +336,17 @@ def _fetch_menu_flavors(
         mf.review_sour,
         mf.review_umami,
         mf.review_spicy,
-        mf.review_embedding
+        mf.review_embedding,
+        {menu_tags_expr} AS menu_tags
     FROM menus m
     JOIN restaurants r ON r.id = m.restaurant_id
     LEFT JOIN menu_flavors mf ON mf.menu_id = m.id
     WHERE m.restaurant_id IN ({placeholders})
       AND m.price BETWEEN %s AND %s
+      AND (r.category_id IN ({exempt_category_ids}) OR m.price >= %s)
     """
 
-    params: list[Any] = [*restaurant_ids, req.min_price, req.max_price]
+    params: list[Any] = [*restaurant_ids, req.min_price, req.max_price, MIN_RECOMMENDABLE_NON_CAFE_PRICE]
     with conn.cursor() as cursor:
         cursor.execute(sql, params)
         return cursor.fetchall()
@@ -311,6 +361,16 @@ def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]]
             count=0,
             items=[],
         )
+
+    natural_category_ids = set() if req.category_ids else _category_ids_from_preference_text(req.preference_text)
+    if natural_category_ids:
+        category_rows = [
+            row
+            for row in rows
+            if int(row.get("category_id") or 0) in natural_category_ids
+        ]
+        if category_rows:
+            rows = category_rows
 
     now_hour = datetime.now().hour
     restaurant_ids = [int(row["id"]) for row in rows]
@@ -358,7 +418,10 @@ def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]]
         item["restaurant_review_score"] = review_score
 
     if personalized:
-        user_taste = build_taste_vector_from_text(req.preference_text)
+        tag_intent = build_preference_tag_intent(req.preference_text)
+        menu_embedding_text = str(tag_intent.get("menu_embedding_text") or req.preference_text).strip() or req.preference_text
+        review_embedding_text = str(tag_intent.get("review_embedding_text") or menu_embedding_text).strip() or menu_embedding_text
+        user_taste = build_taste_vector_from_text(menu_embedding_text)
         user_taste_vector = [
             float(user_taste.get("salty", 0.5)),
             float(user_taste.get("sweet", 0.5)),
@@ -366,7 +429,9 @@ def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]]
             float(user_taste.get("umami", 0.5)),
             float(user_taste.get("spicy", 0.5)),
         ]
-        user_embedding = build_text_embedding(req.preference_text)
+        user_embedding = build_text_embedding(menu_embedding_text)
+        review_user_embedding = build_text_embedding(review_embedding_text)
+        weights = scoring._weight_by_user_type(req.user_type, tag_intent)
 
         flavor_rows = _fetch_menu_flavors(conn, restaurant_ids, req)
         restaurants_by_id = {int(item["id"]): item for item in enriched}
@@ -385,6 +450,8 @@ def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]]
                 user_embedding=user_embedding,
                 preference_text=req.preference_text,
                 taste_levels=req.taste_levels,
+                tag_intent=tag_intent,
+                review_user_embedding=review_user_embedding,
             )
             direct_intent = scoring._preference_query_direct_intent(req.preference_text)
             exact_match_score, related_match_score = scoring._direct_menu_name_match_scores(req.preference_text, row)
@@ -394,6 +461,7 @@ def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]]
                     "menu_name": row.get("menu_name"),
                     "menu_price": menu_price,
                     "menu_image_url": row.get("menu_image_url"),
+                    "menu_tags": row.get("menu_tags"),
                     "restaurant_id": rest_id,
                     "restaurant": rest,
                     "delivery_score": float(rest["delivery_score"]),
@@ -416,6 +484,22 @@ def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]]
                 count=0,
                 items=[],
             )
+
+        use_sectioned_results = False
+        if scoring._should_apply_required_tag_filter(tag_intent):
+            required_tag_candidates = [
+                item for item in menu_candidates if scoring._has_all_required_tags(tag_intent, item)
+            ]
+            if required_tag_candidates:
+                required_menu_ids = {int(item["menu_id"]) for item in required_tag_candidates}
+                use_sectioned_results = True
+                for item in menu_candidates:
+                    if int(item["menu_id"]) in required_menu_ids:
+                        item["recommendation_section"] = "exact"
+                        item["recommendation_section_label"] = "정확 추천"
+                    else:
+                        item["recommendation_section"] = "similar"
+                        item["recommendation_section_label"] = "유사 추천"
 
         menu_prices = [float(item["menu_price"]) for item in menu_candidates]
         min_menu_price = min(menu_prices)
@@ -455,12 +539,39 @@ def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]]
             key=lambda item: (float(item["final_score"]), -float(item["estimated_total_time"])),
             reverse=True,
         )
-        selected = sorted_items[: req.limit]
+        selected: list[dict[str, Any]] = []
+        seen_restaurant_ids: set[int] = set()
+
+        def append_unique(source: list[dict[str, Any]], target_count: int) -> None:
+            for candidate in source:
+                restaurant_id = int(candidate["restaurant_id"])
+                if restaurant_id in seen_restaurant_ids:
+                    continue
+                seen_restaurant_ids.add(restaurant_id)
+                selected.append(candidate)
+                if len(selected) >= target_count:
+                    break
+
+        if use_sectioned_results:
+            exact_sorted = [item for item in sorted_items if item.get("recommendation_section") == "exact"]
+            similar_sorted = [
+                item
+                for item in sorted_items
+                if item.get("recommendation_section") == "similar"
+                and not scoring._has_avoid_match(tag_intent, item)
+            ]
+            target_count = min(req.limit, max(10, min(15, len(exact_sorted) + 8)))
+            append_unique(exact_sorted, target_count)
+            if len(selected) < target_count:
+                append_unique(similar_sorted, target_count)
+        else:
+            append_unique(sorted_items, req.limit)
+
         response_items = [
             RestaurantResponse(
                 menu_id=int(item["menu_id"]),
                 id=int(item["restaurant_id"]),
-                name=str(item.get("menu_name") or ""),
+                name=str(item["restaurant"].get("name") or ""),
                 restaurant_name=str(item["restaurant"].get("name") or ""),
                 category_id=item["restaurant"].get("category_id"),
                 category_name=scoring._normalize_category_name(
@@ -492,6 +603,8 @@ def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]]
                 preference_score=float(item["preference_score"]),
                 final_score=float(item["final_score"]),
                 recommendation_reason=str(item["recommendation_reason"]),
+                recommendation_section=item.get("recommendation_section"),
+                recommendation_section_label=item.get("recommendation_section_label"),
             )
             for item in selected
         ]

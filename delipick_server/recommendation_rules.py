@@ -338,3 +338,86 @@ _CONTEXT_ADJUSTMENT_PROFILES = (
         "negative_weight": 0.00,
     },
 )
+
+_TAG_SCHEMA = {
+    "food_type": (
+        "면",
+        "밥",
+        "죽",
+        "국물",
+        "탕",
+        "찌개",
+        "볶음",
+        "튀김",
+        "구이",
+        "디저트",
+        "음료",
+        "샐러드",
+        "빵",
+        "버거",
+        "피자",
+        "치킨",
+        "닭발",
+        "초밥",
+        "분식",
+        "고기",
+        "해산물",
+    ),
+    "taste": (
+        "매콤",
+        "얼얼",
+        "담백",
+        "진한",
+        "고소",
+        "달콤",
+        "새콤",
+        "짭짤",
+        "감칠맛",
+        "느끼함",
+        "기름짐",
+    ),
+    "context": (
+        "속편함",
+        "해장",
+        "야식",
+        "혼밥",
+        "든든함",
+        "가벼움",
+        "간식",
+        "술안주",
+        "아침",
+        "점심",
+        "아이동반",
+        "스트레스",
+    ),
+    "temperature": (
+        "따뜻함",
+        "차가움",
+    ),
+    "flags": (
+        "옵션메뉴",
+        "추가사리",
+        "비조리",
+        "세트메뉴",
+        "토핑",
+    ),
+}
+
+_TAG_OUTPUT_FIELDS = (
+    "food_type",
+    "taste",
+    "context",
+    "temperature",
+    "flags",
+)
+_ALL_TAGS = {tag for values in _TAG_SCHEMA.values() for tag in values}
+_OPTION_TAGS = {"옵션메뉴", "추가사리", "비조리", "토핑"}
+
+_TAG_INTENT_TYPES = (
+    "direct_menu",
+    "food_form",
+    "taste",
+    "context",
+    "drink",
+    "general",
+)

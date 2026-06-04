@@ -6,3 +6,4 @@ Thumbs.db
 
 # Local Codex/config files
 config/
+.codex_pdf_preview/

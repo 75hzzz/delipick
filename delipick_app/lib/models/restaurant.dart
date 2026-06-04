@@ -22,6 +22,8 @@ class RestaurantItem {
   final double preferenceScore;
   final double finalScore;
   final String? recommendationReason;
+  final String? recommendationSection;
+  final String? recommendationSectionLabel;
 
   const RestaurantItem({
     required this.menuId,
@@ -46,6 +48,8 @@ class RestaurantItem {
     required this.preferenceScore,
     required this.finalScore,
     required this.recommendationReason,
+    required this.recommendationSection,
+    required this.recommendationSectionLabel,
   });
 
   factory RestaurantItem.fromJson(Map<String, dynamic> json) {
@@ -72,6 +76,8 @@ class RestaurantItem {
       preferenceScore: (json['preference_score'] as num?)?.toDouble() ?? 0.5,
       finalScore: (json['final_score'] as num?)?.toDouble() ?? 0,
       recommendationReason: json['recommendation_reason'] as String?,
+      recommendationSection: json['recommendation_section'] as String?,
+      recommendationSectionLabel: json['recommendation_section_label'] as String?,
     );
   }
 }
