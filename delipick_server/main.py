@@ -555,16 +555,29 @@ def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]]
                     break
 
         if use_sectioned_results:
-            exact_sorted = [item for item in sorted_items if item.get("recommendation_section") == "exact"]
+            exact_sorted = [
+                item
+                for item in sorted_items
+                if item.get("recommendation_section") == "exact"
+                and not scoring._has_avoid_match(tag_intent, item)
+            ]
+            should_fill_similar = not (
+                "죽" in scoring._tag_intent_values(tag_intent, "must_tags")
+                and scoring._tag_intent_type(tag_intent) != "context"
+            )
             similar_sorted = [
                 item
                 for item in sorted_items
                 if item.get("recommendation_section") == "similar"
                 and not scoring._has_avoid_match(tag_intent, item)
+                and scoring._is_reasonable_similar_candidate(tag_intent, item)
             ]
-            target_count = min(req.limit, max(10, min(15, len(exact_sorted) + 8)))
+            target_count = min(req.limit, max(10, min(15, len(exact_sorted) + 8))) if should_fill_similar else min(
+                req.limit,
+                len(exact_sorted),
+            )
             append_unique(exact_sorted, target_count)
-            if len(selected) < target_count:
+            if should_fill_similar and len(selected) < target_count:
                 append_unique(similar_sorted, target_count)
         else:
             append_unique(sorted_items, req.limit)

@@ -154,6 +154,15 @@ _EXPERIENCE_INTENT_TRIGGERS = (
 
 _COMMON_SPICY = ("마라", "매운", "매콤", "불", "청양", "짬뽕", "떡볶", "핫", "칠리")
 _COMMON_FRIED_HEAVY = ("튀김", "후라이드", "치킨", "버거", "피자", "크림", "도넛", "케이크")
+_COMMON_DIGESTIVE_HEAVY = (
+    "비빔밥",
+    "볶음밥",
+    "버터",
+    "치즈",
+    "크림",
+    "마요",
+    "로제",
+)
 _COMMON_CAFE_DRINK = (
     "커피",
     "아메리카노",
@@ -186,9 +195,9 @@ _COMMON_WARM_MEAL = (
 _CONTEXT_ADJUSTMENT_PROFILES = (
     {
         "name": "digestive",
-        "triggers": ("배탈", "속안좋", "속 안좋", "체했", "체함", "소화", "부담"),
+        "triggers": ("배탈", "속안좋", "속 안좋", "속이안좋", "속이 안 좋", "체했", "체함", "소화", "부담"),
         "positive": ("죽", "계란찜", "우동", "쌀국수", "맑", "국", "탕", "수프", "스프"),
-        "negative": _COMMON_CAFE_DRINK + _COMMON_SPICY + _COMMON_FRIED_HEAVY,
+        "negative": _COMMON_CAFE_DRINK + _COMMON_SPICY + _COMMON_FRIED_HEAVY + _COMMON_DIGESTIVE_HEAVY,
         "positive_weight": 0.10,
         "negative_weight": 0.26,
     },
@@ -196,7 +205,7 @@ _CONTEXT_ADJUSTMENT_PROFILES = (
         "name": "illness",
         "triggers": ("아파", "아플", "몸안좋", "몸 안좋", "입맛없", "입맛 없어", "감기", "몸살"),
         "positive": ("죽", "맑", "국", "탕", "우동", "쌀국수", "수프", "스프", "보양", "삼계"),
-        "negative": _COMMON_CAFE_DRINK + _COMMON_SPICY + ("버거", "피자", "튀김", "도넛"),
+        "negative": _COMMON_CAFE_DRINK + _COMMON_SPICY + _COMMON_DIGESTIVE_HEAVY + ("버거", "피자", "튀김", "도넛"),
         "positive_weight": 0.10,
         "negative_weight": 0.28,
     },

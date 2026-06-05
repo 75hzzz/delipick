@@ -32,6 +32,13 @@ def _compact_text(text: str) -> str:
     return re.sub(r"\s+", "", (text or "").lower())
 
 
+def _food_type_text(text: str) -> str:
+    compact = _compact_text(text)
+    for brand_or_homonym in ("본죽", "동죽"):
+        compact = compact.replace(brand_or_homonym, "")
+    return compact
+
+
 def _tokenize_preference_text(text: str) -> list[str]:
     tokens = re.findall(r"[0-9A-Za-z가-힣]+", (text or "").lower())
     return [
@@ -313,6 +320,8 @@ def _parse_tag_profile(raw: Any) -> set[str]:
 
 def _infer_tags_from_menu_text(row: dict[str, Any]) -> set[str]:
     restaurant = row.get("restaurant") if isinstance(row.get("restaurant"), dict) else {}
+    menu_text = _compact_text(str(row.get("menu_name") or ""))
+    food_type_text = _food_type_text(str(row.get("menu_name") or ""))
     text = _compact_text(
         " ".join(
             str(value or "")
@@ -367,9 +376,9 @@ def _infer_tags_from_menu_text(row: dict[str, Any]) -> set[str]:
         add("국물")
     if any(keyword in text for keyword in ("면", "국수", "우동", "라멘", "쌀국수", "칼국수", "냉면", "파스타")):
         add("면")
-    if any(keyword in text for keyword in ("밥", "덮밥", "볶음밥", "비빔밥", "국밥", "백반")):
+    if any(keyword in menu_text for keyword in ("밥", "덮밥", "볶음밥", "비빔밥", "국밥", "백반")):
         add("밥")
-    if "죽" in text.replace("동죽", ""):
+    if "죽" in food_type_text:
         add("죽", "밥", "속편함", "따뜻함")
     if any(keyword in text for keyword in ("마라", "매운", "매콤", "불닭", "핫")):
         add("매콤", "얼얼")
@@ -381,6 +390,19 @@ def _infer_tags_from_menu_text(row: dict[str, Any]) -> set[str]:
 
 def _menu_tags_for_row(row: dict[str, Any]) -> set[str]:
     return _parse_tag_profile(row.get("menu_tags")) | _infer_tags_from_menu_text(row)
+
+
+def _sanitize_menu_tags_for_context(tags: set[str], row: dict[str, Any]) -> set[str]:
+    menu_food_text = _food_type_text(str(row.get("menu_name") or ""))
+    if not menu_food_text:
+        return tags
+
+    sanitized = set(tags)
+    rice_not_porridge = any(keyword in menu_food_text for keyword in ("비빔밥", "볶음밥", "덮밥", "버터비빔"))
+    if rice_not_porridge and "죽" not in menu_food_text:
+        sanitized.discard("죽")
+        sanitized.discard("속편함")
+    return sanitized
 
 
 def _tag_intent_values(tag_intent: dict[str, Any] | None, key: str) -> set[str]:
@@ -408,7 +430,7 @@ def _tag_intent_type(tag_intent: dict[str, Any] | None) -> str:
 
 
 def _menu_tag_match_score(tag_intent: dict[str, Any] | None, row: dict[str, Any]) -> float | None:
-    menu_tags = _menu_tags_for_row(row)
+    menu_tags = _sanitize_menu_tags_for_context(_menu_tags_for_row(row), row)
     must_tags = _tag_intent_values(tag_intent, "must_tags")
     prefer_tags = _tag_intent_values(tag_intent, "prefer_tags")
     avoid_tags = _tag_intent_values(tag_intent, "avoid_tags")
@@ -466,7 +488,7 @@ def _has_all_required_tags(tag_intent: dict[str, Any] | None, row: dict[str, Any
     must_tags = _tag_intent_values(tag_intent, "must_tags")
     if not must_tags:
         return False
-    menu_tags = _menu_tags_for_row(row)
+    menu_tags = _sanitize_menu_tags_for_context(_menu_tags_for_row(row), row)
     return bool(menu_tags) and must_tags.issubset(menu_tags)
 
 
@@ -476,12 +498,23 @@ def _has_avoid_match(tag_intent: dict[str, Any] | None, row: dict[str, Any]) -> 
     if not (avoid_tags or avoid_terms):
         return False
 
-    menu_tags = _menu_tags_for_row(row)
+    menu_tags = _sanitize_menu_tags_for_context(_menu_tags_for_row(row), row)
     if avoid_tags & menu_tags:
         return True
 
+    text_haystack = _compact_text(str(row.get("menu_name") or ""))
+    return any(term in text_haystack for term in avoid_terms)
+
+
+def _is_reasonable_similar_candidate(tag_intent: dict[str, Any] | None, row: dict[str, Any]) -> bool:
+    must_tags = _tag_intent_values(tag_intent, "must_tags")
+    if "죽" not in must_tags:
+        return True
+
+    menu_tags = _sanitize_menu_tags_for_context(_menu_tags_for_row(row), row)
+    menu_text = _food_type_text(str(row.get("menu_name") or ""))
     restaurant = row.get("restaurant") if isinstance(row.get("restaurant"), dict) else {}
-    text_haystack = _compact_text(
+    haystack = _food_type_text(
         " ".join(
             str(value or "")
             for value in (
@@ -491,7 +524,55 @@ def _has_avoid_match(tag_intent: dict[str, Any] | None, row: dict[str, Any]) -> 
             )
         )
     )
-    return any(term in text_haystack for term in avoid_terms)
+
+    blocked_terms = (
+        "샹궈",
+        "마라",
+        "초밥",
+        "스시",
+        "돈까스",
+        "스테이크",
+        "베이글",
+        "치즈",
+        "버거",
+        "치킨",
+        "디저트",
+        "닭갈비",
+        "떡볶",
+        "찜닭",
+        "갈비찜",
+        "탕수육",
+        "짬뽕",
+        "땡초",
+        "얼큰",
+        "매운",
+        "매콤",
+        "불닭",
+    )
+    if any(term in haystack for term in blocked_terms):
+        return False
+
+    allowed_terms = (
+        "국밥",
+        "해장국",
+        "설렁탕",
+        "갈비탕",
+        "곰탕",
+        "우동",
+        "쌀국수",
+        "칼국수",
+        "떡만두국",
+        "만두국",
+        "수프",
+        "스프",
+        "된장국",
+        "미역국",
+        "콩나물국",
+        "찌개",
+    )
+    return "속편함" in menu_tags or any(
+        term in menu_text for term in allowed_terms
+    )
 
 
 def _should_apply_required_tag_filter(tag_intent: dict[str, Any] | None) -> bool:

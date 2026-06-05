@@ -279,10 +279,56 @@ def _apply_negation_overrides(text: str, intent: dict[str, Any]) -> dict[str, An
         if "야식" in compact:
             add_unique("prefer_tags", "야식")
 
-    if any(keyword in compact for keyword in ("속안좋", "속아프", "배탈", "배아", "배아픔", "배아파", "복통", "설사", "체했", "소화", "부담")):
+    if any(keyword in compact for keyword in ("속안좋", "속이안좋", "속아프", "속이아프", "배탈", "배아", "배아픔", "배아파", "복통", "설사", "체했", "소화", "부담")):
+        normalized["intent_type"] = "context"
         add_unique("prefer_tags", "속편함", "담백", "따뜻함")
         add_unique("avoid_tags", "매콤", "얼얼", "기름짐", "느끼함", "디저트", "음료", "튀김", "버거", "치킨", "닭발")
-        add_unique("avoid_terms", "마라", "매운", "불닭", "닭발", "버거", "치킨")
+        add_unique(
+            "avoid_terms",
+            "마라",
+            "매운",
+            "불닭",
+            "닭발",
+            "버거",
+            "치킨",
+            "비빔밥",
+            "볶음밥",
+            "덮밥",
+            "버터",
+            "치즈",
+            "크림",
+            "마요",
+            "로제",
+            "도리탕",
+            "곱도리",
+            "닭볶음탕",
+            "닭내장",
+        )
+
+    if "죽" in normalized.get("must_tags", []):
+        add_unique("prefer_tags", "속편함", "따뜻함", "담백")
+        add_unique("avoid_tags", "버거", "닭발", "치킨", "디저트", "음료", "옵션메뉴", "추가사리")
+        add_unique(
+            "avoid_terms",
+            "커피",
+            "아메리카노",
+            "라떼",
+            "에이드",
+            "스무디",
+            "주스",
+            "아이스",
+            "베이글",
+            "도넛",
+            "케이크",
+            "와플",
+            "쿠키",
+            "디저트",
+            "빙수",
+            "비빔밥",
+            "볶음밥",
+            "덮밥",
+            "버터",
+        )
 
     if "국물" in normalized["must_tags"] and "닭발" not in compact:
         add_unique("avoid_tags", "닭발")
@@ -347,7 +393,7 @@ def _heuristic_preference_tag_intent(text: str) -> dict[str, Any]:
     if any(keyword in compact for keyword in ("매운", "매콤", "마라", "얼얼")):
         intent_type = "taste" if intent_type == "general" else intent_type
         add(prefer_tags, "매콤", "얼얼")
-    if any(keyword in compact for keyword in ("속안좋", "속아프", "배탈", "배아", "배아픔", "배아파", "복통", "설사", "체했", "소화", "부담")):
+    if any(keyword in compact for keyword in ("속안좋", "속이안좋", "속아프", "속이아프", "배탈", "배아", "배아픔", "배아파", "복통", "설사", "체했", "소화", "부담")):
         intent_type = "context"
         add(prefer_tags, "속편함", "담백", "따뜻함")
         add(avoid_tags, "매콤", "얼얼", "기름짐", "느끼함", "디저트", "음료", "튀김")
