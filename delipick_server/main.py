@@ -13,7 +13,7 @@ try:
     from .recommend_logic import (
         build_preference_tag_intent,
         build_taste_vector_from_text,
-        build_text_embedding,
+        build_text_embeddings,
         calculate_queueing_metrics,
     )
     from .update_delivery import scheduler, start_delivery_worker
@@ -21,7 +21,7 @@ except ImportError:
     from recommend_logic import (
         build_preference_tag_intent,
         build_taste_vector_from_text,
-        build_text_embedding,
+        build_text_embeddings,
         calculate_queueing_metrics,
     )
     from update_delivery import scheduler, start_delivery_worker
@@ -322,6 +322,7 @@ def _fetch_menu_flavors(
         m.restaurant_id,
         m.id AS menu_id,
         m.menu_name,
+        r.category_id,
         r.name AS restaurant_name,
         m.price,
         m.image_url AS menu_image_url,
@@ -429,8 +430,7 @@ def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]]
             float(user_taste.get("umami", 0.5)),
             float(user_taste.get("spicy", 0.5)),
         ]
-        user_embedding = build_text_embedding(menu_embedding_text)
-        review_user_embedding = build_text_embedding(review_embedding_text)
+        user_embedding, review_user_embedding = build_text_embeddings([menu_embedding_text, review_embedding_text])
         weights = scoring._weight_by_user_type(req.user_type, tag_intent)
 
         flavor_rows = _fetch_menu_flavors(conn, restaurant_ids, req)
@@ -441,6 +441,8 @@ def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]]
             rest_id = int(row.get("restaurant_id") or 0)
             rest = restaurants_by_id.get(rest_id)
             if rest is None:
+                continue
+            if scoring._should_exclude_food_form_category(tag_intent, row, req.preference_text):
                 continue
 
             menu_price = float(row.get("price") or 0.0)
@@ -610,6 +612,13 @@ def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]]
         ]
         mode = "personalized"
     else:
+        has_user_type = bool(req.user_type)
+        available_weights = scoring._weight_by_user_type(req.user_type) if has_user_type else {}
+        available_total = (
+            float(available_weights.get("delivery", 0.0))
+            + float(available_weights.get("price", 0.0))
+            + float(available_weights.get("review", 0.0))
+        )
         for item in enriched:
             price = float(item.get("main_menu_price") or 0.0)
             if max_price == min_price:
@@ -618,16 +627,33 @@ def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]]
                 price_score = scoring._clip01(1.0 - ((price - min_price) / (max_price - min_price)))
             item["price_score"] = price_score
             item["preference_score"] = 0.5
-            item["final_score"] = float(item["delivery_score"])
+            if has_user_type and available_total > 0:
+                item["final_score"] = scoring._clip01(
+                    (
+                        (float(item["delivery_score"]) * float(available_weights["delivery"]))
+                        + (price_score * float(available_weights["price"]))
+                        + (float(item["restaurant_review_score"]) * float(available_weights["review"]))
+                    )
+                    / available_total
+                )
+            else:
+                item["final_score"] = float(item["delivery_score"])
             item["recommendation_reason"] = scoring._reason_text(
                 float(item["delivery_score"]),
                 price_score,
                 float(item["restaurant_review_score"]),
                 0.5,
-                False,
+                has_user_type,
             )
 
-        sorted_items = sorted(enriched, key=lambda item: float(item["total_eta"]))
+        if has_user_type:
+            sorted_items = sorted(
+                enriched,
+                key=lambda item: (float(item["final_score"]), -float(item["total_eta"])),
+                reverse=True,
+            )
+        else:
+            sorted_items = sorted(enriched, key=lambda item: float(item["total_eta"]))
         selected = sorted_items[: req.limit]
         response_items = [
             RestaurantResponse(

@@ -500,6 +500,31 @@ def _should_apply_required_tag_filter(tag_intent: dict[str, Any] | None) -> bool
     return bool(must_tags) and intent_type in {"food_form", "direct_menu", "drink", "context"}
 
 
+def _should_exclude_food_form_category(
+    tag_intent: dict[str, Any] | None,
+    row: dict[str, Any],
+    preference_text: str = "",
+) -> bool:
+    intent_type = _tag_intent_type(tag_intent)
+    must_tags = _tag_intent_values(tag_intent, "must_tags")
+    prefer_tags = _tag_intent_values(tag_intent, "prefer_tags")
+    compact_preference = _compact_text(preference_text)
+    has_noodle_intent = (
+        "면" in must_tags
+        or "면" in prefer_tags
+        or any(keyword in compact_preference for keyword in ("면", "국수", "우동", "라멘", "쌀국수", "칼국수", "냉면"))
+    )
+    if intent_type not in {"food_form", "direct_menu", "general"} or not has_noodle_intent:
+        return False
+
+    restaurant = row.get("restaurant") if isinstance(row.get("restaurant"), dict) else {}
+    category_id = row.get("category_id") or restaurant.get("category_id")
+    try:
+        return int(category_id) == 5
+    except Exception:
+        return False
+
+
 def _tag_weight_by_intent(tag_intent: dict[str, Any] | None) -> float:
     intent_type = _tag_intent_type(tag_intent)
     if intent_type in {"food_form", "direct_menu", "drink"}:
@@ -594,6 +619,27 @@ def _weight_by_user_type(user_type: str, tag_intent: dict[str, Any] | None = Non
             "review": 0.10,
             "preference": 0.74,
         }
+    if user_type == "convenience" and intent_type in {"food_form", "drink", "direct_menu"}:
+        return {
+            "delivery": 0.40,
+            "price": 0.10,
+            "review": 0.20,
+            "preference": 0.30,
+        }
+    if user_type == "gourmet" and intent_type in {"food_form", "drink", "direct_menu"}:
+        return {
+            "delivery": 0.10,
+            "price": 0.10,
+            "review": 0.20,
+            "preference": 0.60,
+        }
+    if user_type == "budget" and intent_type in {"food_form", "drink", "direct_menu"}:
+        return {
+            "delivery": 0.10,
+            "price": 0.50,
+            "review": 0.10,
+            "preference": 0.30,
+        }
     if intent_type in {"food_form", "drink", "direct_menu"}:
         return {
             "delivery": 0.10,
@@ -604,23 +650,23 @@ def _weight_by_user_type(user_type: str, tag_intent: dict[str, Any] | None = Non
 
     if user_type == "convenience":
         return {
-            "delivery": 0.4,
-            "price": 0.15,
-            "review": 0.15,
-            "preference": 0.3,
+            "delivery": 0.40,
+            "price": 0.10,
+            "review": 0.20,
+            "preference": 0.30,
         }
     if user_type == "gourmet":
         return {
             "delivery": 0.1,
             "price": 0.1,
-            "review": 0.15,
-            "preference": 0.65,
+            "review": 0.2,
+            "preference": 0.6,
         }
     if user_type == "budget":
         return {
             "delivery": 0.1,
-            "price": 0.45,
-            "review": 0.15,
+            "price": 0.5,
+            "review": 0.1,
             "preference": 0.3,
         }
     return {

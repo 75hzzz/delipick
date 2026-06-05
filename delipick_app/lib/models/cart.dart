@@ -42,8 +42,8 @@ class CartModel extends ChangeNotifier {
 
   int get additionalPrepDelay {
     if (totalCount <= 1) return 0;
-    final delay = (totalCount - 1) * 2;
-    return delay > 10 ? 10 : delay;
+    final delay = (totalCount - 1) * 4;
+    return delay > 16 ? 16 : delay;
   }
 
   int get estimatedTotalTime {

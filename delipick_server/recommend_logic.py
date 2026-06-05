@@ -17,6 +17,7 @@ load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "").strip()
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 EMBEDDING_MODEL = os.getenv("OPENAI_EMBEDDING_MODEL", "text-embedding-3-small")
+ENABLE_TASTE_LLM = os.getenv("ENABLE_TASTE_LLM", "false").lower() in {"1", "true", "yes"}
 
 client = OpenAI(api_key=OPENAI_API_KEY) if OPENAI_API_KEY else None
 
@@ -395,7 +396,7 @@ def build_taste_vector_from_text(text: str) -> dict[str, float]:
             "spicy": 0.5,
         }
 
-    if client is None:
+    if client is None or not ENABLE_TASTE_LLM:
         return _heuristic_taste_vector(text)
 
     prompt = (
@@ -505,3 +506,34 @@ def build_text_embedding(text: str) -> list[float]:
         return [float(value) for value in embedding]
     except Exception:
         return []
+
+
+def build_text_embeddings(texts: list[str]) -> list[list[float]]:
+    normalized = [str(text or "").strip() for text in texts]
+    if client is None or not any(normalized):
+        return [[] for _ in normalized]
+
+    unique_texts: list[str] = []
+    unique_indexes: dict[str, int] = {}
+    for text in normalized:
+        if not text:
+            continue
+        if text not in unique_indexes:
+            unique_indexes[text] = len(unique_texts)
+            unique_texts.append(text)
+
+    try:
+        response = client.embeddings.create(
+            model=EMBEDDING_MODEL,
+            input=unique_texts,
+        )
+        unique_embeddings: list[list[float]] = [[] for _ in unique_texts]
+        for item in response.data or []:
+            unique_embeddings[int(item.index)] = [float(value) for value in item.embedding]
+
+        return [
+            unique_embeddings[unique_indexes[text]] if text and text in unique_indexes else []
+            for text in normalized
+        ]
+    except Exception:
+        return [build_text_embedding(text) for text in normalized]

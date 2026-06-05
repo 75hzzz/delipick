@@ -7,3 +7,7 @@ Thumbs.db
 # Local Codex/config files
 config/
 .codex_pdf_preview/
+
+# Local nutrient source files
+delipick_server/data/*.xlsx
+delipick_server/scripts/*.xlsx
