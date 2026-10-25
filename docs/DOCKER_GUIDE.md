@@ -18,8 +18,6 @@ QUERY_MODE=live
 OPENAI_API_KEY=본인_키
 ```
 
-API 사용료 발생 가능. 키는 메신저·화면 캡처·GitHub에 공유 금지
-
 6. Android 에뮬레이터 실행 후 `delipick_app` 폴더에서 아래 명령 실행
 
 ```powershell
