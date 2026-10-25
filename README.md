@@ -1,8 +1,8 @@
 # Delipick
 
-기존 `delipick_app`과 `delipick_server` 구조를 유지한 통합본입니다. 검증한 추천 검색 개선 코드, Docker 실행 설정, 설명 문서를 합쳤습니다. 기존 원본 프로젝트와 실험 폴더는 수정하지 않았습니다.
+배달 음식점 추천 앱입니다. 기존 앱·서버 구조에 단계별 후보 검색과 Qdrant 연동, Docker 실행 설정을 추가했습니다.
 
-팀원 실사용 테스트는 `test/qdrant-docker` 브랜치를 사용합니다. [팀원 테스트 순서](docs/TEAM_TEST_GUIDE.md)와 [업로드 전 점검 기록](docs/release_audit/REPORT.md)을 먼저 확인하세요. `main`에 바로 병합하는 버전이 아닙니다.
+팀원 테스트는 `test/qdrant-docker` 브랜치에서 진행합니다. 실행 방법은 [Docker 가이드](docs/DOCKER_GUIDE.md), 측정 결과는 [테스트 결과](docs/RESULTS.md)를 참고하세요.
 
 ## 폴더 구성
 
@@ -22,14 +22,14 @@ delipick_integrated/
     deployment/                 초기화와 Docker 실행 어댑터
     tests/                      통합 테스트
     data/demo/                  별도 가상 샘플
-  docs/                         원래 문서와 변경 설명 및 검증 기록
+  docs/                         기존 README, Docker 가이드, 테스트 결과
   compose.yaml
   Dockerfile
   .env.example
   start.ps1
 ```
 
-`backend`라는 새 폴더로 서버를 옮기지 않았습니다. `before`·`after`·실험 DB 내보내기·실험 가상환경도 이 프로젝트에 넣지 않았습니다. 원래 README는 `docs/ORIGINAL_README.md`에 보관했습니다.
+기존 직접 실행 방법은 [docs/README.md](docs/README.md)에 있습니다.
 
 ## 기존 SQL 덤프로 실행
 
@@ -134,15 +134,11 @@ docker compose stop
 
 ## 변경 문서와 GitHub 공유 범위
 
-- [통합 내용](docs/INTEGRATION.md)
-- [공유 전 최종 점검 결과와 수정 사항](docs/release_audit/REPORT.md)
-- [팀원 PC 실행 및 비교 테스트 안내](docs/TEAM_TEST_GUIDE.md)
-- [기존 검증 코드 상세](docs/validated_experiments/CODE_CHANGES.md)
-- [기존 Docker 성능 검증](docs/validated_experiments/DOCKER_AUDIT_RESULTS.md)
-- `docs/integration_provenance.json`: 최초 통합 당시 체크섬, `docs/release_audit/source_manifest.json`: 이번 수정 후 체크섬
-- `docs/integration/`: 이 통합 경로에서 새로 실시한 실행 테스트 결과
+- [기존 프로젝트 README](docs/README.md)
+- [Docker 실행 및 팀원 테스트](docs/DOCKER_GUIDE.md)
+- [성능 측정 및 테스트 결과](docs/RESULTS.md)
 
-기존 검증 보고서는 당시 경로와 측정값을 유지한 보관본입니다. 보고서의 `backend/`는 이 통합본의 `delipick_server/`에 해당합니다. 새 폴더로 합쳤다는 이유만으로 이전 속도 수치를 새 환경의 재측정값이라고 주장하지 않습니다.
+성능 측정과 최종 실행 검사는 날짜와 범위가 다르므로 `RESULTS.md`에 구분했습니다.
 
 로컬 통합 복사본에는 기존 SQL과 원본 수집 JSON이 남아 있지만 이 브랜치의 최신 공유 파일에서는 제외합니다. `.env`, 비밀키, 가상환경, 빌드 캐시도 제외합니다. 이전 브랜치에서 이미 추적하던 데이터는 과거 Git 이력에 남아 있을 수 있으며, 이번 작업은 이력을 강제로 다시 쓰지 않습니다. 데이터 공개 권한·개인정보는 별도로 확인하세요. 새 브랜치는 기존 `merge-test` 이력을 이어받고 `main`은 변경하지 않습니다.
 

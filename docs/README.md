@@ -1,6 +1,8 @@
 ﻿# 1. merge-test에 있는 코드와 동기화할 때
 (기존에 merge-test에 있는 제일 최신 사항을 가져와야함)
 
+기존 팀 README입니다. Docker 버전 실행은 [DOCKER_GUIDE.md](DOCKER_GUIDE.md)를 참고하세요. 아래 8000 포트는 기존 직접 실행 기준이며 Docker 버전은 18086을 사용합니다.
+
 ## **Android Studio OR vscode 터미널에서**
 ```bash
 # 1. 깃허브(원격)의 최신 정보를 내 컴퓨터로 동기화 (필수!)
@@ -13,7 +15,7 @@ git branch
 git checkout [내-브랜치-이름]
 
 # 3. 해당 브랜치에 있는 최신 내용을 내 브랜치로 끌고 와서 합치기
-# (기존 로컬에 있는 코드 삭제 후, main 코드 덮어쓰기)
+# (상대 브랜치 변경 사항을 현재 브랜치에 병합)
 git merge [상대방_브랜치_이름]
 # merge-test라면
 git merge origin/merge-test
@@ -111,4 +113,4 @@ String iconUrl =
     "https://openweathermap.org/img/wn/$icon@2x.png";
 ```
 
-추천 시스템의 세부 계산식과 가중치는 [추천 알고리즘 문서](docs/recommendation.md)를 참고하세요.
+Docker 실행과 팀원 테스트는 [DOCKER_GUIDE.md](DOCKER_GUIDE.md), 검증 결과는 [RESULTS.md](RESULTS.md)를 참고하세요.

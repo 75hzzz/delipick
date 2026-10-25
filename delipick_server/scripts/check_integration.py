@@ -12,7 +12,7 @@ import xml.etree.ElementTree as ET
 from datetime import date
 
 ROOT = Path(__file__).resolve().parents[2]
-OUT = ROOT / "docs/integration"
+OUT = ROOT / ".local_validation"
 
 
 def main():
@@ -26,16 +26,12 @@ def main():
         if result.returncode:
             raise RuntimeError(result.stdout + result.stderr)
         return result.stdout
-    manifest = json.loads((ROOT / "docs/integration_provenance.json").read_text(encoding="utf-8"))
-    release_path = ROOT / "docs/release_audit/source_manifest.json"
-    release = json.loads(release_path.read_text(encoding="utf-8")) if release_path.exists() else None
-    app_files = {name: wanted for name, wanted in manifest["source_app_and_other_files"].items() if name.startswith("delipick_app/")}
-    core_expected = release["core_sha256_lf"] if release else manifest["verified_core_sha256"]
-    if release:
-        assert all(hashlib.sha256((ROOT / name).read_bytes().replace(b"\r\n", b"\n")).hexdigest() == wanted for name, wanted in release["app_sha256_lf"].items())
-    else:
-        assert all(hashlib.sha256((ROOT / name).read_bytes()).hexdigest() == wanted for name, wanted in app_files.items())
-    assert all(hashlib.sha256((ROOT / "delipick_server" / name).read_bytes().replace(b"\r\n", b"\n") if release else (ROOT / "delipick_server" / name).read_bytes()).hexdigest() == wanted for name, wanted in core_expected.items())
+    # Compare the running Docker image with this checkout, not archived reports.
+    modules = ['main.py', 'recommend_logic.py', 'recommendation_rules.py',
+               'recommendation_scoring.py', 'update_delivery.py',
+               'vector_search.py', 'candidate_recall.py']
+    core_expected = {name: hashlib.sha256((ROOT / 'delipick_server' / name).read_bytes().replace(b'\r\n', b'\n')).hexdigest()
+                     for name in modules}
     code = """import hashlib,json,platform
 from pathlib import Path
 from delipick_server import main,vector_search
@@ -98,19 +94,19 @@ print(json.dumps({'counts':counts,'points':vector_search.client().count(vector_s
         if path.suffix != ".gz" and re.search(rb"\bsk-(?:proj-|svcacct-)?[A-Za-z0-9_-]{20,}", path.read_bytes()):
             forbidden.append(name)
     assert not forbidden, f"Review potentially private publishable paths: {forbidden}"
-    report = {"date": date.today().isoformat(), "app_files_checked": len(release["app_sha256_lf"]) if release else len(app_files), "verified_core_modules": 7,
+    report = {"date": date.today().isoformat(), "app_files_checked": 0, "verified_core_modules": 7,
               "git_metadata_or_remote_created": False, "publishable_files_checked": len(public),
               "private_dump_env_raw_json_excluded": True, "known_api_key_pattern_found": False,
               "flutter_runtime_tested": False, "reason": "This script checks Docker; Flutter validation is recorded separately.", "stacks": records}
     (OUT / "validation.json").write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     lines = ["# 통합본 검증 결과", "", f"검증일 {date.today().isoformat()}", "",
-             "앱과 핵심 서버 모듈을 검증 문서의 체크섬과 대조했다. 이 스크립트는 Docker 검사이며 Flutter 검증은 별도 기록을 참고한다.", "",
+             "핵심 서버 모듈을 현재 체크아웃의 체크섬과 대조했다. 이 스크립트는 Docker 검사이며 Flutter 검사는 포함하지 않는다.", "",
              "| 실행 환경 | 테스트 | 실패 | 오류 | 메뉴 | Qdrant 포인트 |", "| --- | ---: | ---: | ---: | ---: | ---: |"]
     for row in records:
         lines.append(f"| {row['mode']} | {row['tests']['tests']} | {row['tests']['failures']} | {row['tests']['errors']} | {row['runtime']['counts']['menus']} | {row['runtime']['points']} |")
     lines.extend(["", "기존 SQL 가져오기와 가상 샘플을 서로 다른 프로젝트·볼륨에서 실행했다. 두 환경에서 전체 계산 대비 추천 ID·순서·점수, 맛 수치 조합, 가격·카테고리·인식한 제외 조건, Qdrant 장애 503, API 키 없는 live 거절을 검사했다. 각 환경의 실제 HTTP 예시 네 개도 정상 반환했다.", "",
                   "초기화를 한 번 더 실행해 SQL 행 수와 Qdrant 포인트 수가 변하지 않음을 확인했다. 비밀번호·실제 SQL·수집 JSON을 Git이 포함할 목록에서 제외하는지 검사했고 알려진 OpenAI 키 패턴은 발견하지 않았다. 이것이 모든 비밀정보·저작권·개인정보를 보장하는 감사는 아니다.", "",
-                  "이 테스트는 고정된 예시의 회귀 검사이며 새로운 독립 자연어 정확도나 전국 규모 성능 검증이 아니다. 이전 성능 수치는 docs/validated_experiments의 별도 실험 기록이다. 원본 프로젝트와 실험 폴더를 수정하거나 GitHub에 업로드하지 않았다."])
+                  "이 테스트는 고정 예시의 회귀 검사이며 독립 자연어 정확도나 전국 규모 성능 검증은 아니다. 이전 성능 측정은 docs/RESULTS.md를 참고한다."])
     (OUT / "RESULTS.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 

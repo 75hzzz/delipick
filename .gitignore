@@ -28,3 +28,10 @@ delipick_server/scripts/*.xlsx
 *.keystore
 .DS_Store
 Thumbs.db
+.local_validation/
+
+# Keep detailed local audit records out of the shared documentation.
+docs/**
+!docs/README.md
+!docs/DOCKER_GUIDE.md
+!docs/RESULTS.md
