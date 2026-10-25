@@ -1,61 +1,50 @@
 # Docker 실행 및 테스트
 
-## 받을 브랜치
-
-```powershell
-git clone --branch test/qdrant-docker https://github.com/75hzzz/delipick.git delipick-qdrant-test
-cd delipick-qdrant-test
-```
-
-이 버전은 `merge-test`의 c0e405d에서 분기했습니다. `main`은 변경하지 않습니다. 같은 이름의 다른 delipick 폴더를 열지 않도록 터미널 전체 경로를 확인하세요. 기존 비교 버전은 별도 폴더에서 실행하고 새 코드로 덮어쓰지 마세요.
-
 ## 처음 실행
 
-1. Docker Desktop을 설치하고 켭니다.
-2. 팀에서 별도로 받은 동일한 `database.sql`을 `delipick_server/database/database.sql`에 넣습니다. 메타데이터는 Git에 포함된 `import_metadata.json`을 그대로 사용합니다.
-3. 프로젝트 루트에서 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\start.ps1`을 실행합니다.
-4. http://localhost:18086/docs 와 http://localhost:18086/deployment/info 를 확인합니다.
-5. 임의의 자연어를 평가하려면 루트 `.env`의 `QUERY_MODE=live`, `OPENAI_API_KEY=본인_키`를 설정하고 시작 스크립트를 다시 실행합니다. API 사용료가 발생할 수 있습니다. 키는 메신저·화면 캡처·GitHub에 공유하지 않습니다.
-6. Android 에뮬레이터를 켜고 `delipick_app`에서 `flutter pub get`, `flutter run --dart-define=API_BASE_URL=http://10.0.2.2:18086`을 실행합니다.
+1. Docker Desktop 설치 후 실행
+2. 별도로 받은 `database.sql`을 `delipick_server/database/database.sql`에 추가. `import_metadata.json`은 Git에 포함된 파일 그대로 사용
+3. 프로젝트 루트에서 아래 명령 실행
 
-SQL을 아직 받지 않았다면 `start.ps1 -Demo`로 가상 메뉴 224개 샘플을 먼저 확인할 수 있습니다. 샘플 API 포트는 18087입니다. 기본 replay는 기록된 문장 네 개만 지원하며 자유 입력의 품질 평가는 아닙니다. live는 자연어 분석과 사용자 임베딩을 실제 호출하고, 메뉴 임베딩 전체를 매번 재생성하지 않습니다.
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\start.ps1
+```
+
+4. http://localhost:18086/docs 와 http://localhost:18086/deployment/info 접속 확인
+5. 자유로운 자연어 입력 테스트 시 루트 `.env`에서 아래 항목 설정 후 시작 스크립트 재실행
+
+```dotenv
+QUERY_MODE=live
+OPENAI_API_KEY=본인_키
+```
+
+API 사용료 발생 가능. 키는 메신저·화면 캡처·GitHub에 공유 금지
+
+6. Android 에뮬레이터 실행 후 `delipick_app` 폴더에서 아래 명령 실행
+
+```powershell
+flutter pub get
+flutter run --dart-define=API_BASE_URL=http://10.0.2.2:18086
+```
+
+## 가상 데이터로 실행
+
+SQL 파일이 없다면 아래 명령으로 가상 메뉴 224개 샘플 실행
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\start.ps1 -Demo
+```
+
+- 샘플 API 포트: `18087` (앱 연결 주소도 `http://10.0.2.2:18087`로 변경)
+- `replay`: 기록된 문장 네 개만 지원, 자유 입력 테스트용 아님
+- `live`: 자연어 분석과 사용자 임베딩 API 호출. 메뉴 임베딩 전체를 매번 재생성하는 방식은 아님
 
 ## 비교 조건
 
-- 같은 SQL 파일, 같은 사용자 유형, 같은 자연어 문장, 같은 맛 슬라이더, 같은 가격·카테고리로 비교합니다.
-- 비교 중 네이버 자동 갱신은 우선 `ENABLE_DELIVERY_WORKER=false`로 둡니다. 한쪽만 경로 시간이 바뀌면 검색 구조 외의 영향이 섞입니다. 다만 기존 ETA 시뮬레이션 자체에도 난수가 있어 편의형 순위는 변할 수 있습니다.
-- 첫 요청과 같은 문장의 재요청을 따로 기록합니다. 기존 캐시 때문에 재요청만 재면 실제 처음 사용하는 대기시간과 다릅니다.
-- 개인 PC 사양, 네트워크, 외부 LLM 시간도 다릅니다. 사람별 시간을 단순 합쳐 한 가지 검색 성능 수치로 발표하지 않습니다.
-- 보관된 성능 실험의 before 스냅샷과 Git의 merge-test 커밋이 항상 같은 버전은 아닙니다. 이번 팀원 비교는 두 앱 버전의 사용성 평가이며 Qdrant 단독 효과를 분리한 실험이 아닙니다.
+- 같은 SQL 파일·사용자 유형·자연어·맛 슬라이더·가격·카테고리로 비교
+- 비교 중 네이버 자동 갱신은 `ENABLE_DELIVERY_WORKER=false`로 설정. 기존 ETA 시뮬레이션의 난수로 편의형 순위가 달라질 수 있음
+- 첫 요청과 같은 문장의 반복 요청은 구분해서 측정. 캐시 적용 여부에 따라 대기시간 차이 발생 가능
+- PC 사양·네트워크·외부 LLM 응답시간이 다르므로 팀원별 측정값을 단순 합산하지 않음
+- 기존 실험의 before 스냅샷과 `merge-test`는 버전 차이가 있을 수 있음. 팀원 비교는 앱 사용성 평가이며 Qdrant 단독 효과를 분리한 실험은 아님
 
-## 해 볼 입력
-
-| 구분 | 예시 | 볼 내용 |
-| --- | --- | --- |
-| 음식 형태 | 국물 있는 면 요리 추천해줘 | 면·국물에 맞는 메뉴인지 |
-| 제외 | 마라탕 말고 따뜻한 국물 음식 추천해줘 | 제외한 메뉴가 들어오는지 |
-| 맛 | 맵지 않은 음식 추천해줘 | 매운 메뉴가 노출되는지와 저장 태그 한계 |
-| 상황 | 혼자 먹기 좋은 음식 추천해줘 | 양·메뉴가 실제로 납득되는지 |
-| 넓은 요청 | 오늘 뭐 먹을까 | 음료·사이드에 과하게 치우치는지 |
-| 조합 | 같은 문장에 편의형·미식형·경제형 변경 | 유형 변경이 결과에 납득되게 반영되는지 |
-| 슬라이더 | 다섯 맛을 모두 중간으로 선택 후 다시 열기 | 선택이 사라지지 않고 유지되는지 |
-| UI 안정성 | 필터를 빠르게 바꾸기 | 이전 응답이 최신 결과를 덮는지 |
-
-예시 외에 각자 실제로 검색할 법한 문장을 5~10개씩 추가하세요. 모호한 문장, 후보가 없는 문장, 서로 충돌하는 조건도 기록하면 좋습니다. 알레르기 같은 안전 조건의 보장을 시험하는 서비스로 사용하지 않습니다.
-
-## 기록 양식
-
-```text
-비교 버전 또는 커밋:
-PC와 실행 모드:
-자연어 / 유형 / 맛 수치 / 가격 / 카테고리:
-상위 5개 결과:
-원하는 취향에 맞는 정도: 1~5
-제외 조건 위반 여부와 메뉴:
-첫 요청 체감 대기시간:
-같은 요청 반복 대기시간:
-기존 버전보다 나은 점 / 나빠진 점:
-오류 메시지와 재현 순서:
-```
-
-SQL의 태그·리뷰 정보 자체가 부족한 경우와 검색 후보를 잘못 추린 경우는 다릅니다. 테스트 통과를 추천 정확도 100%로 해석하지 않고, 실제로 납득되는 메뉴인지 사람이 평가합니다. 장바구니의 주문 완료는 모의 화면이며 실제 주문이나 결제는 발생하지 않습니다.
+장바구니의 주문 완료는 모의 화면이며 실제 주문·결제는 발생하지 않음
