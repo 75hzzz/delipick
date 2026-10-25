@@ -76,8 +76,7 @@ class _TastePreferenceScreenState extends State<TastePreferenceScreen> {
       }
     }
 
-    final isLegacyDefault = normalized.values.every((level) => level == 1);
-    return isLegacyDefault ? _defaultTasteLevels() : normalized;
+    return normalized;
   }
 
   @override

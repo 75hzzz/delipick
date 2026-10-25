@@ -1,5 +1,7 @@
 ﻿import os
 import time
+import logging
+import math
 from datetime import datetime
 
 import pymysql
@@ -8,6 +10,11 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from dotenv import load_dotenv
 
 load_dotenv()
+logger = logging.getLogger(__name__)
+
+
+class NaverAccessError(RuntimeError):
+    """Stop a batch after authentication, permission, or quota failure."""
 
 # 기준 좌표
 USER_LAT = 35.113732
@@ -19,6 +26,8 @@ NAVER_URL = "https://maps.apigw.ntruss.com/map-direction/v1/driving"
 def _db_candidates() -> list[str]:
     # DB 후보 목록
     requested = os.getenv("DB_NAME", "").strip()
+    if requested:
+        return [requested]
     defaults = [requested] if requested else []
     for name in ("delipick", "qqq"):
         if name not in defaults:
@@ -37,6 +46,7 @@ def get_db_connection() -> pymysql.connections.Connection:
         try:
             return pymysql.connect(
                 host=os.getenv("DB_HOST", "127.0.0.1"),
+                port=int(os.getenv("DB_PORT", "3306")),
                 user=os.getenv("DB_USER", "root"),
                 password=os.getenv("DB_PASSWORD", ""),
                 db=db_name,
@@ -71,10 +81,10 @@ def _has_naver_keys() -> bool:
     return bool(headers["X-NCP-APIGW-API-KEY-ID"] and headers["X-NCP-APIGW-API-KEY"])
 
 
-def get_naver_duration(goal_lat: float, goal_lon: float) -> int:
+def get_naver_duration(goal_lat: float, goal_lon: float) -> int | None:
     # 네이버 경로 기반 소요시간 조회
     if not _has_naver_keys():
-        return 20
+        return None
 
     params = {
         "start": f"{USER_LON},{USER_LAT}",
@@ -89,25 +99,35 @@ def get_naver_duration(goal_lat: float, goal_lon: float) -> int:
             headers=_naver_headers(),
             timeout=8,
         )
+        if response.status_code in {401, 403, 429}:
+            raise NaverAccessError(f"Naver access or quota failure ({response.status_code})")
         if response.status_code == 200:
             data = response.json()
-            duration_ms = data["route"]["trafast"][0]["summary"]["duration"]
-            return int(duration_ms / 1000 / 60)
+            duration_ms = float(data["route"]["trafast"][0]["summary"]["duration"])
+            if not math.isfinite(duration_ms) or duration_ms <= 0:
+                return None
+            return max(1, int(duration_ms / 1000 / 60))
 
-        print(f"Naver API error ({response.status_code}): {response.text}")
-        return 20
+        logger.warning("Naver route request failed with HTTP %s; cached time retained", response.status_code)
+        return None
+    except NaverAccessError:
+        raise
     except Exception as error:
-        print(f"Naver API request failed: {error}")
-        return 20
+        logger.warning("Naver route request failed (%s); cached time retained", type(error).__name__)
+        return None
 
 
 def update_delivery_times() -> None:
+    if not _has_naver_keys():
+        logger.warning("Delivery refresh skipped: both Naver credentials are required")
+        return
     # 식당별 배달시간 갱신 배치
     now_str = datetime.now().strftime("%H:%M:%S")
     print(f"[{now_str}] Delivery time refresh started.")
 
-    conn = get_db_connection()
+    conn = None
     try:
+        conn = get_db_connection()
         with conn.cursor() as cursor:
             cursor.execute("SELECT id, latitude, longitude FROM restaurants")
             restaurants = cursor.fetchall()
@@ -120,7 +140,18 @@ def update_delivery_times() -> None:
                 if lat is None or lon is None:
                     continue
 
-                new_time = get_naver_duration(float(lat), float(lon))
+                try:
+                    lat, lon = float(lat), float(lon)
+                    if not math.isfinite(lat) or not math.isfinite(lon) or not -90 <= lat <= 90 or not -180 <= lon <= 180:
+                        continue
+                    new_time = get_naver_duration(lat, lon)
+                except (ValueError, TypeError):
+                    continue
+                except NaverAccessError as error:
+                    logger.warning("%s; remaining restaurants keep cached delivery times", error)
+                    break
+                if new_time is None:
+                    continue
                 cursor.execute(
                     "UPDATE restaurants SET delivery_time = %s, last_delivery_update = NOW() WHERE id = %s",
                     (new_time, restaurant["id"]),
@@ -130,9 +161,12 @@ def update_delivery_times() -> None:
             conn.commit()
             print(f"Delivery time refresh completed: {updated} rows updated")
     except Exception as error:
-        print(f"Delivery update failed: {error}")
+        if conn is not None:
+            conn.rollback()
+        logger.warning("Delivery refresh failed (%s); uncommitted updates rolled back", type(error).__name__)
     finally:
-        conn.close()
+        if conn is not None:
+            conn.close()
 
 
 scheduler = BackgroundScheduler()
@@ -142,9 +176,14 @@ def start_delivery_worker() -> None:
     # 워커 시작 + 주기 스케줄 등록
     if scheduler.running:
         return
+    if not _has_naver_keys():
+        logger.warning("Delivery worker not started: both Naver credentials are required")
+        return
 
-    update_delivery_times()
-    scheduler.add_job(update_delivery_times, "interval", minutes=60)
+    # The first run is immediate but must not block API startup on remote calls.
+    scheduler.add_job(update_delivery_times, "interval", minutes=60,
+                      id="delivery_refresh", replace_existing=True, max_instances=1,
+                      coalesce=True, next_run_time=datetime.now())
     scheduler.start()
     print("Delivery worker started (every 60 minutes).")
 

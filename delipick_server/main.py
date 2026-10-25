@@ -1,5 +1,9 @@
 ﻿import os
 from datetime import datetime
+import json
+from contextvars import ContextVar
+import logging
+from time import perf_counter
 import re
 from typing import Any
 
@@ -32,6 +36,14 @@ except ImportError:
     import recommendation_scoring as scoring
 
 load_dotenv()
+logger = logging.getLogger("delipick.performance")
+logger.setLevel(logging.INFO)
+if not logger.handlers:
+    logger.addHandler(logging.StreamHandler())
+_request_timings: ContextVar[dict[str, float] | None] = ContextVar("request_timings", default=None)
+_table_columns_cache: dict[str, set[str]] = {}
+_retrieval_context: ContextVar[dict | None] = ContextVar("retrieval_context", default=None)
+
 
 MIN_RECOMMENDABLE_NON_CAFE_PRICE = 4000
 PRICE_FILTER_EXEMPT_CATEGORY_IDS = (7,)
@@ -164,6 +176,8 @@ def _parse_int_env(name: str, default: int) -> int:
 
 def _db_candidates() -> list[str]:
     requested = os.getenv("DB_NAME", "").strip()
+    if requested:
+        return [requested]
     defaults = [requested] if requested else []
     for name in ("delipick", "qqq"):
         if name not in defaults:
@@ -187,6 +201,21 @@ app.add_middleware(
 )
 
 
+@app.middleware("http")
+async def performance_log(request, call_next):
+    timings = {}
+    token = _request_timings.set(timings)
+    started = perf_counter()
+    try:
+        response = await call_next(request)
+        timings["total_ms"] = round((perf_counter() - started) * 1000, 2)
+        response.headers["X-Response-Time-Ms"] = str(timings["total_ms"])
+        logger.info("request_performance %s", json.dumps({"path": request.url.path, **timings}))
+        return response
+    finally:
+        _request_timings.reset(token)
+
+
 def get_db_connection() -> pymysql.connections.Connection:
     last_error: pymysql.MySQLError | None = None
 
@@ -194,6 +223,7 @@ def get_db_connection() -> pymysql.connections.Connection:
         try:
             return pymysql.connect(
                 host=os.getenv("DB_HOST", "127.0.0.1"),
+                port=int(os.getenv("DB_PORT", "3306")),
                 user=os.getenv("DB_USER", "root"),
                 password=os.getenv("DB_PASSWORD", ""),
                 db=db_name,
@@ -213,10 +243,27 @@ def get_db_connection() -> pymysql.connections.Connection:
     raise RuntimeError("Unable to connect database with known candidates.")
 
 
-def _fetch_base_candidates(conn: pymysql.connections.Connection, req: RecommendationRequest) -> list[dict[str, Any]]:
+def _get_table_columns(conn: pymysql.connections.Connection, table_name: str) -> set[str]:
+    """Schema is static while the API is running, so avoid metadata queries per request."""
+    cached = _table_columns_cache.get(table_name)
+    if cached is not None:
+        return cached
+
     with conn.cursor() as cursor:
-        cursor.execute("SHOW COLUMNS FROM restaurants")
-        restaurant_columns = {row["Field"] for row in cursor.fetchall()}
+        cursor.execute(f"SHOW COLUMNS FROM `{table_name}`")
+        columns = {row["Field"] for row in cursor.fetchall()}
+    _table_columns_cache[table_name] = columns
+    return columns
+
+
+def _record_timing(stage: str, started_at: float) -> None:
+    timings = _request_timings.get()
+    if timings is not None:
+        timings[stage] = round((perf_counter() - started_at) * 1000, 2)
+
+
+def _fetch_base_candidates(conn: pymysql.connections.Connection, req: RecommendationRequest) -> list[dict[str, Any]]:
+    restaurant_columns = _get_table_columns(conn, "restaurants")
 
     rating_expr = "r.google_rating" if "google_rating" in restaurant_columns else "0"
     prep_expr = "r.prep_time" if "prep_time" in restaurant_columns else "NULL"
@@ -306,13 +353,12 @@ def _fetch_menu_flavors(
     conn: pymysql.connections.Connection,
     restaurant_ids: list[int],
     req: RecommendationRequest,
+    menu_ids: list[int] | None = None,
 ) -> list[dict[str, Any]]:
     if not restaurant_ids:
         return []
 
-    with conn.cursor() as cursor:
-        cursor.execute("SHOW COLUMNS FROM menu_flavors")
-        flavor_columns = {row["Field"] for row in cursor.fetchall()}
+    flavor_columns = _get_table_columns(conn, "menu_flavors")
 
     menu_tags_expr = "mf.menu_tags" if "menu_tags" in flavor_columns else "NULL"
     placeholders = ",".join(["%s"] * len(restaurant_ids))
@@ -348,6 +394,11 @@ def _fetch_menu_flavors(
     """
 
     params: list[Any] = [*restaurant_ids, req.min_price, req.max_price, MIN_RECOMMENDABLE_NON_CAFE_PRICE]
+    if menu_ids is not None:
+        if not menu_ids:
+            return []
+        sql += " AND m.id IN (" + ",".join(["%s"] * len(menu_ids)) + ")"
+        params.extend(menu_ids)
     with conn.cursor() as cursor:
         cursor.execute(sql, params)
         return cursor.fetchall()
@@ -363,7 +414,9 @@ def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]]
             items=[],
         )
 
-    natural_category_ids = set() if req.category_ids else _category_ids_from_preference_text(req.preference_text)
+    # Parsed conditions already constrain retrieval; raw keywords can include a
+    # negated category (e.g. "not mala" must not restrict results to Asian food).
+    natural_category_ids = set() if req.category_ids or _retrieval_context.get() else _category_ids_from_preference_text(req.preference_text)
     if natural_category_ids:
         category_rows = [
             row
@@ -376,14 +429,18 @@ def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]]
     now_hour = datetime.now().hour
     restaurant_ids = [int(row["id"]) for row in rows]
 
-    review_scores = _fetch_review_scores(conn, restaurant_ids)
+    retrieval_state = _retrieval_context.get()
+    review_scores = (retrieval_state["review_scores"] if retrieval_state and "review_scores" in retrieval_state
+                     else _fetch_review_scores(conn, restaurant_ids))
 
     enriched: list[dict[str, Any]] = []
     etas: list[float] = []
     prices: list[float] = []
 
     for row in rows:
-        metrics = calculate_queueing_metrics(row.get("prep_time"), row.get("delivery_time"), now_hour)
+        metrics = (retrieval_state["restaurant_metrics"][int(row["id"])]
+                   if retrieval_state and "restaurant_metrics" in retrieval_state
+                   else calculate_queueing_metrics(row.get("prep_time"), row.get("delivery_time"), now_hour))
         eta = float(metrics["total_eta"])
         price = float(row.get("main_menu_price") or 0.0)
 
@@ -419,10 +476,11 @@ def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]]
         item["restaurant_review_score"] = review_score
 
     if personalized:
-        tag_intent = build_preference_tag_intent(req.preference_text)
+        retrieval = _retrieval_context.get()
+        tag_intent = retrieval["intent"] if retrieval else build_preference_tag_intent(req.preference_text)
         menu_embedding_text = str(tag_intent.get("menu_embedding_text") or req.preference_text).strip() or req.preference_text
         review_embedding_text = str(tag_intent.get("review_embedding_text") or menu_embedding_text).strip() or menu_embedding_text
-        user_taste = build_taste_vector_from_text(menu_embedding_text)
+        user_taste = retrieval["taste"] if retrieval else build_taste_vector_from_text(menu_embedding_text)
         user_taste_vector = [
             float(user_taste.get("salty", 0.5)),
             float(user_taste.get("sweet", 0.5)),
@@ -430,10 +488,17 @@ def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]]
             float(user_taste.get("umami", 0.5)),
             float(user_taste.get("spicy", 0.5)),
         ]
-        user_embedding, review_user_embedding = build_text_embeddings([menu_embedding_text, review_embedding_text])
+        user_embedding, review_user_embedding = retrieval["vectors"] if retrieval else build_text_embeddings([menu_embedding_text, review_embedding_text])
         weights = scoring._weight_by_user_type(req.user_type, tag_intent)
 
-        flavor_rows = _fetch_menu_flavors(conn, restaurant_ids, req)
+        detail_started = perf_counter()
+        if retrieval and "flavor_rows" in retrieval:
+            flavor_rows = retrieval["flavor_rows"]
+        else:
+            flavor_rows = _fetch_menu_flavors(conn, restaurant_ids, req, retrieval["menu_ids"] if retrieval else None)
+            if retrieval is not None:
+                retrieval["flavor_rows"] = flavor_rows
+            _record_timing("detail_fetch_ms", detail_started)
         restaurants_by_id = {int(item["id"]): item for item in enriched}
         menu_candidates: list[dict[str, Any]] = []
 
@@ -504,8 +569,11 @@ def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]]
                         item["recommendation_section_label"] = "유사 추천"
 
         menu_prices = [float(item["menu_price"]) for item in menu_candidates]
-        min_menu_price = min(menu_prices)
-        max_menu_price = max(menu_prices)
+        if retrieval and "price_bounds" in retrieval:
+            min_menu_price, max_menu_price = retrieval["price_bounds"]
+        else:
+            min_menu_price = min(menu_prices)
+            max_menu_price = max(menu_prices)
 
         for item in menu_candidates:
             if max_menu_price == min_menu_price:
@@ -580,7 +648,8 @@ def _rank_recommendations(req: RecommendationRequest, rows: list[dict[str, Any]]
             if should_fill_similar and len(selected) < target_count:
                 append_unique(similar_sorted, target_count)
         else:
-            append_unique(sorted_items, req.limit)
+            # Apply recognized exclusions on every result path, including fallback.
+            append_unique([item for item in sorted_items if not scoring._has_avoid_match(tag_intent, item)], req.limit)
 
         response_items = [
             RestaurantResponse(
@@ -851,8 +920,7 @@ def get_restaurants(
 
     conn = get_db_connection()
     try:
-        rows = _fetch_base_candidates(conn, request)
-        return _rank_recommendations(request, rows, conn)
+        return run_recommendation(request, conn)
     except pymysql.MySQLError as error:
         raise HTTPException(status_code=500, detail=f"DB error: {error}") from error
     finally:
@@ -863,12 +931,115 @@ def get_restaurants(
 def get_recommendations(request: RecommendationRequest) -> RecommendationResponse:
     conn = get_db_connection()
     try:
-        rows = _fetch_base_candidates(conn, request)
-        return _rank_recommendations(request, rows, conn)
+        return run_recommendation(request, conn)
     except pymysql.MySQLError as error:
         raise HTTPException(status_code=500, detail=f"DB error: {error}") from error
     finally:
         conn.close()
+
+
+def run_recommendation(request, conn):
+    if not request.preference_text:
+        rows = _fetch_base_candidates(conn, request)
+        return _rank_recommendations(request, rows, conn)
+    try:
+        from . import vector_search
+        from . import candidate_recall
+    except ImportError:
+        import vector_search
+        import candidate_recall
+    started = perf_counter()
+    intent = build_preference_tag_intent(request.preference_text)
+    _record_timing("llm_ms", started)
+    menu_text = str(intent.get("menu_embedding_text") or request.preference_text)
+    review_text = str(intent.get("review_embedding_text") or menu_text)
+    started = perf_counter()
+    taste = build_taste_vector_from_text(menu_text)
+    _record_timing("taste_ms", started)
+    started = perf_counter()
+    vectors = build_text_embeddings([menu_text, review_text])
+    _record_timing("embedding_ms", started)
+    started = perf_counter()
+    candidates = vector_search.filter_candidates(conn, request, intent)
+    _record_timing("metadata_ms", started)
+    timings = _request_timings.get()
+    if timings is not None:
+        timings["filtered_menu_count"] = len(candidates)
+    if not candidates:
+        return RecommendationResponse(mode="personalized", user_type=request.user_type or None,
+                                      preference_text=request.preference_text, count=0, items=[])
+    started = perf_counter()
+    rows = _fetch_base_candidates(conn, request)
+    review_scores = _fetch_review_scores(conn, [int(row["id"]) for row in rows])
+    now_hour = datetime.now().hour
+    restaurant_metrics = {int(row["id"]): calculate_queueing_metrics(
+        row.get("prep_time"), row.get("delivery_time"), now_hour) for row in rows}
+    restaurant_state = {int(row["id"]): {"row": row, "eta": restaurant_metrics[int(row["id"])]["total_eta"],
+                                        "review": review_scores.get(int(row["id"]), 0.5)} for row in rows}
+    # The same eligibility set supplies both full-rerank and retrieved-rerank bounds.
+    candidates = [row for row in candidates if int(row["restaurant_id"]) in restaurant_state
+                  and not scoring._should_exclude_food_form_category(intent, row, request.preference_text)]
+    bounds = candidate_recall.price_bounds(candidates)
+    _record_timing("base_ms", started)
+    if timings is not None:
+        timings["filtered_menu_count"] = len(candidates)
+    if not candidates:
+        return RecommendationResponse(mode="personalized", user_type=request.user_type or None,
+                                      preference_text=request.preference_text, count=0, items=[])
+    started = perf_counter()
+    exact_pool = len(candidates) <= _parse_int_env("RECALL_EXACT_THRESHOLD", 200)
+    sql_only = os.getenv("RETRIEVAL_ENGINE") == "sql"
+    if not vectors[0] or not any(vectors[0]):
+        raise HTTPException(status_code=502, detail="Query embedding unavailable; please retry.")
+    try:
+        menu_ids = ([r["menu_id"] for r in candidates] if sql_only or exact_pool
+                    else vector_search.search([r["menu_id"] for r in candidates], *vectors))
+    except Exception as error:
+        logger.error("Vector retrieval failed: %s", type(error).__name__)
+        raise HTTPException(status_code=503, detail="Vector search unavailable; please retry.") from error
+    _record_timing("vector_ms", started)
+    if not sql_only and not exact_pool:
+        started = perf_counter()
+        extra_ids, channel_counts = candidate_recall.select(candidates, request, intent, taste, restaurant_state, bounds)
+        semantic_count = len(menu_ids)
+        menu_ids = sorted(set(menu_ids) | set(extra_ids))
+        _record_timing("recall_ms", started)
+        if timings is not None:
+            timings["semantic_menu_count"] = semantic_count
+            timings["recall_channels"] = channel_counts
+    if timings is not None:
+        timings["retrieved_menu_count"] = len(menu_ids)
+    token = _retrieval_context.set({"intent": intent, "taste": taste, "vectors": vectors, "menu_ids": menu_ids,
+                                   "price_bounds": bounds, "review_scores": review_scores,
+                                   "restaurant_metrics": restaurant_metrics})
+    try:
+        started = perf_counter()
+        refine = not sql_only and not exact_pool and _parse_int_env("RECALL_REFINE_RESTAURANTS", 10) > 0
+        first_request = (request.model_copy(update={"limit": min(100, max(request.limit, _parse_int_env("RECALL_REFINE_RESTAURANTS", 10)))})
+                         if refine else request)
+        result = _rank_recommendations(first_request, rows, conn)
+        if refine:
+            state = _retrieval_context.get()
+            shortlist = {int(item.id) for item in result.items}
+            selected = set(menu_ids)
+            extra_ids = [int(row["menu_id"]) for row in candidates
+                         if int(row["restaurant_id"]) in shortlist and int(row["menu_id"]) not in selected]
+            if extra_ids:
+                fetch_started = perf_counter()
+                extra_rows = _fetch_menu_flavors(conn, sorted(shortlist), request, extra_ids)
+                _record_timing("refinement_fetch_ms", fetch_started)
+                state["flavor_rows"].extend(extra_rows)
+                state["menu_ids"] = sorted(selected | set(extra_ids))
+                if timings is not None:
+                    timings["refinement_menu_count"] = len(extra_rows)
+                    timings["retrieved_menu_count"] = len(state["menu_ids"])
+                result = _rank_recommendations(request, rows, conn)
+            else:
+                result = result.model_copy(update={"items": result.items[:request.limit], "count": len(result.items[:request.limit])})
+        _record_timing("rerank_ms", started)
+        return result
+    finally:
+        _retrieval_context.reset(token)
 
 
 if __name__ == "__main__":

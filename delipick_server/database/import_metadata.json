@@ -1,0 +1,13 @@
+{
+  "embedding_model": "text-embedding-3-small",
+  "dimensions": 1536,
+  "sql_sha256": "3dcbebfc7c586919e73c406b377c93c6a8ec97e23d57266cb7b5e6ae565eefd6",
+  "expected_counts": {
+    "categories": 7,
+    "restaurants": 66,
+    "menus": 1104,
+    "menu_flavors": 1104,
+    "reviews": 1937
+  },
+  "scope": "Metadata for the separately shared original team SQL snapshot; no private review content is bundled here."
+}

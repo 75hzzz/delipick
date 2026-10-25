@@ -11,7 +11,9 @@ import 'services/api_service.dart';
 import 'taste_preference.dart';
 
 class FoodListScreen extends StatefulWidget {
-  const FoodListScreen({super.key});
+  final DelipickApiService? apiService;
+
+  const FoodListScreen({super.key, this.apiService});
 
   @override
   State<FoodListScreen> createState() => _FoodListScreenState();
@@ -21,7 +23,8 @@ class _FoodListScreenState extends State<FoodListScreen> {
   static const RangeValues _defaultPriceRange = RangeValues(2000, 100000);
   static const Color _delipickBlue = Color(0xFF64B5F6);
 
-  final DelipickApiService _apiService = DelipickApiService();
+  late final DelipickApiService _apiService;
+  int _requestId = 0;
 
   List<int> selectedCategories = [];
   RangeValues selectedPriceRange = _defaultPriceRange;
@@ -75,13 +78,13 @@ class _FoodListScreenState extends State<FoodListScreen> {
       }
     }
 
-    final isLegacyDefault = normalized.values.every((level) => level == 1);
-    return isLegacyDefault ? _defaultTasteLevels() : normalized;
+    return normalized;
   }
 
   @override
   void initState() {
     super.initState();
+    _apiService = widget.apiService ?? DelipickApiService();
     _initialize();
   }
 
@@ -92,8 +95,11 @@ class _FoodListScreenState extends State<FoodListScreen> {
   }
 
   Future<void> _initialize() async {
+    final categoriesFuture = _apiService.fetchCategories();
+    final restaurantsFuture = _fetchRestaurants(showLoading: true);
+
     try {
-      final categories = await _apiService.fetchCategories();
+      final categories = await categoriesFuture;
       if (categories.isNotEmpty && mounted) {
         setState(() {
           availableCategories = categories;
@@ -103,10 +109,11 @@ class _FoodListScreenState extends State<FoodListScreen> {
       // API 조회 실패 시 하드코딩된 대안 상수를 유지하기 위한 예외 방어
     }
 
-    await _fetchRestaurants(showLoading: true);
+    await restaurantsFuture;
   }
 
   Future<void> _fetchRestaurants({required bool showLoading}) async {
+    final requestId = ++_requestId;
     if (showLoading && mounted) {
       setState(() {
         isLoading = true;
@@ -127,7 +134,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
         ),
       );
 
-      if (!mounted) return;
+      if (!mounted || requestId != _requestId) return;
 
       setState(() {
         restaurants = response.items;
@@ -135,14 +142,14 @@ class _FoodListScreenState extends State<FoodListScreen> {
         errorMessage = null;
       });
     } catch (e) {
-      if (!mounted) return;
+      if (!mounted || requestId != _requestId) return;
       final message = e is ApiException ? e.message : '네트워크 오류가 발생했습니다.';
       setState(() {
         restaurants = [];
         errorMessage = message;
       });
     } finally {
-      if (mounted) {
+      if (mounted && requestId == _requestId) {
         setState(() {
           isLoading = false;
         });
@@ -417,13 +424,13 @@ class _FoodListScreenState extends State<FoodListScreen> {
 
           // 설정값 유무가 전혀 체크되지 않은 초기 default 상태 분기
           if (!showFilterLabel)
-            const Padding(
-              padding: EdgeInsets.fromLTRB(16, 0, 16, 10),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  '기본 정렬: 배달 빠른 순',
-                  style: TextStyle(fontSize: 13, color: Colors.grey),
+                  currentMode == 'personalized' ? '취향 반영 추천' : '기본 정렬: 배달 빠른 순',
+                  style: const TextStyle(fontSize: 13, color: Colors.grey),
                 ),
               ),
             ),

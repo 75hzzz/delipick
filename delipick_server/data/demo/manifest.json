@@ -1,0 +1,10 @@
+{
+  "fictional": true,
+  "embedding_model": "text-embedding-3-small",
+  "dimensions": 1536,
+  "restaurants": 28,
+  "menus": 224,
+  "reviews": 28,
+  "sha256": "e9b473772a1c442e0101641ade9565b534855cc27201f62c2008b6c48edb7545",
+  "version": "fictional-demo-v1"
+}

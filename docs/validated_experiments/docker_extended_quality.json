@@ -1,0 +1,9466 @@
+{
+  "dataset": "fictional-demo-v1",
+  "scenarios": 576,
+  "matches": 576,
+  "nonempty_reference": 432,
+  "new_empty": 0,
+  "mismatches": [],
+  "raw": [
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {},
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {},
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {},
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {},
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 12,
+      "reference_count": 12,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 12,
+      "reference_count": 12,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 12,
+      "reference_count": 12,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 12,
+      "reference_count": 12,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 12,
+      "reference_count": 12,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 12,
+      "reference_count": 12,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {},
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {},
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {},
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {},
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 12,
+      "reference_count": 12,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 12,
+      "reference_count": 12,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 12,
+      "reference_count": 12,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "soup_mild",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {},
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {},
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {},
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {},
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 15,
+      "reference_count": 15,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 15,
+      "reference_count": 15,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 15,
+      "reference_count": 15,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 15,
+      "reference_count": 15,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 15,
+      "reference_count": 15,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 15,
+      "reference_count": 15,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {},
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {},
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {},
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {},
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 15,
+      "reference_count": 15,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 15,
+      "reference_count": 15,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 15,
+      "reference_count": 15,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "noodle",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {},
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {},
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {},
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {},
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 15,
+      "reference_count": 15,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 15,
+      "reference_count": 15,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 15,
+      "reference_count": 15,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 15,
+      "reference_count": 15,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 15,
+      "reference_count": 15,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 15,
+      "reference_count": 15,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {},
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {},
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {},
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {},
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 15,
+      "reference_count": 15,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 15,
+      "reference_count": 15,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 15,
+      "reference_count": 15,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "solo",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 0,
+      "reference_count": 0,
+      "ordered_ids_match": true,
+      "max_score_gap": 0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {},
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {},
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {},
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {},
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 20,
+      "reference_count": 20,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 20,
+      "reference_count": 20,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 20,
+      "reference_count": 20,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "convenience",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 20,
+      "reference_count": 20,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 20,
+      "reference_count": 20,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 20,
+      "reference_count": 20,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {},
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {},
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {},
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {},
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {},
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {},
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {},
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 20,
+      "reference_count": 20,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {},
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 20,
+      "reference_count": 20,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {
+        "spicy": 0
+      },
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [],
+      "max_price": 100000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 1,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 1,
+      "reference_count": 1,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [],
+      "max_price": 100000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 5,
+      "reference_count": 5,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 5,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [],
+      "max_price": 100000,
+      "count": 10,
+      "reference_count": 10,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 10,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [],
+      "max_price": 100000,
+      "count": 20,
+      "reference_count": 20,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        1
+      ],
+      "max_price": 10000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        2,
+        3
+      ],
+      "max_price": 15000,
+      "count": 8,
+      "reference_count": 8,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "taste": {
+        "spicy": 2,
+        "salty": 2
+      },
+      "limit": 20,
+      "categories": [
+        7
+      ],
+      "max_price": 5000,
+      "count": 4,
+      "reference_count": 4,
+      "ordered_ids_match": true,
+      "max_score_gap": 0.0,
+      "context_cleared": true
+    }
+  ]
+}

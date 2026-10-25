@@ -1,0 +1,113 @@
+name: delipick-integrated
+
+x-app: &app
+  image: delipick-integrated-api:local
+  build: .
+  environment: &environment
+    DB_HOST: mysql
+    DB_PORT: "3306"
+    DB_NAME: ${DB_NAME:-delipick}
+    DB_USER: delipick
+    DB_PASSWORD: ${MYSQL_PASSWORD:?Run start.ps1 first}
+    QDRANT_URL: http://qdrant:6333
+    QDRANT_COLLECTION: ${QDRANT_COLLECTION:-delipick_menu_vectors}
+    RETRIEVAL_ENGINE: qdrant
+    RETRIEVAL_K: ${RETRIEVAL_K:-100}
+    RECALL_EXACT_THRESHOLD: ${RECALL_EXACT_THRESHOLD:-200}
+    RECALL_CHANNEL_K: ${RECALL_CHANNEL_K:-40}
+    RECALL_MIXED_K: ${RECALL_MIXED_K:-120}
+    RECALL_REFINE_RESTAURANTS: ${RECALL_REFINE_RESTAURANTS:-10}
+    ENABLE_DELIVERY_WORKER: "false"
+    ENABLE_TASTE_LLM: ${ENABLE_TASTE_LLM:-false}
+    CORS_ALLOW_ORIGINS: ${CORS_ALLOW_ORIGINS:-*}
+    DATASET_MODE: ${DATASET_MODE:-existing}
+    QUERY_MODE: ${QUERY_MODE:-replay}
+    OPENAI_API_KEY: ""
+    OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
+    OPENAI_EMBEDDING_MODEL: ${OPENAI_EMBEDDING_MODEL:-text-embedding-3-small}
+    TZ: Asia/Seoul
+
+services:
+  mysql:
+    image: mysql:8.4@sha256:24989179f58856db763f418010c1169fecc944e3ec1ea7e921572d83eb070f70
+    environment:
+      MYSQL_DATABASE: ${DB_NAME:-delipick}
+      MYSQL_USER: delipick
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Run start.ps1 first}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Run start.ps1 first}
+      TZ: Asia/Seoul
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "127.0.0.1:${MYSQL_PORT:-13307}:3306"
+    healthcheck:
+      test: ["CMD-SHELL", "MYSQL_PWD=$$MYSQL_ROOT_PASSWORD mysqladmin ping -h 127.0.0.1 -u root --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 40
+      start_period: 20s
+    restart: unless-stopped
+
+  qdrant:
+    image: qdrant/qdrant:v1.19.2@sha256:b7b0444c4c351c970b98e90a6f89c2ee4287c65b44e52b4cb503fa5b2aa927ad
+    environment:
+      QDRANT__TELEMETRY_DISABLED: "true"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    ports:
+      - "127.0.0.1:${QDRANT_PORT:-16339}:6333"
+    restart: unless-stopped
+
+  import:
+    image: mysql:8.4@sha256:24989179f58856db763f418010c1169fecc944e3ec1ea7e921572d83eb070f70
+    command: ["bash", "/bootstrap/import_database.sh"]
+    environment:
+      DB_HOST: mysql
+      DB_USER: delipick
+      DB_NAME: ${DB_NAME:-delipick}
+      MYSQL_PWD: ${MYSQL_PASSWORD:?Run start.ps1 first}
+      DATASET_MODE: ${DATASET_MODE:-existing}
+    volumes:
+      - ./delipick_server/database:/database:ro
+      - ./delipick_server/scripts/import_database.sh:/bootstrap/import_database.sh:ro
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: "no"
+
+  init:
+    <<: *app
+    volumes:
+      - ./delipick_server/database:/database:ro
+    command: ["python", "-m", "delipick_server.deployment.initialize"]
+    depends_on:
+      import:
+        condition: service_completed_successfully
+      qdrant:
+        condition: service_started
+    restart: "no"
+
+  api:
+    <<: *app
+    environment:
+      <<: *environment
+      ENABLE_DELIVERY_WORKER: ${ENABLE_DELIVERY_WORKER:-false}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      NAVER_CLIENT_ID: ${NAVER_CLIENT_ID:-}
+      NAVER_CLIENT_SECRET: ${NAVER_CLIENT_SECRET:-}
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    ports:
+      - "${API_BIND_ADDRESS:-127.0.0.1}:${API_PORT:-18086}:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/deployment/health',timeout=5)"]
+      interval: 10s
+      timeout: 6s
+      retries: 12
+      start_period: 20s
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+  qdrant_data:

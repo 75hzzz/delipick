@@ -1,0 +1,41 @@
+{
+  "mode": "demo",
+  "tests": {
+    "tests": 72,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 1
+  },
+  "counts": {
+    "tables": {
+      "categories": 7,
+      "restaurants": 28,
+      "menus": 224,
+      "menu_flavors": 224,
+      "reviews": 28,
+      "menu_tag_map": 1140
+    },
+    "points": 224
+  },
+  "reinitialization_preserved_counts": true,
+  "http": [
+    {
+      "status": 200,
+      "count": 5
+    },
+    {
+      "status": 200,
+      "count": 5
+    },
+    {
+      "status": 200,
+      "count": 5
+    },
+    {
+      "status": 200,
+      "count": 5
+    }
+  ],
+  "flutter_get_route_checked": true,
+  "external_api_calls": false
+}

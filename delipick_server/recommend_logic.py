@@ -2,6 +2,8 @@
 import os
 import random
 import re
+from copy import deepcopy
+from functools import lru_cache
 from typing import Any
 
 from dotenv import load_dotenv
@@ -20,6 +22,7 @@ EMBEDDING_MODEL = os.getenv("OPENAI_EMBEDDING_MODEL", "text-embedding-3-small")
 ENABLE_TASTE_LLM = os.getenv("ENABLE_TASTE_LLM", "false").lower() in {"1", "true", "yes"}
 
 client = OpenAI(api_key=OPENAI_API_KEY) if OPENAI_API_KEY else None
+_embedding_cache: dict[tuple[str, ...], tuple[tuple[float, ...], ...]] = {}
 
 
 def calculate_queueing_metrics(prep_time: Any, delivery_time: Any, now_hour: int) -> dict[str, Any]:
@@ -472,7 +475,8 @@ def build_taste_vector_from_text(text: str) -> dict[str, float]:
         return _heuristic_taste_vector(text)
 
 
-def build_preference_tag_intent(text: str) -> dict[str, Any]:
+@lru_cache(maxsize=256)
+def _build_preference_tag_intent_cached(text: str) -> dict[str, Any]:
     if not text.strip():
         return {
             "intent_type": "general",
@@ -538,6 +542,12 @@ def build_preference_tag_intent(text: str) -> dict[str, Any]:
         return fallback
 
 
+def build_preference_tag_intent(text: str) -> dict[str, Any]:
+    """Reuse deterministic LLM analysis for repeated natural-language queries."""
+    return deepcopy(_build_preference_tag_intent_cached(text.strip()))
+
+
+
 def build_text_embedding(text: str) -> list[float]:
     # 자연어 -> 임베딩 벡터 생성
     if not text.strip() or client is None:
@@ -556,6 +566,11 @@ def build_text_embedding(text: str) -> list[float]:
 
 def build_text_embeddings(texts: list[str]) -> list[list[float]]:
     normalized = [str(text or "").strip() for text in texts]
+    cache_key = tuple(normalized)
+    cached = _embedding_cache.get(cache_key)
+    if cached is not None:
+        return [list(vector) for vector in cached]
+
     if client is None or not any(normalized):
         return [[] for _ in normalized]
 
@@ -577,9 +592,13 @@ def build_text_embeddings(texts: list[str]) -> list[list[float]]:
         for item in response.data or []:
             unique_embeddings[int(item.index)] = [float(value) for value in item.embedding]
 
-        return [
+        result = [
             unique_embeddings[unique_indexes[text]] if text and text in unique_indexes else []
             for text in normalized
         ]
+        if len(_embedding_cache) >= 512:
+            _embedding_cache.pop(next(iter(_embedding_cache)))
+        _embedding_cache[cache_key] = tuple(tuple(vector) for vector in result)
+        return result
     except Exception:
         return [build_text_embedding(text) for text in normalized]

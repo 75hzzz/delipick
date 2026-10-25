@@ -51,9 +51,9 @@ class ApiException implements Exception {
 class DelipickApiService {
   static const String _defaultBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
-      defaultValue: 'http://10.0.2.2:8000',
+    defaultValue: 'http://10.0.2.2:18086',
   );
-  static const Duration _requestTimeout = Duration(seconds: 12);
+  static const Duration _requestTimeout = Duration(seconds: 45);
 
   final String baseUrl;
   final http.Client _client;
@@ -180,6 +180,9 @@ class DelipickApiService {
         final detail = decoded['detail'];
         if (detail is String && detail.trim().isNotEmpty) {
           return detail;
+        }
+        if (detail is Map<String, dynamic> && detail['message'] is String) {
+          return detail['message'] as String;
         }
       }
     } catch (_) {

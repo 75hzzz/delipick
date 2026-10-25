@@ -1,0 +1,8 @@
+{
+  "clean_checkout_started": true,
+  "env_generated_locally": true,
+  "sql_not_required_for_demo": true,
+  "query_mode": "replay",
+  "http_status": 200,
+  "http_recommendation_count": 5
+}

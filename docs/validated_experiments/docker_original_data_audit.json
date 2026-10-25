@@ -1,0 +1,1350 @@
+{
+  "dataset": "private-original-data-copy",
+  "source_rows": {
+    "restaurants": 66,
+    "menus": 1104,
+    "reviews": 1937
+  },
+  "scales_are_id_offset_clones": true,
+  "external_api_time_included": false,
+  "performance": {
+    "external_api_time_included": false,
+    "data": {
+      "1": {
+        "points": 1104,
+        "status": "green",
+        "indexed_vectors_count": 1415
+      },
+      "10": {
+        "points": 11040,
+        "status": "green",
+        "indexed_vectors_count": 14150
+      },
+      "30": {
+        "points": 33120,
+        "status": "green",
+        "indexed_vectors_count": 42450
+      }
+    },
+    "summary": [
+      {
+        "scale": 1,
+        "variant": "before",
+        "samples": 9,
+        "mean_ms": 366.68530322236217,
+        "median_ms": 394.32741000018723,
+        "p95_ms": 416.8347264007025,
+        "mean_loaded_vectors": 953
+      },
+      {
+        "scale": 1,
+        "variant": "sql",
+        "samples": 9,
+        "mean_ms": 26.36632844445962,
+        "median_ms": 22.973440998612205,
+        "p95_ms": 38.50182100031816,
+        "mean_loaded_vectors": 34.333333333333336
+      },
+      {
+        "scale": 1,
+        "variant": "qdrant",
+        "samples": 9,
+        "mean_ms": 28.308642666363287,
+        "median_ms": 28.437523998945835,
+        "p95_ms": 37.11396620019514,
+        "mean_loaded_vectors": 34.333333333333336
+      },
+      {
+        "scale": 10,
+        "variant": "before",
+        "samples": 9,
+        "mean_ms": 6341.547112777738,
+        "median_ms": 6508.634231999167,
+        "p95_ms": 6759.9052976001985,
+        "mean_loaded_vectors": 9530
+      },
+      {
+        "scale": 10,
+        "variant": "sql",
+        "samples": 9,
+        "mean_ms": 182.10589966656698,
+        "median_ms": 140.64103300006536,
+        "p95_ms": 341.8686701999831,
+        "mean_loaded_vectors": 343.3333333333333
+      },
+      {
+        "scale": 10,
+        "variant": "qdrant",
+        "samples": 9,
+        "mean_ms": 234.60147344465238,
+        "median_ms": 251.9402980015002,
+        "p95_ms": 365.3234874011104,
+        "mean_loaded_vectors": 266.6666666666667
+      },
+      {
+        "scale": 30,
+        "variant": "before",
+        "samples": 9,
+        "mean_ms": 23166.54498699993,
+        "median_ms": 24038.672922999467,
+        "p95_ms": 24501.997094399485,
+        "mean_loaded_vectors": 28590
+      },
+      {
+        "scale": 30,
+        "variant": "sql",
+        "samples": 9,
+        "mean_ms": 927.2357639998113,
+        "median_ms": 749.0660949988523,
+        "p95_ms": 1597.9950240001926,
+        "mean_loaded_vectors": 1030
+      },
+      {
+        "scale": 30,
+        "variant": "qdrant",
+        "samples": 9,
+        "mean_ms": 672.8603368887384,
+        "median_ms": 629.1620029987826,
+        "p95_ms": 927.7929348012549,
+        "mean_loaded_vectors": 423.3333333333333
+      }
+    ]
+  },
+  "hardware": {
+    "date": "2026-10-19",
+    "host_cpu": "13th Gen Intel(R) Core(TM) i7-13700KF",
+    "host_physical_cores": 16,
+    "host_logical_processors": 24,
+    "docker_cpu_count": 24,
+    "docker_memory_bytes": 16668332032,
+    "background_services": "Existing fictional-demo API, MySQL and Qdrant remained running, without demo load requests during original-data sequential benchmarks.",
+    "source_mysql": "Windows MySQL80 was used only for the read-only snapshot, outside benchmark timings. Measured queries used isolated Docker MySQL."
+  },
+  "quality": {
+    "cases": 336,
+    "ordered_id_matches": 336,
+    "nonempty_reference": 327,
+    "new_empty_results": 0,
+    "max_score_gap_when_ids_match": 0,
+    "mismatches": []
+  },
+  "verification": {
+    "runtime": {
+      "python": "3.12.15",
+      "architecture": "x86_64",
+      "mysql": "8.4.11",
+      "qdrant": "1.19.2"
+    },
+    "implementation_hash_checks": {
+      "backend\\candidate_recall.py": true,
+      "backend\\main.py": true,
+      "backend\\recommendation_rules.py": true,
+      "backend\\recommendation_scoring.py": true,
+      "backend\\recommend_logic.py": true,
+      "backend\\update_delivery.py": true,
+      "backend\\vector_search.py": true,
+      "baseline\\main.py": true,
+      "baseline\\recommendation_rules.py": true,
+      "baseline\\recommendation_scoring.py": true,
+      "baseline\\recommend_logic.py": true,
+      "baseline\\update_delivery.py": true
+    },
+    "databases": {
+      "1": {
+        "table_counts": {
+          "categories": 7,
+          "restaurants": 66,
+          "menus": 1104,
+          "menu_flavors": 1104,
+          "reviews": 1937,
+          "menu_tag_map": 5386
+        },
+        "qdrant_points": 1104,
+        "qdrant_status": "green",
+        "indexed_vectors": 1415,
+        "points_with_vector": {
+          "menu": 1104,
+          "review": 311
+        },
+        "menu_indexes": [
+          "PRIMARY",
+          "idx_lab_price_rest",
+          "idx_lab_rest_price",
+          "restaurant_id"
+        ]
+      },
+      "10": {
+        "table_counts": {
+          "categories": 7,
+          "restaurants": 660,
+          "menus": 11040,
+          "menu_flavors": 11040,
+          "reviews": 19370,
+          "menu_tag_map": 53860
+        },
+        "qdrant_points": 11040,
+        "qdrant_status": "green",
+        "indexed_vectors": 14150,
+        "points_with_vector": {
+          "menu": 11040,
+          "review": 3110
+        },
+        "menu_indexes": [
+          "PRIMARY",
+          "idx_lab_price_rest",
+          "idx_lab_rest_price",
+          "restaurant_id"
+        ]
+      },
+      "30": {
+        "table_counts": {
+          "categories": 7,
+          "restaurants": 1980,
+          "menus": 33120,
+          "menu_flavors": 33120,
+          "reviews": 58110,
+          "menu_tag_map": 161580
+        },
+        "qdrant_points": 33120,
+        "qdrant_status": "green",
+        "indexed_vectors": 42450,
+        "points_with_vector": {
+          "menu": 33120,
+          "review": 9330
+        },
+        "menu_indexes": [
+          "PRIMARY",
+          "idx_lab_price_rest",
+          "idx_lab_rest_price",
+          "restaurant_id"
+        ]
+      }
+    },
+    "recorded_query_fixtures_verified": 36,
+    "fixture_mismatches": [],
+    "recognized_condition_audit": {
+      "returned_slots": 1584,
+      "violation_count": 0,
+      "violations": [],
+      "limitation": "Recognized tags, stored values and literal terms; not independently labeled food suitability or missed LLM intent."
+    },
+    "stored_mild_spicy_check": {
+      "scope": "Recognized mild-exclusion queries; gourmet, default taste, no UI constraints.",
+      "returned_slots": 20,
+      "missing": 0,
+      "over_0_4": 0
+    },
+    "scaled_benchmark_result_checks": [
+      {
+        "scale": 1,
+        "case": "soup_mild",
+        "repeat": 3,
+        "same_count": true,
+        "ordered_ids_match": true,
+        "maximum_ranked_score_gap": 0.0,
+        "ranked_scores_match_1e_6": true
+      },
+      {
+        "scale": 1,
+        "case": "soup_mild",
+        "repeat": 2,
+        "same_count": true,
+        "ordered_ids_match": true,
+        "maximum_ranked_score_gap": 0.0,
+        "ranked_scores_match_1e_6": true
+      },
+      {
+        "scale": 1,
+        "case": "soup_mild",
+        "repeat": 1,
+        "same_count": true,
+        "ordered_ids_match": true,
+        "maximum_ranked_score_gap": 0.0,
+        "ranked_scores_match_1e_6": true
+      },
+      {
+        "scale": 1,
+        "case": "noodle",
+        "repeat": 3,
+        "same_count": true,
+        "ordered_ids_match": true,
+        "maximum_ranked_score_gap": 0.0,
+        "ranked_scores_match_1e_6": true
+      },
+      {
+        "scale": 1,
+        "case": "noodle",
+        "repeat": 1,
+        "same_count": true,
+        "ordered_ids_match": true,
+        "maximum_ranked_score_gap": 0.0,
+        "ranked_scores_match_1e_6": true
+      },
+      {
+        "scale": 1,
+        "case": "noodle",
+        "repeat": 2,
+        "same_count": true,
+        "ordered_ids_match": true,
+        "maximum_ranked_score_gap": 0.0,
+        "ranked_scores_match_1e_6": true
+      },
+      {
+        "scale": 1,
+        "case": "solo",
+        "repeat": 3,
+        "same_count": true,
+        "ordered_ids_match": true,
+        "maximum_ranked_score_gap": 0.0,
+        "ranked_scores_match_1e_6": true
+      },
+      {
+        "scale": 1,
+        "case": "solo",
+        "repeat": 1,
+        "same_count": true,
+        "ordered_ids_match": true,
+        "maximum_ranked_score_gap": 0.0,
+        "ranked_scores_match_1e_6": true
+      },
+      {
+        "scale": 1,
+        "case": "solo",
+        "repeat": 2,
+        "same_count": true,
+        "ordered_ids_match": true,
+        "maximum_ranked_score_gap": 0.0,
+        "ranked_scores_match_1e_6": true
+      },
+      {
+        "scale": 10,
+        "case": "soup_mild",
+        "repeat": 3,
+        "same_count": true,
+        "ordered_ids_match": true,
+        "maximum_ranked_score_gap": 0.0,
+        "ranked_scores_match_1e_6": true
+      },
+      {
+        "scale": 10,
+        "case": "soup_mild",
+        "repeat": 2,
+        "same_count": true,
+        "ordered_ids_match": true,
+        "maximum_ranked_score_gap": 0.0,
+        "ranked_scores_match_1e_6": true
+      },
+      {
+        "scale": 10,
+        "case": "soup_mild",
+        "repeat": 1,
+        "same_count": true,
+        "ordered_ids_match": true,
+        "maximum_ranked_score_gap": 0.0,
+        "ranked_scores_match_1e_6": true
+      },
+      {
+        "scale": 10,
+        "case": "noodle",
+        "repeat": 3,
+        "same_count": true,
+        "ordered_ids_match": true,
+        "maximum_ranked_score_gap": 0.0,
+        "ranked_scores_match_1e_6": true
+      },
+      {
+        "scale": 10,
+        "case": "noodle",
+        "repeat": 1,
+        "same_count": true,
+        "ordered_ids_match": true,
+        "maximum_ranked_score_gap": 0.0,
+        "ranked_scores_match_1e_6": true
+      },
+      {
+        "scale": 10,
+        "case": "noodle",
+        "repeat": 2,
+        "same_count": true,
+        "ordered_ids_match": true,
+        "maximum_ranked_score_gap": 0.0,
+        "ranked_scores_match_1e_6": true
+      },
+      {
+        "scale": 10,
+        "case": "solo",
+        "repeat": 3,
+        "same_count": true,
+        "ordered_ids_match": true,
+        "maximum_ranked_score_gap": 0.0,
+        "ranked_scores_match_1e_6": true
+      },
+      {
+        "scale": 10,
+        "case": "solo",
+        "repeat": 1,
+        "same_count": true,
+        "ordered_ids_match": true,
+        "maximum_ranked_score_gap": 0.0,
+        "ranked_scores_match_1e_6": true
+      },
+      {
+        "scale": 10,
+        "case": "solo",
+        "repeat": 2,
+        "same_count": true,
+        "ordered_ids_match": true,
+        "maximum_ranked_score_gap": 0.0,
+        "ranked_scores_match_1e_6": true
+      },
+      {
+        "scale": 30,
+        "case": "soup_mild",
+        "repeat": 3,
+        "same_count": true,
+        "ordered_ids_match": true,
+        "maximum_ranked_score_gap": 0.0,
+        "ranked_scores_match_1e_6": true
+      },
+      {
+        "scale": 30,
+        "case": "soup_mild",
+        "repeat": 2,
+        "same_count": true,
+        "ordered_ids_match": true,
+        "maximum_ranked_score_gap": 0.0,
+        "ranked_scores_match_1e_6": true
+      },
+      {
+        "scale": 30,
+        "case": "soup_mild",
+        "repeat": 1,
+        "same_count": true,
+        "ordered_ids_match": true,
+        "maximum_ranked_score_gap": 0.0,
+        "ranked_scores_match_1e_6": true
+      },
+      {
+        "scale": 30,
+        "case": "noodle",
+        "repeat": 3,
+        "same_count": true,
+        "ordered_ids_match": true,
+        "maximum_ranked_score_gap": 0.0,
+        "ranked_scores_match_1e_6": true
+      },
+      {
+        "scale": 30,
+        "case": "noodle",
+        "repeat": 1,
+        "same_count": true,
+        "ordered_ids_match": true,
+        "maximum_ranked_score_gap": 0.0,
+        "ranked_scores_match_1e_6": true
+      },
+      {
+        "scale": 30,
+        "case": "noodle",
+        "repeat": 2,
+        "same_count": true,
+        "ordered_ids_match": true,
+        "maximum_ranked_score_gap": 0.0,
+        "ranked_scores_match_1e_6": true
+      },
+      {
+        "scale": 30,
+        "case": "solo",
+        "repeat": 3,
+        "same_count": true,
+        "ordered_ids_match": true,
+        "maximum_ranked_score_gap": 0.0,
+        "ranked_scores_match_1e_6": true
+      },
+      {
+        "scale": 30,
+        "case": "solo",
+        "repeat": 1,
+        "same_count": true,
+        "ordered_ids_match": true,
+        "maximum_ranked_score_gap": 0.0,
+        "ranked_scores_match_1e_6": true
+      },
+      {
+        "scale": 30,
+        "case": "solo",
+        "repeat": 2,
+        "same_count": true,
+        "ordered_ids_match": true,
+        "maximum_ranked_score_gap": 0.0,
+        "ranked_scores_match_1e_6": true
+      }
+    ],
+    "all_scaled_ranked_scores_match": true
+  },
+  "broad_queries": {
+    "scale": 30,
+    "scenarios": 18,
+    "same_result_counts": 18,
+    "ordered_id_matches": 18,
+    "ranked_menu_name_matches": 18,
+    "ranked_score_matches_1e_6": 18,
+    "maximum_ranked_score_gap": 0.0,
+    "note": "Six previously used broad queries times three user types, one run each. Regression, not independent holdout or repeated latency benchmark."
+  },
+  "broad_query_diagnostics": [
+    {
+      "case": "general",
+      "type": "convenience",
+      "same_result_count": true,
+      "ordered_ids_match": true,
+      "ranked_menu_names_match": true,
+      "max_ranked_score_gap": 0.0,
+      "ranked_scores_match_1e_6": true,
+      "sql_ms": 16009.203573999912,
+      "qdrant_ms": 1302.0344270007627,
+      "sql_loaded_vectors": 28590,
+      "qdrant_loaded_vectors": 580
+    },
+    {
+      "case": "general",
+      "type": "gourmet",
+      "same_result_count": true,
+      "ordered_ids_match": true,
+      "ranked_menu_names_match": true,
+      "max_ranked_score_gap": 0.0,
+      "ranked_scores_match_1e_6": true,
+      "sql_ms": 14756.27997599986,
+      "qdrant_ms": 1101.9661539994559,
+      "sql_loaded_vectors": 28590,
+      "qdrant_loaded_vectors": 550
+    },
+    {
+      "case": "general",
+      "type": "budget",
+      "same_result_count": true,
+      "ordered_ids_match": true,
+      "ranked_menu_names_match": true,
+      "max_ranked_score_gap": 0.0,
+      "ranked_scores_match_1e_6": true,
+      "sql_ms": 14868.655234999096,
+      "qdrant_ms": 1156.1112719991797,
+      "sql_loaded_vectors": 28590,
+      "qdrant_loaded_vectors": 560
+    },
+    {
+      "case": "cheap",
+      "type": "convenience",
+      "same_result_count": true,
+      "ordered_ids_match": true,
+      "ranked_menu_names_match": true,
+      "max_ranked_score_gap": 0.0,
+      "ranked_scores_match_1e_6": true,
+      "sql_ms": 14854.603187000976,
+      "qdrant_ms": 1137.2235700000601,
+      "sql_loaded_vectors": 28590,
+      "qdrant_loaded_vectors": 520
+    },
+    {
+      "case": "cheap",
+      "type": "gourmet",
+      "same_result_count": true,
+      "ordered_ids_match": true,
+      "ranked_menu_names_match": true,
+      "max_ranked_score_gap": 0.0,
+      "ranked_scores_match_1e_6": true,
+      "sql_ms": 14680.678687000182,
+      "qdrant_ms": 1517.1052059995418,
+      "sql_loaded_vectors": 28590,
+      "qdrant_loaded_vectors": 1174
+    },
+    {
+      "case": "cheap",
+      "type": "budget",
+      "same_result_count": true,
+      "ordered_ids_match": true,
+      "ranked_menu_names_match": true,
+      "max_ranked_score_gap": 0.0,
+      "ranked_scores_match_1e_6": true,
+      "sql_ms": 14610.418019999997,
+      "qdrant_ms": 1546.191285000532,
+      "sql_loaded_vectors": 28590,
+      "qdrant_loaded_vectors": 1174
+    },
+    {
+      "case": "warm",
+      "type": "convenience",
+      "same_result_count": true,
+      "ordered_ids_match": true,
+      "ranked_menu_names_match": true,
+      "max_ranked_score_gap": 0.0,
+      "ranked_scores_match_1e_6": true,
+      "sql_ms": 14667.93948799932,
+      "qdrant_ms": 1369.3126990001474,
+      "sql_loaded_vectors": 28590,
+      "qdrant_loaded_vectors": 940
+    },
+    {
+      "case": "warm",
+      "type": "gourmet",
+      "same_result_count": true,
+      "ordered_ids_match": true,
+      "ranked_menu_names_match": true,
+      "max_ranked_score_gap": 0.0,
+      "ranked_scores_match_1e_6": true,
+      "sql_ms": 14793.011629999455,
+      "qdrant_ms": 1109.766440000385,
+      "sql_loaded_vectors": 28590,
+      "qdrant_loaded_vectors": 507
+    },
+    {
+      "case": "warm",
+      "type": "budget",
+      "same_result_count": true,
+      "ordered_ids_match": true,
+      "ranked_menu_names_match": true,
+      "max_ranked_score_gap": 0.0,
+      "ranked_scores_match_1e_6": true,
+      "sql_ms": 14775.685591001093,
+      "qdrant_ms": 1231.216697000491,
+      "sql_loaded_vectors": 28590,
+      "qdrant_loaded_vectors": 620
+    },
+    {
+      "case": "sour",
+      "type": "convenience",
+      "same_result_count": true,
+      "ordered_ids_match": true,
+      "ranked_menu_names_match": true,
+      "max_ranked_score_gap": 0.0,
+      "ranked_scores_match_1e_6": true,
+      "sql_ms": 14491.238493999845,
+      "qdrant_ms": 1094.95813400099,
+      "sql_loaded_vectors": 28590,
+      "qdrant_loaded_vectors": 497
+    },
+    {
+      "case": "sour",
+      "type": "gourmet",
+      "same_result_count": true,
+      "ordered_ids_match": true,
+      "ranked_menu_names_match": true,
+      "max_ranked_score_gap": 0.0,
+      "ranked_scores_match_1e_6": true,
+      "sql_ms": 14555.378724999173,
+      "qdrant_ms": 1475.4708860000392,
+      "sql_loaded_vectors": 28590,
+      "qdrant_loaded_vectors": 1141
+    },
+    {
+      "case": "sour",
+      "type": "budget",
+      "same_result_count": true,
+      "ordered_ids_match": true,
+      "ranked_menu_names_match": true,
+      "max_ranked_score_gap": 0.0,
+      "ranked_scores_match_1e_6": true,
+      "sql_ms": 14551.609980000649,
+      "qdrant_ms": 1245.783804999519,
+      "sql_loaded_vectors": 28590,
+      "qdrant_loaded_vectors": 767
+    },
+    {
+      "case": "holdout_fast",
+      "type": "convenience",
+      "same_result_count": true,
+      "ordered_ids_match": true,
+      "ranked_menu_names_match": true,
+      "max_ranked_score_gap": 0.0,
+      "ranked_scores_match_1e_6": true,
+      "sql_ms": 14651.06633799951,
+      "qdrant_ms": 1519.7353870007646,
+      "sql_loaded_vectors": 28590,
+      "qdrant_loaded_vectors": 1174
+    },
+    {
+      "case": "holdout_fast",
+      "type": "gourmet",
+      "same_result_count": true,
+      "ordered_ids_match": true,
+      "ranked_menu_names_match": true,
+      "max_ranked_score_gap": 0.0,
+      "ranked_scores_match_1e_6": true,
+      "sql_ms": 14725.625809998746,
+      "qdrant_ms": 1111.2880040000164,
+      "sql_loaded_vectors": 28590,
+      "qdrant_loaded_vectors": 500
+    },
+    {
+      "case": "holdout_fast",
+      "type": "budget",
+      "same_result_count": true,
+      "ordered_ids_match": true,
+      "ranked_menu_names_match": true,
+      "max_ranked_score_gap": 0.0,
+      "ranked_scores_match_1e_6": true,
+      "sql_ms": 14681.066786000883,
+      "qdrant_ms": 1526.0898140004429,
+      "sql_loaded_vectors": 28590,
+      "qdrant_loaded_vectors": 1174
+    },
+    {
+      "case": "holdout_sharing",
+      "type": "convenience",
+      "same_result_count": true,
+      "ordered_ids_match": true,
+      "ranked_menu_names_match": true,
+      "max_ranked_score_gap": 0.0,
+      "ranked_scores_match_1e_6": true,
+      "sql_ms": 14786.802123999223,
+      "qdrant_ms": 1153.3564950004802,
+      "sql_loaded_vectors": 28590,
+      "qdrant_loaded_vectors": 580
+    },
+    {
+      "case": "holdout_sharing",
+      "type": "gourmet",
+      "same_result_count": true,
+      "ordered_ids_match": true,
+      "ranked_menu_names_match": true,
+      "max_ranked_score_gap": 0.0,
+      "ranked_scores_match_1e_6": true,
+      "sql_ms": 14788.730534999559,
+      "qdrant_ms": 1076.6445080007543,
+      "sql_loaded_vectors": 28590,
+      "qdrant_loaded_vectors": 550
+    },
+    {
+      "case": "holdout_sharing",
+      "type": "budget",
+      "same_result_count": true,
+      "ordered_ids_match": true,
+      "ranked_menu_names_match": true,
+      "max_ranked_score_gap": 0.0,
+      "ranked_scores_match_1e_6": true,
+      "sql_ms": 14887.051257999701,
+      "qdrant_ms": 1133.9558949985076,
+      "sql_loaded_vectors": 28590,
+      "qdrant_loaded_vectors": 560
+    }
+  ],
+  "http_load": {
+    "dataset": "private-original-data-copy",
+    "restaurants": 66,
+    "menus": 1104,
+    "scale": 1,
+    "external_api_calls": false,
+    "eta_fixed": true,
+    "note": "Actual HTTP to temporary Docker backend; 32 requests per level, recorded four natural-language inputs. No baseline load comparison, sustained capacity claim, or 30x HTTP load test.",
+    "runs": [
+      {
+        "concurrency": 1,
+        "requests": 32,
+        "success_200_five_items": 32,
+        "mean_ms": 106.94373437490867,
+        "p95_ms": 357.6316999970004,
+        "wall_seconds": 3.4247823000041535,
+        "requests_per_second": 9.343659595519748,
+        "raw": [
+          {
+            "case": "soup_mild",
+            "status": 200,
+            "count": 5,
+            "ms": 24.27210000314517
+          },
+          {
+            "case": "noodle",
+            "status": 200,
+            "count": 5,
+            "ms": 31.75589999591466
+          },
+          {
+            "case": "solo",
+            "status": 200,
+            "count": 5,
+            "ms": 35.22760000487324
+          },
+          {
+            "case": "general",
+            "status": 200,
+            "count": 5,
+            "ms": 333.9997000002768
+          },
+          {
+            "case": "soup_mild",
+            "status": 200,
+            "count": 5,
+            "ms": 27.99139999842737
+          },
+          {
+            "case": "noodle",
+            "status": 200,
+            "count": 5,
+            "ms": 37.48249999625841
+          },
+          {
+            "case": "solo",
+            "status": 200,
+            "count": 5,
+            "ms": 21.827199998369906
+          },
+          {
+            "case": "general",
+            "status": 200,
+            "count": 5,
+            "ms": 327.6945000034175
+          },
+          {
+            "case": "soup_mild",
+            "status": 200,
+            "count": 5,
+            "ms": 49.581200000829995
+          },
+          {
+            "case": "noodle",
+            "status": 200,
+            "count": 5,
+            "ms": 32.550699994317256
+          },
+          {
+            "case": "solo",
+            "status": 200,
+            "count": 5,
+            "ms": 20.387600001413375
+          },
+          {
+            "case": "general",
+            "status": 200,
+            "count": 5,
+            "ms": 324.0981999988435
+          },
+          {
+            "case": "soup_mild",
+            "status": 200,
+            "count": 5,
+            "ms": 23.523100004240405
+          },
+          {
+            "case": "noodle",
+            "status": 200,
+            "count": 5,
+            "ms": 32.77869999874383
+          },
+          {
+            "case": "solo",
+            "status": 200,
+            "count": 5,
+            "ms": 19.90720000321744
+          },
+          {
+            "case": "general",
+            "status": 200,
+            "count": 5,
+            "ms": 323.0027000026894
+          },
+          {
+            "case": "soup_mild",
+            "status": 200,
+            "count": 5,
+            "ms": 26.37200000026496
+          },
+          {
+            "case": "noodle",
+            "status": 200,
+            "count": 5,
+            "ms": 33.612899998843204
+          },
+          {
+            "case": "solo",
+            "status": 200,
+            "count": 5,
+            "ms": 31.711299998278264
+          },
+          {
+            "case": "general",
+            "status": 200,
+            "count": 5,
+            "ms": 329.2261000024155
+          },
+          {
+            "case": "soup_mild",
+            "status": 200,
+            "count": 5,
+            "ms": 22.702800000843126
+          },
+          {
+            "case": "noodle",
+            "status": 200,
+            "count": 5,
+            "ms": 31.718699996417854
+          },
+          {
+            "case": "solo",
+            "status": 200,
+            "count": 5,
+            "ms": 21.676200005458668
+          },
+          {
+            "case": "general",
+            "status": 200,
+            "count": 5,
+            "ms": 327.9465999949025
+          },
+          {
+            "case": "soup_mild",
+            "status": 200,
+            "count": 5,
+            "ms": 23.139000004448462
+          },
+          {
+            "case": "noodle",
+            "status": 200,
+            "count": 5,
+            "ms": 47.07770000095479
+          },
+          {
+            "case": "solo",
+            "status": 200,
+            "count": 5,
+            "ms": 21.894600002269726
+          },
+          {
+            "case": "general",
+            "status": 200,
+            "count": 5,
+            "ms": 363.361800002167
+          },
+          {
+            "case": "soup_mild",
+            "status": 200,
+            "count": 5,
+            "ms": 42.99249999894528
+          },
+          {
+            "case": "noodle",
+            "status": 200,
+            "count": 5,
+            "ms": 32.326099993952084
+          },
+          {
+            "case": "solo",
+            "status": 200,
+            "count": 5,
+            "ms": 42.72919999493752
+          },
+          {
+            "case": "general",
+            "status": 200,
+            "count": 5,
+            "ms": 357.6316999970004
+          }
+        ]
+      },
+      {
+        "concurrency": 4,
+        "requests": 32,
+        "success_200_five_items": 32,
+        "mean_ms": 315.57296875007523,
+        "p95_ms": 1028.5682999965502,
+        "wall_seconds": 2.8505297000010614,
+        "requests_per_second": 11.225983718039522,
+        "raw": [
+          {
+            "case": "soup_mild",
+            "status": 200,
+            "count": 5,
+            "ms": 79.64440000068862
+          },
+          {
+            "case": "noodle",
+            "status": 200,
+            "count": 5,
+            "ms": 65.41550000110874
+          },
+          {
+            "case": "solo",
+            "status": 200,
+            "count": 5,
+            "ms": 40.193900000303984
+          },
+          {
+            "case": "general",
+            "status": 200,
+            "count": 5,
+            "ms": 673.2534000038868
+          },
+          {
+            "case": "soup_mild",
+            "status": 200,
+            "count": 5,
+            "ms": 95.70869999879505
+          },
+          {
+            "case": "noodle",
+            "status": 200,
+            "count": 5,
+            "ms": 125.40840000292519
+          },
+          {
+            "case": "solo",
+            "status": 200,
+            "count": 5,
+            "ms": 89.99969999422319
+          },
+          {
+            "case": "general",
+            "status": 200,
+            "count": 5,
+            "ms": 969.1957000031834
+          },
+          {
+            "case": "soup_mild",
+            "status": 200,
+            "count": 5,
+            "ms": 98.0379999964498
+          },
+          {
+            "case": "noodle",
+            "status": 200,
+            "count": 5,
+            "ms": 105.86909999983618
+          },
+          {
+            "case": "solo",
+            "status": 200,
+            "count": 5,
+            "ms": 42.1522000033292
+          },
+          {
+            "case": "general",
+            "status": 200,
+            "count": 5,
+            "ms": 1047.059000004083
+          },
+          {
+            "case": "soup_mild",
+            "status": 200,
+            "count": 5,
+            "ms": 42.32629999751225
+          },
+          {
+            "case": "noodle",
+            "status": 200,
+            "count": 5,
+            "ms": 180.09680000250228
+          },
+          {
+            "case": "solo",
+            "status": 200,
+            "count": 5,
+            "ms": 153.8263000038569
+          },
+          {
+            "case": "general",
+            "status": 200,
+            "count": 5,
+            "ms": 1028.5682999965502
+          },
+          {
+            "case": "soup_mild",
+            "status": 200,
+            "count": 5,
+            "ms": 186.22470000264002
+          },
+          {
+            "case": "noodle",
+            "status": 200,
+            "count": 5,
+            "ms": 263.4152000027825
+          },
+          {
+            "case": "solo",
+            "status": 200,
+            "count": 5,
+            "ms": 66.56659999862313
+          },
+          {
+            "case": "general",
+            "status": 200,
+            "count": 5,
+            "ms": 947.5527999966289
+          },
+          {
+            "case": "soup_mild",
+            "status": 200,
+            "count": 5,
+            "ms": 193.48660000105156
+          },
+          {
+            "case": "noodle",
+            "status": 200,
+            "count": 5,
+            "ms": 55.42050000076415
+          },
+          {
+            "case": "solo",
+            "status": 200,
+            "count": 5,
+            "ms": 156.46669999841833
+          },
+          {
+            "case": "general",
+            "status": 200,
+            "count": 5,
+            "ms": 998.572199998307
+          },
+          {
+            "case": "soup_mild",
+            "status": 200,
+            "count": 5,
+            "ms": 199.98330000089481
+          },
+          {
+            "case": "noodle",
+            "status": 200,
+            "count": 5,
+            "ms": 54.39800000021933
+          },
+          {
+            "case": "solo",
+            "status": 200,
+            "count": 5,
+            "ms": 155.67580000060843
+          },
+          {
+            "case": "general",
+            "status": 200,
+            "count": 5,
+            "ms": 887.7869999996619
+          },
+          {
+            "case": "soup_mild",
+            "status": 200,
+            "count": 5,
+            "ms": 35.77159999986179
+          },
+          {
+            "case": "noodle",
+            "status": 200,
+            "count": 5,
+            "ms": 285.1239999945392
+          },
+          {
+            "case": "solo",
+            "status": 200,
+            "count": 5,
+            "ms": 126.1097000024165
+          },
+          {
+            "case": "general",
+            "status": 200,
+            "count": 5,
+            "ms": 649.0245999957551
+          }
+        ]
+      },
+      {
+        "concurrency": 8,
+        "requests": 32,
+        "success_200_five_items": 32,
+        "mean_ms": 587.92206562498,
+        "p95_ms": 1985.0007999993977,
+        "wall_seconds": 2.9768439999970724,
+        "requests_per_second": 10.749639551159373,
+        "raw": [
+          {
+            "case": "soup_mild",
+            "status": 200,
+            "count": 5,
+            "ms": 95.61820000089938
+          },
+          {
+            "case": "noodle",
+            "status": 200,
+            "count": 5,
+            "ms": 286.4560000016354
+          },
+          {
+            "case": "solo",
+            "status": 200,
+            "count": 5,
+            "ms": 87.93119999609189
+          },
+          {
+            "case": "general",
+            "status": 200,
+            "count": 5,
+            "ms": 1863.4022999976878
+          },
+          {
+            "case": "soup_mild",
+            "status": 200,
+            "count": 5,
+            "ms": 160.37179999693763
+          },
+          {
+            "case": "noodle",
+            "status": 200,
+            "count": 5,
+            "ms": 268.85439999750815
+          },
+          {
+            "case": "solo",
+            "status": 200,
+            "count": 5,
+            "ms": 89.28279999963706
+          },
+          {
+            "case": "general",
+            "status": 200,
+            "count": 5,
+            "ms": 1707.951399999729
+          },
+          {
+            "case": "soup_mild",
+            "status": 200,
+            "count": 5,
+            "ms": 218.16219999891473
+          },
+          {
+            "case": "noodle",
+            "status": 200,
+            "count": 5,
+            "ms": 296.3976000028197
+          },
+          {
+            "case": "solo",
+            "status": 200,
+            "count": 5,
+            "ms": 190.70070000452688
+          },
+          {
+            "case": "general",
+            "status": 200,
+            "count": 5,
+            "ms": 1899.0407000019331
+          },
+          {
+            "case": "soup_mild",
+            "status": 200,
+            "count": 5,
+            "ms": 165.27789999963716
+          },
+          {
+            "case": "noodle",
+            "status": 200,
+            "count": 5,
+            "ms": 245.29580000671558
+          },
+          {
+            "case": "solo",
+            "status": 200,
+            "count": 5,
+            "ms": 131.80790000478737
+          },
+          {
+            "case": "general",
+            "status": 200,
+            "count": 5,
+            "ms": 1985.0007999993977
+          },
+          {
+            "case": "soup_mild",
+            "status": 200,
+            "count": 5,
+            "ms": 77.53819999925327
+          },
+          {
+            "case": "noodle",
+            "status": 200,
+            "count": 5,
+            "ms": 225.60900000098627
+          },
+          {
+            "case": "solo",
+            "status": 200,
+            "count": 5,
+            "ms": 117.79749999550404
+          },
+          {
+            "case": "general",
+            "status": 200,
+            "count": 5,
+            "ms": 1957.1865999969305
+          },
+          {
+            "case": "soup_mild",
+            "status": 200,
+            "count": 5,
+            "ms": 139.03720000234898
+          },
+          {
+            "case": "noodle",
+            "status": 200,
+            "count": 5,
+            "ms": 172.50029999559047
+          },
+          {
+            "case": "solo",
+            "status": 200,
+            "count": 5,
+            "ms": 96.40659999422496
+          },
+          {
+            "case": "general",
+            "status": 200,
+            "count": 5,
+            "ms": 1970.7013000006555
+          },
+          {
+            "case": "soup_mild",
+            "status": 200,
+            "count": 5,
+            "ms": 80.27020000008633
+          },
+          {
+            "case": "noodle",
+            "status": 200,
+            "count": 5,
+            "ms": 151.3305999978911
+          },
+          {
+            "case": "solo",
+            "status": 200,
+            "count": 5,
+            "ms": 59.142900005099364
+          },
+          {
+            "case": "general",
+            "status": 200,
+            "count": 5,
+            "ms": 1991.0135000027367
+          },
+          {
+            "case": "soup_mild",
+            "status": 200,
+            "count": 5,
+            "ms": 64.63839999923948
+          },
+          {
+            "case": "noodle",
+            "status": 200,
+            "count": 5,
+            "ms": 393.65660000476055
+          },
+          {
+            "case": "solo",
+            "status": 200,
+            "count": 5,
+            "ms": 143.47189999534748
+          },
+          {
+            "case": "general",
+            "status": 200,
+            "count": 5,
+            "ms": 1481.653599999845
+          }
+        ]
+      }
+    ]
+  }
+}

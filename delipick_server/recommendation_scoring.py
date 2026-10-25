@@ -1,4 +1,6 @@
 import json
+from array import array
+from functools import lru_cache
 import math
 import re
 from typing import Any
@@ -28,6 +30,7 @@ def _clip01(value: float) -> float:
     return max(0.0, min(1.0, value))
 
 
+@lru_cache(maxsize=8192)
 def _compact_text(text: str) -> str:
     return re.sub(r"\s+", "", (text or "").lower())
 
@@ -39,6 +42,7 @@ def _food_type_text(text: str) -> str:
     return compact
 
 
+@lru_cache(maxsize=256)
 def _tokenize_preference_text(text: str) -> list[str]:
     tokens = re.findall(r"[0-9A-Za-z가-힣]+", (text or "").lower())
     return [
@@ -53,6 +57,7 @@ def _keyword_hit_count(haystack: str, keywords: tuple[str, ...]) -> int:
     return sum(1 for keyword in keywords if _compact_text(keyword) in compact_haystack)
 
 
+@lru_cache(maxsize=256)
 def _experience_intent_score(text: str) -> float:
     compact = _compact_text(text)
     hits = sum(1 for trigger in rules._EXPERIENCE_INTENT_TRIGGERS if _compact_text(trigger) in compact)
@@ -110,6 +115,7 @@ def _condition_adjustment_score(text: str, item: dict[str, Any]) -> float:
     return max(-0.42, min(0.24, adjustment))
 
 
+@lru_cache(maxsize=256)
 def _preference_query_direct_intent(text: str) -> float:
     compact = _compact_text(text)
     tokens = _tokenize_preference_text(text)
@@ -251,39 +257,36 @@ def _euclidean_similarity_0_1(vec1: list[float], vec2: list[float], default: flo
     return _clip01(1.0 - (distance / max_distance))
 
 
-def _parse_embedding(raw: Any) -> list[float]:
-    if raw is None:
-        return []
-
-    if isinstance(raw, list):
-        return [float(v) for v in raw]
-
-    if not isinstance(raw, str):
-        return []
-
-    text = raw.strip()
-    if not text:
-        return []
-
+@lru_cache(maxsize=4096)
+def _parse_embedding_text(text: str) -> array:
     try:
         parsed = json.loads(text)
         if isinstance(parsed, list):
-            return [float(v) for v in parsed]
+            return array("f", (float(value) for value in parsed))
     except Exception:
         pass
-
     start = text.find("[")
     end = text.rfind("]")
     if start == -1 or end == -1 or end <= start:
-        return []
-
+        return array("f")
     try:
         parsed = json.loads(text[start : end + 1])
         if isinstance(parsed, list):
-            return [float(v) for v in parsed]
+            return array("f", (float(value) for value in parsed))
     except Exception:
+        return array("f")
+    return array("f")
+
+
+def _parse_embedding(raw: Any) -> list[float] | array:
+    if raw is None:
         return []
-    return []
+    if isinstance(raw, list):
+        return [float(value) for value in raw]
+    if not isinstance(raw, str):
+        return []
+    text = raw.strip()
+    return _parse_embedding_text(text) if text else []
 
 
 def _parse_tag_profile(raw: Any) -> set[str]:

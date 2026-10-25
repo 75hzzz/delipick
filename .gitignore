@@ -1,13 +1,30 @@
-# [OS / IDE 공통 설정]
-.DS_Store
-Thumbs.db
-.vscode/
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+**/__pycache__/
+**/*.py[cod]
+**/.pytest_cache/
+**/venv/
+**/.venv/
+**/build/
+**/.dart_tool/
+**/.gradle/
+**/ephemeral/
 .idea/
-
-# Local Codex/config files
+.vscode/
 config/
-.codex_pdf_preview/
-
-# Local nutrient source files
+runtime/
+delipick_server/database/*.sql
+delipick_server/database/*.sql.gz
+delipick_server/data/*.json
 delipick_server/data/*.xlsx
 delipick_server/scripts/*.xlsx
+**/local.properties
+**/key.properties
+*.jks
+*.keystore
+.DS_Store
+Thumbs.db

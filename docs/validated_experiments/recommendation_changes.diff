@@ -1,0 +1,500 @@
+--- before/delipick_server/main.py
++++ after/delipick_server/main.py
+@@ -1,5 +1,6 @@
+ import os
+ from datetime import datetime
++import json
+ from contextvars import ContextVar
+ import logging
+ from time import perf_counter
+@@ -36,8 +37,12 @@
+ 
+ load_dotenv()
+ logger = logging.getLogger("delipick.performance")
++logger.setLevel(logging.INFO)
++if not logger.handlers:
++    logger.addHandler(logging.StreamHandler())
+ _request_timings: ContextVar[dict[str, float] | None] = ContextVar("request_timings", default=None)
+ _table_columns_cache: dict[str, set[str]] = {}
++_retrieval_context: ContextVar[dict | None] = ContextVar("retrieval_context", default=None)
+ 
+ 
+ MIN_RECOMMENDABLE_NON_CAFE_PRICE = 4000
+@@ -192,6 +197,21 @@
+     allow_methods=["*"],
+     allow_headers=["*"],
+ )
++
++
++@app.middleware("http")
++async def performance_log(request, call_next):
++    timings = {}
++    token = _request_timings.set(timings)
++    started = perf_counter()
++    try:
++        response = await call_next(request)
++        timings["total_ms"] = round((perf_counter() - started) * 1000, 2)
++        response.headers["X-Response-Time-Ms"] = str(timings["total_ms"])
++        logger.info("request_performance %s", json.dumps({"path": request.url.path, **timings}))
++        return response
++    finally:
++        _request_timings.reset(token)
+ 
+ 
+ def get_db_connection() -> pymysql.connections.Connection:
+@@ -330,6 +350,7 @@
+     conn: pymysql.connections.Connection,
+     restaurant_ids: list[int],
+     req: RecommendationRequest,
++    menu_ids: list[int] | None = None,
+ ) -> list[dict[str, Any]]:
+     if not restaurant_ids:
+         return []
+@@ -370,6 +391,11 @@
+     """
+ 
+     params: list[Any] = [*restaurant_ids, req.min_price, req.max_price, MIN_RECOMMENDABLE_NON_CAFE_PRICE]
++    if menu_ids is not None:
++        if not menu_ids:
++            return []
++        sql += " AND m.id IN (" + ",".join(["%s"] * len(menu_ids)) + ")"
++        params.extend(menu_ids)
+     with conn.cursor() as cursor:
+         cursor.execute(sql, params)
+         return cursor.fetchall()
+@@ -385,7 +411,9 @@
+             items=[],
+         )
+ 
+-    natural_category_ids = set() if req.category_ids else _category_ids_from_preference_text(req.preference_text)
++    # Parsed conditions already constrain retrieval; raw keywords can include a
++    # negated category (e.g. "not mala" must not restrict results to Asian food).
++    natural_category_ids = set() if req.category_ids or _retrieval_context.get() else _category_ids_from_preference_text(req.preference_text)
+     if natural_category_ids:
+         category_rows = [
+             row
+@@ -398,14 +426,18 @@
+     now_hour = datetime.now().hour
+     restaurant_ids = [int(row["id"]) for row in rows]
+ 
+-    review_scores = _fetch_review_scores(conn, restaurant_ids)
++    retrieval_state = _retrieval_context.get()
++    review_scores = (retrieval_state["review_scores"] if retrieval_state and "review_scores" in retrieval_state
++                     else _fetch_review_scores(conn, restaurant_ids))
+ 
+     enriched: list[dict[str, Any]] = []
+     etas: list[float] = []
+     prices: list[float] = []
+ 
+     for row in rows:
+-        metrics = calculate_queueing_metrics(row.get("prep_time"), row.get("delivery_time"), now_hour)
++        metrics = (retrieval_state["restaurant_metrics"][int(row["id"])]
++                   if retrieval_state and "restaurant_metrics" in retrieval_state
++                   else calculate_queueing_metrics(row.get("prep_time"), row.get("delivery_time"), now_hour))
+         eta = float(metrics["total_eta"])
+         price = float(row.get("main_menu_price") or 0.0)
+ 
+@@ -441,10 +473,11 @@
+         item["restaurant_review_score"] = review_score
+ 
+     if personalized:
+-        tag_intent = build_preference_tag_intent(req.preference_text)
++        retrieval = _retrieval_context.get()
++        tag_intent = retrieval["intent"] if retrieval else build_preference_tag_intent(req.preference_text)
+         menu_embedding_text = str(tag_intent.get("menu_embedding_text") or req.preference_text).strip() or req.preference_text
+         review_embedding_text = str(tag_intent.get("review_embedding_text") or menu_embedding_text).strip() or menu_embedding_text
+-        user_taste = build_taste_vector_from_text(menu_embedding_text)
++        user_taste = retrieval["taste"] if retrieval else build_taste_vector_from_text(menu_embedding_text)
+         user_taste_vector = [
+             float(user_taste.get("salty", 0.5)),
+             float(user_taste.get("sweet", 0.5)),
+@@ -452,10 +485,17 @@
+             float(user_taste.get("umami", 0.5)),
+             float(user_taste.get("spicy", 0.5)),
+         ]
+-        user_embedding, review_user_embedding = build_text_embeddings([menu_embedding_text, review_embedding_text])
++        user_embedding, review_user_embedding = retrieval["vectors"] if retrieval else build_text_embeddings([menu_embedding_text, review_embedding_text])
+         weights = scoring._weight_by_user_type(req.user_type, tag_intent)
+ 
+-        flavor_rows = _fetch_menu_flavors(conn, restaurant_ids, req)
++        detail_started = perf_counter()
++        if retrieval and "flavor_rows" in retrieval:
++            flavor_rows = retrieval["flavor_rows"]
++        else:
++            flavor_rows = _fetch_menu_flavors(conn, restaurant_ids, req, retrieval["menu_ids"] if retrieval else None)
++            if retrieval is not None:
++                retrieval["flavor_rows"] = flavor_rows
++            _record_timing("detail_fetch_ms", detail_started)
+         restaurants_by_id = {int(item["id"]): item for item in enriched}
+         menu_candidates: list[dict[str, Any]] = []
+ 
+@@ -526,8 +566,11 @@
+                         item["recommendation_section_label"] = "유사 추천"
+ 
+         menu_prices = [float(item["menu_price"]) for item in menu_candidates]
+-        min_menu_price = min(menu_prices)
+-        max_menu_price = max(menu_prices)
++        if retrieval and "price_bounds" in retrieval:
++            min_menu_price, max_menu_price = retrieval["price_bounds"]
++        else:
++            min_menu_price = min(menu_prices)
++            max_menu_price = max(menu_prices)
+ 
+         for item in menu_candidates:
+             if max_menu_price == min_menu_price:
+@@ -602,7 +645,8 @@
+             if should_fill_similar and len(selected) < target_count:
+                 append_unique(similar_sorted, target_count)
+         else:
+-            append_unique(sorted_items, req.limit)
++            # Apply recognized exclusions on every result path, including fallback.
++            append_unique([item for item in sorted_items if not scoring._has_avoid_match(tag_intent, item)], req.limit)
+ 
+         response_items = [
+             RestaurantResponse(
+@@ -873,8 +917,7 @@
+ 
+     conn = get_db_connection()
+     try:
+-        rows = _fetch_base_candidates(conn, request)
+-        return _rank_recommendations(request, rows, conn)
++        return run_recommendation(request, conn)
+     except pymysql.MySQLError as error:
+         raise HTTPException(status_code=500, detail=f"DB error: {error}") from error
+     finally:
+@@ -885,12 +928,115 @@
+ def get_recommendations(request: RecommendationRequest) -> RecommendationResponse:
+     conn = get_db_connection()
+     try:
+-        rows = _fetch_base_candidates(conn, request)
+-        return _rank_recommendations(request, rows, conn)
++        return run_recommendation(request, conn)
+     except pymysql.MySQLError as error:
+         raise HTTPException(status_code=500, detail=f"DB error: {error}") from error
+     finally:
+         conn.close()
++
++
++def run_recommendation(request, conn):
++    if not request.preference_text:
++        rows = _fetch_base_candidates(conn, request)
++        return _rank_recommendations(request, rows, conn)
++    try:
++        from . import vector_search
++        from . import candidate_recall
++    except ImportError:
++        import vector_search
++        import candidate_recall
++    started = perf_counter()
++    intent = build_preference_tag_intent(request.preference_text)
++    _record_timing("llm_ms", started)
++    menu_text = str(intent.get("menu_embedding_text") or request.preference_text)
++    review_text = str(intent.get("review_embedding_text") or menu_text)
++    started = perf_counter()
++    taste = build_taste_vector_from_text(menu_text)
++    _record_timing("taste_ms", started)
++    started = perf_counter()
++    vectors = build_text_embeddings([menu_text, review_text])
++    _record_timing("embedding_ms", started)
++    started = perf_counter()
++    candidates = vector_search.filter_candidates(conn, request, intent)
++    _record_timing("metadata_ms", started)
++    timings = _request_timings.get()
++    if timings is not None:
++        timings["filtered_menu_count"] = len(candidates)
++    if not candidates:
++        return RecommendationResponse(mode="personalized", user_type=request.user_type or None,
++                                      preference_text=request.preference_text, count=0, items=[])
++    started = perf_counter()
++    rows = _fetch_base_candidates(conn, request)
++    review_scores = _fetch_review_scores(conn, [int(row["id"]) for row in rows])
++    now_hour = datetime.now().hour
++    restaurant_metrics = {int(row["id"]): calculate_queueing_metrics(
++        row.get("prep_time"), row.get("delivery_time"), now_hour) for row in rows}
++    restaurant_state = {int(row["id"]): {"row": row, "eta": restaurant_metrics[int(row["id"])]["total_eta"],
++                                        "review": review_scores.get(int(row["id"]), 0.5)} for row in rows}
++    # The same eligibility set supplies both full-rerank and retrieved-rerank bounds.
++    candidates = [row for row in candidates if int(row["restaurant_id"]) in restaurant_state
++                  and not scoring._should_exclude_food_form_category(intent, row, request.preference_text)]
++    bounds = candidate_recall.price_bounds(candidates)
++    _record_timing("base_ms", started)
++    if timings is not None:
++        timings["filtered_menu_count"] = len(candidates)
++    if not candidates:
++        return RecommendationResponse(mode="personalized", user_type=request.user_type or None,
++                                      preference_text=request.preference_text, count=0, items=[])
++    started = perf_counter()
++    exact_pool = len(candidates) <= _parse_int_env("RECALL_EXACT_THRESHOLD", 200)
++    sql_only = os.getenv("RETRIEVAL_ENGINE") == "sql"
++    if not vectors[0] or not any(vectors[0]):
++        raise HTTPException(status_code=502, detail="Query embedding unavailable; please retry.")
++    try:
++        menu_ids = ([r["menu_id"] for r in candidates] if sql_only or exact_pool
++                    else vector_search.search([r["menu_id"] for r in candidates], *vectors))
++    except Exception as error:
++        logger.error("Vector retrieval failed: %s", type(error).__name__)
++        raise HTTPException(status_code=503, detail="Vector search unavailable; please retry.") from error
++    _record_timing("vector_ms", started)
++    if not sql_only and not exact_pool:
++        started = perf_counter()
++        extra_ids, channel_counts = candidate_recall.select(candidates, request, intent, taste, restaurant_state, bounds)
++        semantic_count = len(menu_ids)
++        menu_ids = sorted(set(menu_ids) | set(extra_ids))
++        _record_timing("recall_ms", started)
++        if timings is not None:
++            timings["semantic_menu_count"] = semantic_count
++            timings["recall_channels"] = channel_counts
++    if timings is not None:
++        timings["retrieved_menu_count"] = len(menu_ids)
++    token = _retrieval_context.set({"intent": intent, "taste": taste, "vectors": vectors, "menu_ids": menu_ids,
++                                   "price_bounds": bounds, "review_scores": review_scores,
++                                   "restaurant_metrics": restaurant_metrics})
++    try:
++        started = perf_counter()
++        refine = not sql_only and not exact_pool and _parse_int_env("RECALL_REFINE_RESTAURANTS", 10) > 0
++        first_request = (request.model_copy(update={"limit": min(100, max(request.limit, _parse_int_env("RECALL_REFINE_RESTAURANTS", 10)))})
++                         if refine else request)
++        result = _rank_recommendations(first_request, rows, conn)
++        if refine:
++            state = _retrieval_context.get()
++            shortlist = {int(item.id) for item in result.items}
++            selected = set(menu_ids)
++            extra_ids = [int(row["menu_id"]) for row in candidates
++                         if int(row["restaurant_id"]) in shortlist and int(row["menu_id"]) not in selected]
++            if extra_ids:
++                fetch_started = perf_counter()
++                extra_rows = _fetch_menu_flavors(conn, sorted(shortlist), request, extra_ids)
++                _record_timing("refinement_fetch_ms", fetch_started)
++                state["flavor_rows"].extend(extra_rows)
++                state["menu_ids"] = sorted(selected | set(extra_ids))
++                if timings is not None:
++                    timings["refinement_menu_count"] = len(extra_rows)
++                    timings["retrieved_menu_count"] = len(state["menu_ids"])
++                result = _rank_recommendations(request, rows, conn)
++            else:
++                result = result.model_copy(update={"items": result.items[:request.limit], "count": len(result.items[:request.limit])})
++        _record_timing("rerank_ms", started)
++        return result
++    finally:
++        _retrieval_context.reset(token)
+ 
+ 
+ if __name__ == "__main__":
+--- /dev/null
++++ after/delipick_server/vector_search.py
+@@ -0,0 +1,89 @@
++"""Two-stage retrieval; MySQL is authoritative, Qdrant is a derived index."""
++import json
++import os
++from functools import lru_cache
++
++from qdrant_client import QdrantClient, models
++
++SAFE_REQUIRED = {"국물", "면", "밥", "죽", "음료", "따뜻함", "차가움"}
++EXPERIENCE = {"혼밥", "아이동반", "속편함", "해장", "야식", "든든함", "가벼움", "가족식사"}
++
++
++@lru_cache(maxsize=1)
++def client():
++    return QdrantClient(url=os.getenv("QDRANT_URL", "http://127.0.0.1:16333"), timeout=60)
++
++
++def collection():
++    return os.getenv("QDRANT_COLLECTION", "delipick_lab_1")
++
++
++def conditions(intent):
++    required = sorted(set(intent.get("must_tags", [])) & SAFE_REQUIRED)
++    excluded = sorted(set(intent.get("avoid_tags", [])) - EXPERIENCE)
++    terms = sorted(set(intent.get("avoid_terms", [])))
++    return required, excluded, terms
++
++
++def metadata_sql(req, intent, filtered=True, details=False):
++    clauses = ["m.price BETWEEN %s AND %s", "(r.category_id=7 OR m.price >= 4000)"]
++    params = [req.min_price, req.max_price]
++    if req.category_ids:
++        clauses.append("r.category_id IN (" + ",".join(["%s"] * len(req.category_ids)) + ")")
++        params.extend(req.category_ids)
++    if filtered:
++        required, excluded, terms = conditions(intent)
++        for tag in required:
++            clauses.append("EXISTS (SELECT 1 FROM menu_tag_map t WHERE t.menu_id=m.id AND t.tag_value=%s)")
++            params.append(tag)
++        if excluded:
++            clauses.append("NOT EXISTS (SELECT 1 FROM menu_tag_map t WHERE t.menu_id=m.id AND t.tag_value IN (" + ",".join(["%s"] * len(excluded)) + "))")
++            params.extend(excluded)
++        for term in terms:
++            clauses.append("LOCATE(%s, REPLACE(m.menu_name, ' ', ''))=0")
++            params.append(term.replace(" ", ""))
++    fields = "m.id AS menu_id, m.restaurant_id"
++    join = "JOIN restaurants r ON r.id=m.restaurant_id "
++    if details:
++        fields += (", m.menu_name, m.price, r.category_id, r.name AS restaurant_name, mf.menu_tags, "
++                   "mf.salty, mf.sweet, mf.sour, mf.umami, mf.spicy, "
++                   "mf.review_salty, mf.review_sweet, mf.review_sour, mf.review_umami, mf.review_spicy")
++        join += "LEFT JOIN menu_flavors mf ON mf.menu_id=m.id "
++    return ("SELECT " + fields + " FROM menus m " + join + "WHERE " + " AND ".join(clauses)), params
++
++
++def filter_candidates(conn, req, intent):
++    sql, params = metadata_sql(req, intent, details=True)
++    with conn.cursor() as cur:
++        cur.execute(sql, params)
++        return cur.fetchall()
++
++
++def search(candidate_ids, menu_vector, review_vector, limit=None):
++    if not candidate_ids:
++        return []
++    k = limit or int(os.getenv("RETRIEVAL_K", "100"))
++    query_filter = models.Filter(must=[models.HasIdCondition(has_id=candidate_ids)])
++    # Union protects experience-oriented requests from menu-only retrieval bias.
++    ids = set()
++    for name, vector in (("menu", menu_vector), ("review", review_vector)):
++        if vector:
++            result = client().query_points(
++                collection_name=collection(), using=name, query=vector,
++                query_filter=query_filter, limit=k, with_payload=False,
++                with_vectors=False, search_params=models.SearchParams(hnsw_ef=512),
++            )
++            ids.update(int(point.id) for point in result.points)
++    return sorted(ids)
++
++
++def flatten_tags(raw):
++    if isinstance(raw, str):
++        try:
++            raw = json.loads(raw)
++        except (ValueError, TypeError):
++            return []
++    if not isinstance(raw, dict):
++        return []
++    return [(str(kind), str(tag)) for kind, values in raw.items()
++            if isinstance(values, list) for tag in values if isinstance(tag, str)]
+--- /dev/null
++++ after/delipick_server/candidate_recall.py
+@@ -0,0 +1,89 @@
++"""Recall inexpensive personalization signals before loading large vectors."""
++import os
++
++try:
++    from . import recommendation_scoring as scoring
++except ImportError:
++    import recommendation_scoring as scoring
++
++TASTE_KEYS = ("salty", "sweet", "sour", "umami", "spicy")
++
++
++def price_bounds(rows):
++    values = [float(row["price"]) for row in rows]
++    return (min(values), max(values)) if values else (0.0, 0.0)
++
++
++def price_score(price, bounds):
++    low, high = bounds
++    return 1.0 if high == low else scoring._clip01(1.0 - (float(price) - low) / (high - low))
++
++
++def diversified(rows, scores, quota, per_restaurant=2):
++    counts = {}
++    result = []
++    for i in sorted(range(len(rows)), key=lambda i: (-scores[i], int(rows[i]["menu_id"]))):
++        restaurant_id = int(rows[i]["restaurant_id"])
++        if counts.get(restaurant_id, 0) >= per_restaurant:
++            continue
++        counts[restaurant_id] = counts.get(restaurant_id, 0) + 1
++        result.append(int(rows[i]["menu_id"]))
++        if len(result) >= quota:
++            break
++    return result
++
++
++def select(rows, req, intent, taste, restaurant_state, bounds):
++    """Use only scalar features here; full semantic scoring is still downstream."""
++    weights = scoring._weight_by_user_type(req.user_type, intent)
++    target = [float(taste.get(k, 0.5)) for k in TASTE_KEYS]
++    manual_target = scoring._apply_manual_taste_targets(target, req.taste_levels)
++    etas = [state["eta"] for state in restaurant_state.values()]
++    low_eta, high_eta = min(etas), max(etas)
++    channels = {k: [] for k in ("price", "delivery", "taste", "review", "coarse", "required")}
++    # Repeated franchise menus share features, but have different IDs/locations.
++    features_cache = {}
++    for row in rows:
++        state = restaurant_state[int(row["restaurant_id"])]
++        key = tuple(row.get(k) for k in ("menu_name", "restaurant_name", "category_id", "menu_tags",
++                                         *TASTE_KEYS, *("review_" + k for k in TASTE_KEYS)))
++        features = features_cache.get(key)
++        if features is None:
++            menu_taste = scoring._menu_taste_vector(row)
++            taste_score = (scoring._euclidean_similarity_0_1(manual_target, menu_taste) * 0.65
++                           + scoring._cosine_similarity_0_1(manual_target, menu_taste) * 0.35)
++            manual = scoring._manual_taste_range_score(menu_taste, req.taste_levels)
++            if manual is not None:
++                taste_score = 0.5 * taste_score + 0.5 * manual
++            # Missing vector fields intentionally omit semantic terms in this proxy.
++            coarse_preference = scoring._calculate_menu_preference_score(
++                row, target, [1.0], req.preference_text, req.taste_levels, intent, [1.0])
++            exact, related = scoring._direct_menu_name_match_scores(req.preference_text, row)
++            direct = scoring._preference_query_direct_intent(req.preference_text)
++            bonus = exact * direct * 0.22 + related * (direct * 0.06 + (1.0 - direct) * 0.10)
++            adjustment = scoring._condition_adjustment_score(req.preference_text, {
++                "menu_name": row["menu_name"], "restaurant": state["row"]})
++            features = (taste_score, coarse_preference, bonus, scoring._has_all_required_tags(intent, row), adjustment)
++            features_cache[key] = features
++        taste_score, coarse_preference, bonus, required, adjustment = features
++        delivery = 1.0 if high_eta == low_eta else 1.0 - (state["eta"] - low_eta) / (high_eta - low_eta)
++        price = price_score(row["price"], bounds)
++        coarse = (weights["delivery"] * delivery + weights["price"] * price
++                  + weights["review"] * state["review"] + weights["preference"] * coarse_preference
++                  + bonus + adjustment)
++        channels["price"].append(price)
++        channels["delivery"].append(delivery)
++        channels["taste"].append(taste_score)
++        channels["review"].append(state["review"])
++        channels["coarse"].append(coarse)
++        channels["required"].append(coarse if required else -10.0)
++    quota = int(os.getenv("RECALL_CHANNEL_K", "40"))
++    mixed_quota = int(os.getenv("RECALL_MIXED_K", "120"))
++    picks = {name: diversified(rows, scores, mixed_quota if name == "coarse" else quota,
++                               per_restaurant=3 if name == "coarse" else 2)
++             for name, scores in channels.items() if name != "required"}
++    required_rows = [i for i, score in enumerate(channels["required"]) if score > -10.0]
++    if required_rows:
++        ordered = sorted(required_rows, key=lambda i: (-channels["required"][i], int(rows[i]["menu_id"])))
++        picks["required"] = [int(rows[i]["menu_id"]) for i in ordered[:quota]]
++    return sorted({menu_id for ids in picks.values() for menu_id in ids}), {name: len(ids) for name, ids in picks.items()}
+--- before/delipick_server/recommendation_scoring.py
++++ after/delipick_server/recommendation_scoring.py
+@@ -30,6 +30,7 @@
+     return max(0.0, min(1.0, value))
+ 
+ 
++@lru_cache(maxsize=8192)
+ def _compact_text(text: str) -> str:
+     return re.sub(r"\s+", "", (text or "").lower())
+ 
+@@ -41,6 +42,7 @@
+     return compact
+ 
+ 
++@lru_cache(maxsize=256)
+ def _tokenize_preference_text(text: str) -> list[str]:
+     tokens = re.findall(r"[0-9A-Za-z가-힣]+", (text or "").lower())
+     return [
+@@ -55,6 +57,7 @@
+     return sum(1 for keyword in keywords if _compact_text(keyword) in compact_haystack)
+ 
+ 
++@lru_cache(maxsize=256)
+ def _experience_intent_score(text: str) -> float:
+     compact = _compact_text(text)
+     hits = sum(1 for trigger in rules._EXPERIENCE_INTENT_TRIGGERS if _compact_text(trigger) in compact)
+@@ -112,6 +115,7 @@
+     return max(-0.42, min(0.24, adjustment))
+ 
+ 
++@lru_cache(maxsize=256)
+ def _preference_query_direct_intent(text: str) -> float:
+     compact = _compact_text(text)
+     tokens = _tokenize_preference_text(text)
